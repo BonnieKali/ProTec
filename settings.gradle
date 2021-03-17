@@ -1,4 +1,3 @@
-include ':libs:database'
 include ':features:dashboard'
 include ':libs:session'
 include ':libs:actions'

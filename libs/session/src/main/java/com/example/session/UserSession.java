@@ -11,11 +11,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class Session {
+public class UserSession {
     private static final String TAG = "com.example.session.Session";
 
     // Static singleton com.example.session.Session instance
-    private static Session instance;
+    private static UserSession instance;
 
     // Authentication
     private FirebaseAuth mAuth;
@@ -27,7 +27,7 @@ public class Session {
      *
      * Private constructor only called once, implementing singleton pattern.
      */
-    private Session(){
+    private UserSession(){
         mAuth = FirebaseAuth.getInstance();
     }
 
@@ -36,9 +36,9 @@ public class Session {
      *
      * @return com.example.session.Session singleton instance
      */
-    public static synchronized Session getInstance(){
+    public static synchronized UserSession getInstance(){
         if(instance == null) {
-            instance = new Session();
+            instance = new UserSession();
         }
         return instance;
     }

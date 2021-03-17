@@ -17,7 +17,6 @@
             <option value="$PROJECT_DIR$/features/login" />
             <option value="$PROJECT_DIR$/libs" />
             <option value="$PROJECT_DIR$/libs/actions" />
-            <option value="$PROJECT_DIR$/libs/database" />
             <option value="$PROJECT_DIR$/libs/session" />
             <option value="$PROJECT_DIR$/libs/ui" />
           </set>

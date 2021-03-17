@@ -32,6 +32,7 @@ dependencies {
 
     implementation project(':libs:ui')
     implementation project(':libs:actions')
+    implementation project(':libs:session')
 
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
