@@ -1,0 +1,9 @@
+include ':features:dashboard'
+include ':libs:session'
+include ':libs:actions'
+include ':features:login'
+include ':features'
+include ':libs:ui'
+include ':libs'
+include ':app'
+rootProject.name = "ProTec"
