@@ -1,4 +1,5 @@
-import android.app.Activity;
+package com.example.session;
+
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -9,19 +10,18 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class Session {
-    private static final String TAG = "Session";
+    private static final String TAG = "com.example.session.Session";
 
-    // Static singleton Session instance
+    // Static singleton com.example.session.Session instance
     private static Session instance;
 
     // Authentication
     private FirebaseAuth mAuth;
 
     /**
-     * Singleton Session class.
+     * Singleton com.example.session.Session class.
      *
      * Responsible for database connection, synchronization, and user authentication.
      *
@@ -32,9 +32,9 @@ public class Session {
     }
 
     /**
-     * Returns the singleton Session instance. This is a thread-safe call
+     * Returns the singleton com.example.session.Session instance. This is a thread-safe call
      *
-     * @return Session singleton instance
+     * @return com.example.session.Session singleton instance
      */
     public static synchronized Session getInstance(){
         if(instance == null) {
