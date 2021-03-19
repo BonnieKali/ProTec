@@ -1,23 +1,21 @@
 package com.example.login;
 
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import com.example.session.UserSession;
-import com.example.threads.BackgroundPool;
-import com.example.threads.OnTaskCompleteCallback;
-import com.example.threads.RunnableTask;
+import com.example.session.local.UserSession;
+import com.example.session.database.Database;
 import com.example.threads.TaskResult;
+import com.example.ui.ProTecAlerts;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +25,8 @@ public class LoginFragment extends Fragment {
 
     // UI
     private ProgressBar progressBar;
+    private EditText email;
+    private EditText password;
 
     // Logic
     private UserSession session;
@@ -37,14 +37,27 @@ public class LoginFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
-        // Init session
+        // Initialize fragment variables
         progressBar = view.findViewById(R.id.progress_bar);
+        email = view.findViewById(R.id.username);
+        password = view.findViewById(R.id.password);
+
         session = UserSession.getInstance();
 
         // Set Listeners for clickable items
         setOnClickListeners(view);
 
+        runTests();
+
         return view;
+    }
+
+    /*
+    TESTING PURPOSES
+     */
+    private void runTests() {
+        Database.init();
+        Database.test();
     }
 
 
@@ -64,33 +77,28 @@ public class LoginFragment extends Fragment {
      */
     private void setLoginButtonListener(View loginButton) {
         loginButton.setOnClickListener(v -> {
-            // Enable progress bar
-            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.VISIBLE);     // Enable progress bar
             int action = R.id.action_loginFragment_to_avatarFragment;
 
-            // Create a background authentication task
-            RunnableTask task = () -> {
-                // This is a blocking statement
-                Boolean result = session.signInUserWithEmailPassword(getContext(),
-                        "patient0@protec.com", "123456");
-                return new TaskResult<>(result);
-            };
+            session.signInUserWithEmailPassword(
+                email.getText().toString(),
+                password.getText().toString(),
+                taskResult -> {
+                    Log.d(TAG, "OnTaskCompleteCallback: Running callback in UI");
 
-            // Send the task to the ThreadPool and attach a UI callback for when it is finished
-            BackgroundPool.attachTask(task, taskResult -> {
-                Log.d(TAG, "OnTaskCompleteCallback: Running callback in UI");
-
-                if (taskResult instanceof TaskResult.Error){
-                    Log.d(TAG, "OnTaskCompleteCallback: Result is of type TaskResult.Error");
-                }
-
-                else if (taskResult.getData() == Boolean.TRUE) {
-                    Log.d(TAG, "OnTaskCompleteCallback: Authentication result is successful. Leaving login screen");
-                    Navigation.findNavController(v).navigate(action);
-                }
+                    if(taskResult instanceof TaskResult.Error){
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Log.d(TAG, "OnTaskCompleteCallback: Authentication error");
+                        ProTecAlerts.warning(getContext(),
+                                ((TaskResult.Error<?>) taskResult).exception.getMessage());
+                    }
+                    else {
+                        Log.d(TAG, "OnTaskCompleteCallback: Authentication result is" +
+                                " successful. Leaving login screen");
+                        Navigation.findNavController(v).navigate(action);
+                    }
+                });
             });
-
-        });
     }
 
 
@@ -100,7 +108,6 @@ public class LoginFragment extends Fragment {
      */
     private void setRegisterButtonListener(View registerButton){
         registerButton.setOnClickListener(v -> {
-            progressBar.setVisibility(View.VISIBLE);
             int action = R.id.action_loginFragment_to_registerFragment;
             Navigation.findNavController(v).navigate(action);
         });
