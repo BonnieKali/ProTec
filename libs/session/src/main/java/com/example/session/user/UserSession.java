@@ -6,7 +6,7 @@ public class UserSession {
     private Boolean initialized;
 
     public UserInfo userInfo;  // Object containing all user info
-    public UserData userData;  // Object containing all collected user data
+//    public UserData userData;  // Object containing all collected user data
 
 
     /**
@@ -14,7 +14,7 @@ public class UserSession {
      */
     public UserSession(){
         this.userInfo = null;
-        this.userData = null;
+//        this.userData = null;
         this.initialized = false;
     }
 
@@ -23,7 +23,7 @@ public class UserSession {
      */
     public UserSession(UserInfo userInfo, UserData userData){
         this.userInfo = userInfo;
-        this.userData = userData;
+//        this.userData = userData;
         this.initialized = true;
     }
 
@@ -37,11 +37,24 @@ public class UserSession {
     /**
      * Returns unique user id of the current user
      *
-     * @return
+     * @return String unique user identifier
      */
     public String getUID(){
         if(this.isInitialised()){
             return userInfo.id;
+        }else{
+            return null;
+        }
+    }
+
+    /**
+     * Returns the user type of this account (PATIENT/CARER)
+     *
+     * @return UserType of account
+     */
+    public UserInfo.UserType getType(){
+        if(this.isInitialised()){
+            return userInfo.userType;
         }else{
             return null;
         }
@@ -52,7 +65,7 @@ public class UserSession {
         return "UserSession{" +
                 "initialized=" + initialized +
                 ", userInfo=" + userInfo +
-                ", userData=" + userData +
+//                ", userData=" + userData +
                 '}';
     }
 }

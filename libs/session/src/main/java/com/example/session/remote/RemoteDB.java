@@ -2,7 +2,10 @@ package com.example.session.remote;
 
 import android.util.Log;
 
+import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
+import com.example.session.user.carer.CarerSession;
+import com.example.session.user.patient.PatientSession;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
@@ -24,6 +27,8 @@ public class RemoteDB {
             "https://protec-546cd-default-rtdb.europe-west1.firebasedatabase.app/";
 
     private static final String USERS = "users";
+    private static final String PATIENTS = "patients";
+    private static final String CARERS = "carers";
     private static final String EVENTS = "events";
 
     // Database reference
@@ -42,18 +47,27 @@ public class RemoteDB {
 
     /**
      * Updates the information and data entries of the selected user with the data contained in
-     * the UserSession object
+     * the UserSession object. If the userSession is of type CARER/PATIENT it will be saved to
+     * the corresponding table.
      *
      * @param uid   Unique user identifier
      * @param userSession   UserSession object containing all user info/data
      */
     public void updateUser(String uid, UserSession userSession){
         Gson json = new Gson();
-        String userSessionString = json.toJson(userSession, UserSession.class);
-
+        String userSessionString = json.toJson(userSession, userSession.getClass());
         Map<String, Object> jsonMap = json.fromJson(userSessionString,
                 new TypeToken<HashMap<String, Object>>() {}.getType());
-        dRef.child(USERS).child(uid).updateChildren(jsonMap);
+
+        dRef.child(USERS).child(uid).setValue(userSession.getType().toString());
+
+        if (userSession.getType() == UserInfo.UserType.CARER){
+            Log.d(TAG, "updateUser: Updating Carer account");
+            dRef.child(CARERS).child(uid).updateChildren(jsonMap);
+        } else {
+            Log.d(TAG, "updateUser: Updated Patient account");
+            dRef.child(PATIENTS).child(uid).updateChildren(jsonMap);
+        }
     }
 
 
@@ -66,10 +80,16 @@ public class RemoteDB {
      * @return UserSession object
      */
     public UserSession getUser(String uid){
+        UserInfo.UserType userType = getUserType(uid);
         String result = "";
 
         try {
-            Task<DataSnapshot> task = dRef.child(USERS).child(uid).get();
+            Task<DataSnapshot> task;
+            if (userType == UserInfo.UserType.CARER){
+                task = dRef.child(CARERS).child(uid).get();
+            }else{
+                task = dRef.child(PATIENTS).child(uid).get();
+            }
             Tasks.await(task);
 
             if (task.isSuccessful()) {
@@ -95,8 +115,54 @@ public class RemoteDB {
             return null;
         } else {
             Gson gson = new Gson();
-            return gson.fromJson(result, UserSession.class);
+
+            if (userType == UserInfo.UserType.CARER){
+                return gson.fromJson(result, CarerSession.class);
+            }else{
+                return gson.fromJson(result, PatientSession.class);
+            }
         }
     }
+
+
+    private UserInfo.UserType getUserType(String uid){
+        String result = "";
+
+        try {
+            Task<DataSnapshot> task = dRef.child(USERS).child(uid).get();
+            Tasks.await(task);
+
+            if (task.isSuccessful()) {
+                Log.d(TAG, "getUserType: Success");
+
+                if(task.getResult() != null){
+                    result = String.valueOf(task.getResult().getValue());
+                    Log.d(TAG, "getUserType: Result is "+result);
+                }else{
+                    Log.w(TAG, "getUserType: Result is null");
+                }
+            }
+            else {
+                Log.e("firebase", "Error getting data", task.getException());
+            }
+        } catch (ExecutionException e) {
+            Log.w(TAG, "getUserType: Failure", e);
+        } catch (InterruptedException e) {
+            Log.w(TAG, "getUserType: Failure", e);
+        }
+
+        if (result.equals("")){
+            return null;
+        } else {
+            Gson gson = new Gson();
+            if (result.equals(UserInfo.UserType.CARER.toString())){
+                return UserInfo.UserType.CARER;
+            }else {
+                return UserInfo.UserType.PATIENT;
+            }
+        }
+    }
+
+
 
 }

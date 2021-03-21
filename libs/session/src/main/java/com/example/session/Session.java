@@ -2,6 +2,7 @@ package com.example.session;
 
 import android.content.Context;
 
+import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
 import com.example.threads.OnTaskCompleteCallback;
 
@@ -111,8 +112,9 @@ public class Session {
      * @param uiCallback OnTaskCompleteCallback to be executed on UI thread.
      */
     public void createUserWithEmailPassword(String email, String password,
+                                            UserInfo.UserType userType,
                                             OnTaskCompleteCallback uiCallback) {
-        sessionHandler.createUserWithEmailPassword(email, password, uiCallback);
+        sessionHandler.createUserWithEmailPassword(email, password, userType,  uiCallback);
     }
 
 

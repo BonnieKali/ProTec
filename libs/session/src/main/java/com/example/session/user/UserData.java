@@ -10,8 +10,8 @@ public class UserData {
     private String placeHolder;
 
     // All user data instances are held here
-    public LocationData locationData;
-    public BiomarkerData biomarkerData;
+//    public LocationData locationData;
+//    public BiomarkerData biomarkerData;
     /*
         ADD MORE VARIABLES HERE
      */
@@ -24,27 +24,27 @@ public class UserData {
         this.placeHolder = "data_place_holder";
     }
 
-    /**
-     * Constructor
-     *
-     * @param locationData
-     * @param biomarkerData
-     */
-    public UserData(LocationData locationData,
-                    BiomarkerData biomarkerData){
-        this();
-        this.locationData = locationData;
-        this.biomarkerData = biomarkerData;
-        /*
-            ADD MORE HERE
-         */
-    }
+//    /**
+//     * Constructor
+//     *
+//     * @param locationData
+//     * @param biomarkerData
+//     */
+//    public UserData(LocationData locationData,
+//                    BiomarkerData biomarkerData){
+//        this();
+//        this.locationData = locationData;
+//        this.biomarkerData = biomarkerData;
+//        /*
+//            ADD MORE HERE
+//         */
+//    }
 
-    @Override
-    public String toString() {
-        return "UserData{" +
-                "locationData=" + locationData +
-                ", biomarkerData=" + biomarkerData +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "UserData{" +
+//                "locationData=" + locationData +
+//                ", biomarkerData=" + biomarkerData +
+//                '}';
+//    }
 }

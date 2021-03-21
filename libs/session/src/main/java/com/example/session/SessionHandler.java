@@ -126,8 +126,8 @@ public class SessionHandler {
      * @param uiCallback OnTaskCompleteCallback to be executed on UI thread.
      */
     public void createUserWithEmailPassword(String email, String password,
+                                            UserInfo.UserType userType,
                                             OnTaskCompleteCallback uiCallback) {
-        // TODO: Add UserType field in method input
         RunnableTask authenticationTask = () -> {
             TaskResult<String> userResult =
                     authentication.createUserWithEmailPassword(email, password);
@@ -140,9 +140,7 @@ public class SessionHandler {
             // Build new UserSession and save it locally/remotely
             String userID = userResult.getData();
 
-            // TODO: Add UserType field in method input
-            this.userSession = UserSessionBuilder.buildNew(userID, email,
-                    UserInfo.UserType.PATIENT);
+            this.userSession = UserSessionBuilder.buildNew(userID, email, userType);
             Log.d(TAG, "createUserWithEmailPassword: New user was created!");
             Log.d(TAG, "createUserWithEmailPassword: "+userSession.toString());
 

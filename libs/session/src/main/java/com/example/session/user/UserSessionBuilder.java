@@ -4,6 +4,10 @@ import android.util.Log;
 
 import com.example.session.local.LocalDB;
 import com.example.session.remote.RemoteDB;
+import com.example.session.user.carer.CarerData;
+import com.example.session.user.carer.CarerSession;
+import com.example.session.user.patient.PatientData;
+import com.example.session.user.patient.PatientSession;
 
 
 public class UserSessionBuilder {
@@ -33,10 +37,16 @@ public class UserSessionBuilder {
             Log.w(TAG, "fromLocal: Null returned from localdb. Returning empty UserSession");
             return new UserSession();
         } else {
-            Log.d(TAG, "fromLocal: Returning saved UserSession");
-            return userSession;
+            if (userSession.getType() == UserInfo.UserType.CARER){
+                Log.d(TAG, "fromLocal: Returning saved CarerSession");
+                return (CarerSession) userSession;
+//                return new CarerSession(userSession.userInfo, (CarerData) userSession.userData);
+            } else {
+                Log.d(TAG, "fromLocal: Returning saved PatientSession");
+                return (PatientSession) userSession;
+//                return new PatientSession(userSession.userInfo, (PatientData) userSession.userData);
+            }
         }
-
     }
 
     /**
@@ -57,11 +67,21 @@ public class UserSessionBuilder {
             Log.w(TAG, "fromRemote: Null returned from remote.");
             throw new UserNotFoundInRemoteException("User was not found on the database.");
         }
-        return userSession;
+
+        if (userSession.getType() == UserInfo.UserType.CARER){
+            Log.d(TAG, "fromRemote: Returning saved CarerSession");
+            return (CarerSession) userSession;
+//            return new CarerSession(userSession.userInfo, (CarerData) userSession.userData);
+        } else {
+            Log.d(TAG, "fromRemote: Returning saved PatientSession");
+            return (PatientSession) userSession;
+//            return new PatientSession(userSession.userInfo, (PatientData) userSession.userData);
+        }
     }
 
     /**
-     * Constructs a new, empty UserSession for new users.
+     * Constructs a new, empty UserSession for new users. Depending on the UserType it will return
+     * a CarerSession or PatientSession object
      *
      * @param uid Unique user identifier
      * @param email User email
@@ -70,8 +90,16 @@ public class UserSessionBuilder {
      */
     public static UserSession buildNew(String uid, String email, UserInfo.UserType userType){
         UserInfo userInfo = new UserInfo(uid, email, userType);
-        UserData userData = new UserData();
-        return new UserSession(userInfo, userData);
+
+        if (userType == UserInfo.UserType.CARER) {
+            CarerData carerData = new CarerData();
+            return new CarerSession(userInfo, carerData);
+        }
+        else {
+            PatientData patientData = new PatientData();
+            return new PatientSession(userInfo, patientData);
+        }
+
     }
 
 }
