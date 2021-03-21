@@ -100,8 +100,16 @@ public class LocalDB {
      * @param userSession UserSession object to save.
      */
     public void saveUserSession(UserSession userSession){
-        // Set UserSessionExists
+
+        // If empty ser
+        if(!userSession.isInitialised()){
+            deleteUserSession();
+            return;
+        }
+
         SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // Set UserSessionExists
         editor.putBoolean(USER_SESSION_EXISTS_KEY, true);
         editor.putString(USER_SESSION_TYPE, userSession.getType().toString());
 

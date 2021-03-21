@@ -1,6 +1,7 @@
 package com.example.session;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
@@ -25,12 +26,15 @@ public class Session {
     //-------------------------|
 
     /**
-     * Called on application creation to set a static app context
+     * Called on application creation to set a static app context and initialize the Session
+     * instance.
      *
      * @param context Application context
      */
     public static void initialize(Context context){
+        Log.d(TAG, "Initializing");
         appContext = context;
+//        getInstance();  // Initialize the instance object with the initialize call
     }
 
     /**
@@ -85,6 +89,13 @@ public class Session {
      */
     public Boolean isUserSignedIn(){
         return sessionHandler.isUserSignedIn();
+    }
+
+    /**
+     * Logs out current user by deleting the session
+     */
+    public void logOutUser(OnTaskCompleteCallback uiCallback){
+        sessionHandler.logOutUser(uiCallback);
     }
 
     /**

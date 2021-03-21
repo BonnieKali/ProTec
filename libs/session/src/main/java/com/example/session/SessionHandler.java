@@ -32,6 +32,7 @@ public class SessionHandler {
      * Class that implements the details of all public Session calls
      */
     public SessionHandler(Context context){
+        Log.d(TAG, "Initializing");
         authentication = new Authentication();
 
         localDB = new LocalDB(context);
@@ -53,11 +54,28 @@ public class SessionHandler {
     }
 
     /**
+     * Saves the current state of the session to local database in current thread
+     * (blocking statement).
+     */
+    public void saveStateBlock(){
+        localDB.saveUserSession(userSession);
+    }
+
+
+    /**
      * Saves all user data to the remote database in a background thread.
      */
     public void syncToRemote() {
         BackgroundPool.attachProcess(() -> remoteDB.updateUser(userSession.getUID(), userSession));
     }
+
+    /**
+     * Saves all user data to the remote database in current thread (blocking statement).
+     */
+    public void syncToRemoteBlock(){
+        remoteDB.updateUser(userSession.getUID(), userSession);
+    }
+
 
 
     //---------------------|
@@ -71,6 +89,29 @@ public class SessionHandler {
      */
     public Boolean isUserSignedIn() {
         return userSession.isInitialised();
+    }
+
+    /**
+     * Logs out current user by deleting the session
+     */
+    public void logOutUser(OnTaskCompleteCallback uiCallback){
+
+        // Log out user in background thread
+        RunnableTask task = () -> {
+            // Save any unsaved changes to remote database
+            syncToRemoteBlock();
+
+            // Reset local session variables
+            authentication.logOut();
+            userSession = UserSessionBuilder.buildEmpty();
+
+            // Save the new non-logged-in state
+            saveStateBlock();
+
+            return new TaskResult<>(true);
+        };
+
+        BackgroundPool.attachTask(task, uiCallback);
     }
 
 

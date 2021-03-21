@@ -19,9 +19,11 @@ public class Authentication {
 
     // Authentication
     private FirebaseAuth mAuth;
-    private UserSessionBuilder userSessionBuilder;
 
 
+    /**
+     * Class that deals with remote registration and authentication.
+     */
     public Authentication(){
         mAuth = FirebaseAuth.getInstance();
     }
@@ -71,7 +73,7 @@ public class Authentication {
 
     /**
      * Signs in user with given email and password. This is a blocking statement, so it should be
-     * called in a background thread
+     * called in a background thread.
      *
      * @param email String user email
      * @param password String user password
@@ -114,6 +116,12 @@ public class Authentication {
     }
 
 
+    /**
+     * Signs out currently authenticated user.
+     */
+    public void logOut(){
+        mAuth.signOut();
+    }
 
 
 

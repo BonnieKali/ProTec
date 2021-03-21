@@ -35,7 +35,7 @@ public class UserSessionBuilder {
 
         if (userSession == null){
             Log.w(TAG, "fromLocal: Null returned from localdb. Returning empty UserSession");
-            return new UserSession();
+            return buildEmpty();
         } else {
             if (userSession.getType() == UserInfo.UserType.CARER){
                 Log.d(TAG, "fromLocal: Returning saved CarerSession");
@@ -99,7 +99,15 @@ public class UserSessionBuilder {
             PatientData patientData = new PatientData();
             return new PatientSession(userInfo, patientData);
         }
+    }
 
+    /**
+     * Constructs empty UserSession object if user is not logged in (or logging out)
+     *
+     * @return UserSession empty object
+     */
+    public static UserSession buildEmpty(){
+        return new UserSession();
     }
 
 }
