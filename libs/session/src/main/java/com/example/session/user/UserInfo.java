@@ -13,6 +13,13 @@ public class UserInfo {
     public UserType userType;
 
 
+    /**
+     * Class containing all necessary user information
+     *
+     * @param id Unique user identifier
+     * @param email User email
+     * @param userType UserType
+     */
     public UserInfo(String id, String email, UserType userType){
         this.id = id;
         this.email = email;

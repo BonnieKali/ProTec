@@ -20,6 +20,7 @@ public class LocalDB {
     private static final String USER_SESSION_TYPE = "user_session_type";
     private static final String USER_SESSION_OBJECT_KEY = "user_session_object";
 
+    // Reference to SharedPreferences of application
     private final SharedPreferences sharedPreferences;
 
 
@@ -29,7 +30,6 @@ public class LocalDB {
      * @param context Application context
      */
     public LocalDB(Context context){
-        // Functional variables
         sharedPreferences = context.getSharedPreferences(LOCAL_DB_NAME, Context.MODE_PRIVATE);
     }
 
@@ -101,7 +101,7 @@ public class LocalDB {
      */
     public void saveUserSession(UserSession userSession){
 
-        // If empty ser
+        // If empty user
         if(!userSession.isInitialised()){
             deleteUserSession();
             return;

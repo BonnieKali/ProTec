@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutorService;
 public class Authentication {
     private static final String TAG = "Authentication";
 
-    // Authentication
+    // Firebase Authentication
     private FirebaseAuth mAuth;
 
 

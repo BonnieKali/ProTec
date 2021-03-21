@@ -54,13 +54,16 @@ public class RemoteDB {
      * @param userSession   UserSession object containing all user info/data
      */
     public void updateUser(String uid, UserSession userSession){
+        // Turn userSession object into a JSON Map
         Gson json = new Gson();
         String userSessionString = json.toJson(userSession, userSession.getClass());
         Map<String, Object> jsonMap = json.fromJson(userSessionString,
                 new TypeToken<HashMap<String, Object>>() {}.getType());
 
+        // Overwrite the previous UserType entry assigned to this UID
         dRef.child(USERS).child(uid).setValue(userSession.getType().toString());
 
+        // Send the JSON data to the corresponding database table
         if (userSession.getType() == UserInfo.UserType.CARER){
             Log.d(TAG, "updateUser: Updating Carer account");
             dRef.child(CARERS).child(uid).updateChildren(jsonMap);
@@ -125,6 +128,12 @@ public class RemoteDB {
     }
 
 
+    /**
+     * Returns the UserType associated with the given UID. This is a blocking statement.
+     *
+     * @param uid Unique user identifier
+     * @return object of UserType enum
+     */
     private UserInfo.UserType getUserType(String uid){
         String result = "";
 

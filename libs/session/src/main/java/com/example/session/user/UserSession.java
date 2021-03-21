@@ -3,10 +3,12 @@ package com.example.session.user;
 
 public class UserSession {
 
+    // Specifies whether the UserSession is initialized (if user is logged out, this is
+    // not initialized)
     private Boolean initialized;
 
-    public UserInfo userInfo;  // Object containing all user info
-//    public UserData userData;  // Object containing all collected user data
+    // Object containing all user information
+    public UserInfo userInfo;
 
 
     /**
@@ -14,16 +16,14 @@ public class UserSession {
      */
     public UserSession(){
         this.userInfo = null;
-//        this.userData = null;
         this.initialized = false;
     }
 
     /**
      * Constructor with initialized userInfo and userData objects
      */
-    public UserSession(UserInfo userInfo, UserData userData){
+    public UserSession(UserInfo userInfo){
         this.userInfo = userInfo;
-//        this.userData = userData;
         this.initialized = true;
     }
 
@@ -65,7 +65,6 @@ public class UserSession {
         return "UserSession{" +
                 "initialized=" + initialized +
                 ", userInfo=" + userInfo +
-//                ", userData=" + userData +
                 '}';
     }
 }

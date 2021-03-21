@@ -10,6 +10,9 @@ import com.example.session.user.patient.PatientData;
 import com.example.session.user.patient.PatientSession;
 
 
+/**
+ * Static class responsible for building UserSessions
+ */
 public class UserSessionBuilder {
     private static final String TAG = "UserSessionBuilder";
 
@@ -40,11 +43,9 @@ public class UserSessionBuilder {
             if (userSession.getType() == UserInfo.UserType.CARER){
                 Log.d(TAG, "fromLocal: Returning saved CarerSession");
                 return (CarerSession) userSession;
-//                return new CarerSession(userSession.userInfo, (CarerData) userSession.userData);
             } else {
                 Log.d(TAG, "fromLocal: Returning saved PatientSession");
                 return (PatientSession) userSession;
-//                return new PatientSession(userSession.userInfo, (PatientData) userSession.userData);
             }
         }
     }
@@ -71,11 +72,9 @@ public class UserSessionBuilder {
         if (userSession.getType() == UserInfo.UserType.CARER){
             Log.d(TAG, "fromRemote: Returning saved CarerSession");
             return (CarerSession) userSession;
-//            return new CarerSession(userSession.userInfo, (CarerData) userSession.userData);
         } else {
             Log.d(TAG, "fromRemote: Returning saved PatientSession");
             return (PatientSession) userSession;
-//            return new PatientSession(userSession.userInfo, (PatientData) userSession.userData);
         }
     }
 

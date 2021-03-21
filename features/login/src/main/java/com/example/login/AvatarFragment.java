@@ -20,7 +20,7 @@ import com.example.session.Session;
 public class AvatarFragment extends Fragment {
     private static final String TAG = "AvatarFragment";
 
-    // UI
+    // UI Variables
     private TextView imageCaption;
 
     // Logic
@@ -32,15 +32,17 @@ public class AvatarFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_avatar, container, false);
 
+        // Retrieve Session
         session = Session.getInstance();
+
+        // Retrieve UI
         imageCaption = view.findViewById(R.id.avatar_caption);
 
+        // Log user details
         Log.d(TAG, "User object is: "+session.getUser().toString());
-        Log.d(TAG, "UserInfo object is: "+session.getUser().userInfo.toString());
-
-
         imageCaption.setText(session.getUser().userInfo.email);
 
+        // Set listener to button. This takes the user to the dashboard.
         view.findViewById(R.id.button_login_toapp).setOnClickListener(v -> {
             Activity act = getActivity();
             if(act != null){

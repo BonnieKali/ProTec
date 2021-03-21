@@ -35,12 +35,13 @@ public class LoginFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
+        // Retrieve session
+        session = Session.getInstance();
+
         // Initialize fragment variables
         progressBar = view.findViewById(R.id.progress_bar);
         email = view.findViewById(R.id.login_email);
         password = view.findViewById(R.id.login_password);
-
-        session = Session.getInstance();
 
         // Set Listeners for clickable items
         setOnClickListeners(view);

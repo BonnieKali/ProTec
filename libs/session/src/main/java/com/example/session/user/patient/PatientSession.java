@@ -7,8 +7,14 @@ public class PatientSession extends UserSession {
 
     public PatientData patientData;
 
+
+    /**
+     * Patient-specific session
+     * @param userInfo UserInfo object containing all user information
+     * @param patientData PatientData object containing all patient-specific data
+     */
     public PatientSession(UserInfo userInfo, PatientData patientData){
-        super(userInfo, patientData);
+        super(userInfo);
         this.patientData = patientData;
     }
 

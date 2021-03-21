@@ -13,13 +13,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Get any previously started user session
         Session session = Session.getInstance();
 
+        // Check if a user is signed in
         if (session.isUserSignedIn()){
             // Go directly to dashboard
             startActivity(Actions.openDashboardIntent(this));
         } else {
-            // Start app to login
+            // Go to login
             startActivity(Actions.openLoginIntent(this));
         }
     }

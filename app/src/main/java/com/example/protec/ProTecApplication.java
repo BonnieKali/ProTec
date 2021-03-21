@@ -11,7 +11,7 @@ public class ProTecApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        // Here we initialize the libraries
+        // Here we initialize all library dependencies
         Session.initialize(getApplicationContext());
         BackgroundPool.initialize();
     }
