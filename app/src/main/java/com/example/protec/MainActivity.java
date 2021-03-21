@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.actions.Actions;
+import com.example.session.Session;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -12,7 +13,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Start app to login
-        startActivity(Actions.openLoginIntent(this));
+        // Get any previously started user session
+        Session session = Session.getInstance();
+
+        // Check if a user is signed in
+        if (session.isUserSignedIn()){
+            // Go directly to dashboard
+            startActivity(Actions.openDashboardIntent(this));
+        } else {
+            // Go to login
+            startActivity(Actions.openLoginIntent(this));
+        }
     }
 }
