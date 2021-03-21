@@ -37,7 +37,7 @@
         android:layout_marginBottom="32dp" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/avatar_caption"
         style="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -1,4 +1,4 @@
-package com.example.session.database;
+package com.example.session;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Database {
+public class DatabaseTest {
     private static final String DB_URL =
             "https://protec-546cd-default-rtdb.europe-west1.firebasedatabase.app/";
 

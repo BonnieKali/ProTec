@@ -2,71 +2,119 @@ package com.example.session.remote;
 
 import android.util.Log;
 
+import com.example.session.user.UserSessionBuilder;
 import com.example.threads.OnTaskCompleteCallback;
 import com.example.threads.TaskResult;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 
 public class Authentication {
     private static final String TAG = "Authentication";
 
-
     // Authentication
     private FirebaseAuth mAuth;
+    private UserSessionBuilder userSessionBuilder;
+
 
     public Authentication(){
         mAuth = FirebaseAuth.getInstance();
     }
 
     /**
-     * Creates a new user with a given email and password. It assumes that the both inputs have a
-     * correct format.
+     * Creates a new user with a given email and password.
      *
      * @param email String user email
      * @param password String user password
-     * @param callback OnTaskCompleteCallback which runs on the UI thread when operation is finished
+     * @return TaskResult(String) containing the uid of the newly created user. If there is an error
+     * then the result will be TaskResult.Error containing the exception that caused it.
      */
-    public void createUserWithEmailPassword(String email,
-                                            String password,
-                                            OnTaskCompleteCallback callback){
+    public TaskResult<String> createUserWithEmailPassword(String email, String password){
+        TaskResult<String> result;
 
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+        // Authenticate the user in a synchronous statement
+        try {
+            Task<AuthResult> task = mAuth.createUserWithEmailAndPassword(email, password);
+            AuthResult authResult = Tasks.await(task);  // Here we wait for the result
             if (task.isSuccessful()) {
                 // Registration successful
-                Log.d(TAG, "createUserWithEmailPassword:success");
-                callback.onComplete(new TaskResult<>(true));
+                Log.d(TAG, "createUserWithEmailPassword: Success");
+                FirebaseUser user = mAuth.getCurrentUser();
+
+                if (user != null){
+                    String uid = user.getUid();
+                    result = new TaskResult<>(uid);
+                } else {
+                    Log.w(TAG, "createUserWithEmailPassword: Current user was null");
+                    result = new TaskResult.Error<>(new Exception("Firebase User was null"));
+                }
             } else {
-                // Registration failed
-
-
-                Log.w(TAG, "createUserWithEmailPassword:failure", task.getException());
-                callback.onComplete(new TaskResult<>(false));
+                // Sign in failed
+                Log.w(TAG, "createUserWithEmailPassword: Failure", task.getException());
+                result = new TaskResult.Error<>(task.getException());
             }
-        });
+        } catch (ExecutionException e) {
+            Log.w(TAG, "createUserWithEmailPassword: Failure", e);
+            result = new TaskResult.Error<>(e);
+        } catch (InterruptedException e) {
+            Log.w(TAG, "createUserWithEmailPassword: Failure", e);
+            result = new TaskResult.Error<>(e);
+        }
+
+        return result;
     }
 
     /**
-     * Signs in user with given email and password. The Result is sent to the UI thread through
-     * a callback argument.
+     * Signs in user with given email and password. This is a blocking statement, so it should be
+     * called in a background thread
      *
      * @param email String user email
      * @param password String user password
-     * @param callback OnTaskCompleteCallback which runs on the UI thread when operation is finished
+     * @return TaskResult(String) containing the uid of the signed in user. If there is an error
+     *          then the result will be TaskResult.Error containing the exception caused
      */
-    public void signInUserWithEmailPassword(String email,
-                                            String password,
-                                            OnTaskCompleteCallback callback){
+    public TaskResult<String> signInUserWithEmailPassword(String email, String password){
+        TaskResult<String> result;
 
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+        // Authenticate the user in a synchronous statement
+        try {
+            Task<AuthResult> task = mAuth.signInWithEmailAndPassword(email, password);
+            AuthResult authResult = Tasks.await(task);  // Here we wait for the result
             if (task.isSuccessful()) {
                 // Sign in successful
-                Log.d(TAG, "signInUserWithEmailPassword:success");
-                callback.onComplete(new TaskResult<>());
+                Log.d(TAG, "signInUserWithEmailPassword: Success");
+                FirebaseUser user = mAuth.getCurrentUser();
+
+                if (user != null){
+                    String uid = user.getUid();
+                    result = new TaskResult<>(uid);
+                } else {
+                    Log.w(TAG, "signInUserWithEmailPassword: Current user was null");
+                    result = new TaskResult.Error<>(new Exception("Firebase User was null"));
+                }
             } else {
                 // Sign in failed
-                Log.w(TAG, "signInUserWithEmailPassword:failure", task.getException());
-                callback.onComplete(new TaskResult.Error<>(task.getException()));
+                Log.w(TAG, "signInUserWithEmailPassword: Failure", task.getException());
+                result = new TaskResult.Error<>(task.getException());
             }
-        });
+        } catch (ExecutionException e) {
+            Log.w(TAG, "signInUserWithEmailPassword: Failure", e);
+            result = new TaskResult.Error<>(e);
+        } catch (InterruptedException e) {
+            Log.w(TAG, "signInUserWithEmailPassword: Failure", e);
+            result = new TaskResult.Error<>(e);
+        }
+
+        return result;
     }
+
+
+
+
 
 }

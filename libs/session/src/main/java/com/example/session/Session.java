@@ -1,43 +1,45 @@
 package com.example.session;
 
-import com.example.session.data.User;
-import com.example.session.local.LocalDB;
-import com.example.session.local.UserSession;
-import com.example.session.remote.Authentication;
-import com.example.session.remote.RemoteDB;
+import android.content.Context;
+
+import com.example.session.user.UserSession;
+import com.example.threads.OnTaskCompleteCallback;
+
 
 public class Session {
     private static final String TAG = "Session";
 
-    // Static singleton com.example.session.Session instance
+    // Reference to application context
+    private static Context appContext;
+
+    // Static singleton Session instance
     private static Session instance;
 
-    // Databases for data storage
-    private LocalDB localDB;
-    private RemoteDB remoteDB;
+    // Session utils
+    private final SessionHandler sessionHandler;
 
-    // Authenticates users from remote Auth firebase portal
-    private Authentication authentication;
 
-    // Keeps all local user session information
-    private UserSession userSession;
-
+    //-------------------------|
+    // Singleton functionality |
+    //-------------------------|
 
     /**
-     * Singleton Session class.
+     * Called on application creation to set a static app context
      *
-     * Responsible for initializing all persistent session components.
-     *
-     * Private constructor only called once, implementing singleton pattern.
+     * @param context Application context
      */
-    private Session(){
-        authentication = new Authentication();
+    public static void initialize(Context context){
+        appContext = context;
+    }
 
-        localDB = new LocalDB();
-        remoteDB = new RemoteDB();
-
-//        userSession = new UserSession();
-        
+    /**
+     * Singleton Session class responsible for initializing all persistent session components.
+     * Private constructor only called once, implementing singleton pattern.
+     *
+     * @param context application Context
+     */
+    private Session(Context context){
+        sessionHandler = new SessionHandler(context);
     }
 
     /**
@@ -46,8 +48,85 @@ public class Session {
      * @return Session singleton instance
      */
     public static synchronized Session getInstance(){
-        if(instance == null) { instance = new Session(); }
+        if(instance == null) {
+            instance = new Session(appContext);
+        }
         return instance;
+    }
+
+
+    //-----------------------|
+    // State synchronization |
+    //-----------------------|
+
+    /**
+     * Saves the current state of the session to local database in a background thread.
+     */
+    public void saveState(){
+        sessionHandler.saveState();
+    }
+
+    /**
+     * Saves all user data to the remote database in a background thread.
+     */
+    public void syncToRemote(){
+        sessionHandler.syncToRemote();
+    }
+
+
+    //---------------------|
+    // User Authentication |
+    //---------------------|
+    /**
+     * Specifies whether there is a currently signed in user.
+     *
+     * @return isUserSignedIn
+     */
+    public Boolean isUserSignedIn(){
+        return sessionHandler.isUserSignedIn();
+    }
+
+    /**
+     * Signs in user with given credentials in a background thread. The result is passed to the
+     * input uiCallback as a TaskResult argument.
+     *
+     * If the operation is successful, a new UserSession object is built from the remote database
+     * and stored inside the global session instance.
+     *
+     * @param email User email
+     * @param password User password
+     * @param uiCallback OnTaskCompleteCallback to be executed on the UI thread.
+     */
+    public void signInUserWithEmailPassword(String email, String password,
+                                            OnTaskCompleteCallback uiCallback) {
+        sessionHandler.signInUserWithEmailPassword(email, password, uiCallback);
+    }
+
+    /**
+     * Creates a new user with the given credentials and signs him in in a background thread. The
+     * result is passed to the input uiCallback as a TaskResult argument.
+     *
+     * @param email User email
+     * @param password User password
+     * @param uiCallback OnTaskCompleteCallback to be executed on UI thread.
+     */
+    public void createUserWithEmailPassword(String email, String password,
+                                            OnTaskCompleteCallback uiCallback) {
+        sessionHandler.createUserWithEmailPassword(email, password, uiCallback);
+    }
+
+
+    //--------------------|
+    // UserSession Access-|
+    //--------------------|
+
+    /**
+     * Returns the active UserSession object
+     *
+     * @return UserSession object
+     */
+    public UserSession getUser(){
+        return sessionHandler.userSession;
     }
 
 
