@@ -3,7 +3,9 @@
     package="com.example.login">
 
     <application android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity">
+        <activity
+            android:name=".LoginActivity"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="ProTec.login.open" />
                 <category android:name="android.intent.category.DEFAULT" />

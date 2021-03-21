@@ -15,6 +15,12 @@
     </style>
 
 
+    <!--  Startup theme  -->
+    <style name="StartupTheme" parent="AppTheme">
+        <item name="android:windowBackground">@color/neon_dark_blue</item>
+    </style>
+
+
     <!-- ToolBar -->
     <style name="ToolBarStyle" parent="Theme.AppCompat">
         <!-- Primary brand color. -->
