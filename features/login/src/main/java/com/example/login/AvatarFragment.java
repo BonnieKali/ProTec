@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -27,11 +28,16 @@ public class AvatarFragment extends Fragment {
     private static final String TAG = "AvatarFragment";
 
     // Specifies duration for the life of the current fragment
-    private final float AVATAR_DURATION_SECONDS = 2.0f;
+    private final float AVATAR_DURATION_SECONDS = 4.0f;
+
+    // Specifies delay until the explanation text and progress bar appear
+    private final float EXPLANATION_DELAY_SECONDS = 1.0f;
 
     // UI Variables
     private TextView imageCaption;
     private TextView hello_email;
+    private ProgressBar progressBar;
+    private TextView progressExplanation;
 
     // Logic
     private Session session;
@@ -48,6 +54,8 @@ public class AvatarFragment extends Fragment {
         // Retrieve UI
         imageCaption = view.findViewById(R.id.avatar_caption);
         hello_email = view.findViewById(R.id.avatar_email);
+        progressBar = view.findViewById(R.id.avatar_progress_bar);
+        progressExplanation = view.findViewById(R.id.avatar_progress_explanation);
 
         // Log user details
         Log.d(TAG, "User object is: "+session.getUser().toString());
@@ -69,19 +77,6 @@ public class AvatarFragment extends Fragment {
      * @param view Current inflated view
      */
     private void setListeners(View view){
-
-        // This is used when we want the user to click the button to go to dashboard
-        // Currently this happens automatically after AVATAR_DURATION_SECONDS
-        /*
-        // Set listener to button. This takes the user to the dashboard.
-        view.findViewById(R.id.button_login_toapp).setOnClickListener(v -> {
-            Activity act = getActivity();
-            if(act != null){
-                act.startActivity(Actions.openDashboardIntent(act));
-            }
-        });
-        */
-
         // Go to next target after N seconds if the button is not clicked
         setGoTimer();
     }
@@ -92,14 +87,24 @@ public class AvatarFragment extends Fragment {
      */
     private void setGoTimer() {
 
-        // Create background task which waits AVATAR_DURATION_SECONDS and sends an result
-        RunnableTask task = () -> {
+        // Create background task which waits AVATAR_DURATION_SECONDS and sends empty result
+        RunnableTask task_duration = () -> {
             SystemClock.sleep((long)(AVATAR_DURATION_SECONDS*1000));
             return new TaskResult<>(null);
         };
 
+        // Create background task which waits EXPLANATION_DELAY_SECONDS and sends empty result
+        RunnableTask task_delay = () -> {
+            SystemClock.sleep((long)(EXPLANATION_DELAY_SECONDS*1000));
+            return new TaskResult<>(null);
+        };
+
         // Attach task and go to dashboard upon completion
-        BackgroundPool.attachTask(task, taskResult -> toDashboard());
+        BackgroundPool.attachTask(task_duration, taskResult -> toDashboard());
+
+        // Attach task_delay and show progress/explanation upon completion
+        BackgroundPool.attachTask(task_delay, taskResult -> enableProgress());
+
     }
 
 
@@ -111,8 +116,27 @@ public class AvatarFragment extends Fragment {
         if(act != null){
             Intent intent = Actions.openDashboardIntent(act);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            disableProgress();
             act.startActivity(intent);
+            act.finish();
         }
+    }
+
+
+    /**
+     * Enables progress bar and explanation text
+     */
+    private void enableProgress(){
+        progressBar.setVisibility(View.VISIBLE);
+        progressExplanation.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Disables progress bar and explanation (when dashboard is ready)
+     */
+    private void disableProgress(){
+        progressBar.setVisibility(View.INVISIBLE);
+        progressExplanation.setVisibility(View.INVISIBLE);
     }
 
 }
