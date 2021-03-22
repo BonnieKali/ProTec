@@ -3,12 +3,16 @@ package com.example.session;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.session.event.Event;
+import com.example.session.event.EventBuilder;
+import com.example.session.event.EventType;
 import com.example.session.local.LocalDB;
 import com.example.session.remote.Authentication;
 import com.example.session.remote.RemoteDB;
 import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
 import com.example.session.user.UserSessionBuilder;
+import com.example.session.user.patient.PatientSession;
 import com.example.threads.BackgroundPool;
 import com.example.threads.OnTaskCompleteCallback;
 import com.example.threads.RunnableTask;
@@ -42,6 +46,7 @@ public class SessionHandler {
     }
 
 
+
     //-----------------------|
     // State synchronization |
     //-----------------------|
@@ -60,7 +65,6 @@ public class SessionHandler {
     public void saveStateBlock(){
         localDB.saveUserSession(userSession);
     }
-
 
     /**
      * Saves all user data to the remote database in a background thread.
@@ -113,7 +117,6 @@ public class SessionHandler {
 
         BackgroundPool.attachTask(task, uiCallback);
     }
-
 
     /**
      * Attempts to authenticate user with given credentials. If the operation is successful, a
@@ -197,4 +200,58 @@ public class SessionHandler {
         // Send task to the background thread pool and run the input callback on the UI thread
         BackgroundPool.attachTask(authenticationTask, uiCallback);
     }
+
+
+
+    //----------------|
+    // EVENT HANDLING |
+    //----------------|
+
+    /**
+     * Sets a listener for new database live events. This can only be used by CarerSessions.
+     *
+     * @param onTaskCompleteCallback callback to be executed in the UI thread when a new event
+     *                               arrives. This callback will provide the TaskResult(event) as
+     *                               an argument.
+     * @return Boolean operation successful
+     */
+    public Boolean setLiveEventListener(OnTaskCompleteCallback onTaskCompleteCallback){
+        // If the current user is a patient, do not set the listener
+        if (userSession.userInfo.userType == UserInfo.UserType.PATIENT) {
+            Log.w(TAG, "setLiveEventListener: Current user is a patient. No listener added");
+            return false;
+        }
+
+        remoteDB.setNewLiveEventListener(onTaskCompleteCallback);
+        return true;
+    }
+
+    /**
+     * Creates an Event object and sends it to the remote database with a generation request.
+     * It then returns this event object
+     *
+     * @param eventType Type of event to generate
+     * @return Event object
+     */
+    public Event generateLiveEvent(EventType eventType){
+        // If the current user is a carer, do not generate event
+        if (userSession.userInfo.userType == UserInfo.UserType.CARER){
+            return null;
+        }
+
+        Event event = EventBuilder.buildEvent((PatientSession) userSession ,eventType);
+        remoteDB.generateEvent(event);
+        return event;
+    }
+
+    /**
+     * Removes the given event from the live_events in the database. This should be called when
+     * the event has been dealt with.
+     *
+     * @param event Event object
+     */
+    public void disableLiveEvent(Event event){
+        remoteDB.disableEvent(event);
+    }
+
 }

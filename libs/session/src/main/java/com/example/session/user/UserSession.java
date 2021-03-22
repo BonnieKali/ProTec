@@ -14,7 +14,7 @@ public class UserSession {
     /**
      * Default empty constructor
      */
-    public UserSession(){
+    protected UserSession(){
         this.userInfo = null;
         this.initialized = false;
     }
@@ -22,7 +22,7 @@ public class UserSession {
     /**
      * Constructor with initialized userInfo and userData objects
      */
-    public UserSession(UserInfo userInfo){
+    protected UserSession(UserInfo userInfo){
         this.userInfo = userInfo;
         this.initialized = true;
     }
