@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,14 @@ import android.widget.TextView;
 import com.example.session.Session;
 import com.example.session.event.Event;
 import com.example.session.event.EventType;
+import com.example.session.user.UserInfo;
+import com.example.session.user.patient.PatientData;
+import com.example.session.user.patient.PatientSession;
+import com.example.threads.BackgroundPool;
+import com.example.threads.OnTaskCompleteCallback;
+import com.example.threads.RunnableTask;
+import com.example.threads.TaskResult;
+import com.example.ui.ProTecAlerts;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,6 +52,42 @@ public class PatientDashboardFragment extends Fragment {
         generateFallEvent.setOnClickListener(v -> session.generateLiveEvent(EventType.FELL));
         generateLeftEvent.setOnClickListener(v -> session.generateLiveEvent(EventType.LEFT_HOUSE));
 
+        doExamples();
+
         return view;
+    }
+
+    private void doExamples() {
+
+        PatientSession patientSession = (PatientSession) session.getUser();
+
+        String id = patientSession.userInfo.id;
+        String email = patientSession.userInfo.email;
+        UserInfo.UserType userType = patientSession.userInfo.userType;
+
+        PatientData patientData = patientSession.patientData;
+
+
+        // Do heavy calculation
+        RunnableTask heavy_task = () -> {
+            // WE DO INTENSE SHIT
+            SystemClock.sleep(4*1000);
+            int result = 150;
+            return new TaskResult<Integer>(result);
+        };
+
+        // Deal with result of calculation
+        OnTaskCompleteCallback uiCallback = taskResult -> {
+            Integer result = (Integer) taskResult.getData();
+//            ((PatientSession)session.getUser()).patientData.reconstructionData.sensor_data = result; // Same as below
+            patientSession.patientData.reconstructionData.sensor_data = result;
+//            patientSession.patientData.locationData // James' data
+            ProTecAlerts.warning(getActivity(), "the data has returned as: "+result);
+            session.saveState();
+        };
+
+        // Send it to thread pool to work
+        BackgroundPool.attachTask(heavy_task, uiCallback);
+
     }
 }
