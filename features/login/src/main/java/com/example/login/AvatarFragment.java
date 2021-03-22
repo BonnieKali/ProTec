@@ -109,7 +109,7 @@ public class AvatarFragment extends Fragment {
 
 
     /**
-     * Takes user to dashboard, clearing the view stack
+     * Takes user to dashboard, clearing the view stack and finishing Login activity
      */
     private void toDashboard(){
         Activity act = getActivity();

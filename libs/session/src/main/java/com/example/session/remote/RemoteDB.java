@@ -29,7 +29,8 @@ public class RemoteDB {
     private static final String USERS = "users";
     private static final String PATIENTS = "patients";
     private static final String CARERS = "carers";
-    private static final String EVENTS = "events";
+    private static final String LIVE_EVENTS = "live_events";
+    private static final String PAST_EVENTS = "past_events";
 
     // Database reference
     private static DatabaseReference dRef;
@@ -44,6 +45,10 @@ public class RemoteDB {
         dRef = database.getReference();
     }
 
+
+    //--------------|
+    // USER ACTIONS |
+    //--------------|
 
     /**
      * Updates the information and data entries of the selected user with the data contained in
@@ -170,6 +175,15 @@ public class RemoteDB {
                 return UserInfo.UserType.PATIENT;
             }
         }
+    }
+
+
+    //---------------|
+    // EVENT ACTIONS |
+    //---------------|
+
+    public void generateEvent(){
+
     }
 
 

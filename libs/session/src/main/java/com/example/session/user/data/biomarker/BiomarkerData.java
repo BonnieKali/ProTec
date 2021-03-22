@@ -1,4 +1,4 @@
-package com.example.session.data.biomarker;
+package com.example.session.user.data.biomarker;
 
 public class BiomarkerData {
     /*
