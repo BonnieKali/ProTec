@@ -22,7 +22,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -228,7 +230,12 @@ public class RemoteDB {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
                 Log.d(TAG, "onChildAdded: Added "+ snapshot.getValue());
-                Event event = snapshot.getValue(Event.class);
+                String jsonObject = String.valueOf(snapshot.getValue());
+
+                Gson gson = new Gson();
+                JsonReader reader = new JsonReader(new StringReader(jsonObject));
+                reader.setLenient(true);
+                Event event = gson.fromJson(reader, Event.class);
                 onTaskCompleteCallback.onComplete(new TaskResult<>(event));
             }
 
