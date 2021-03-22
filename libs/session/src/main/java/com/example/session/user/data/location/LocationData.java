@@ -1,4 +1,4 @@
-package com.example.session.data.location;
+package com.example.session.user.data.location;
 
 public class LocationData {
     /*

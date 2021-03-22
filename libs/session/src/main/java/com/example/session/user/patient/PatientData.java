@@ -1,7 +1,7 @@
 package com.example.session.user.patient;
 
-import com.example.session.data.biomarker.BiomarkerData;
-import com.example.session.data.location.LocationData;
+import com.example.session.user.data.biomarker.BiomarkerData;
+import com.example.session.user.data.location.LocationData;
 import com.example.session.user.UserData;
 
 public class PatientData extends UserData {

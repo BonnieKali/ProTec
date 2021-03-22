@@ -3,8 +3,12 @@ package com.example.session;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.session.event.Event;
+import com.example.session.event.EventBuilder;
+import com.example.session.event.EventType;
 import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
+import com.example.session.user.patient.PatientSession;
 import com.example.threads.OnTaskCompleteCallback;
 
 
@@ -19,6 +23,7 @@ public class Session {
 
     // Session utils
     private final SessionHandler sessionHandler;
+
 
 
     //-------------------------|
@@ -60,6 +65,7 @@ public class Session {
     }
 
 
+
     //-----------------------|
     // State synchronization |
     //-----------------------|
@@ -77,6 +83,7 @@ public class Session {
     public void syncToRemote(){
         sessionHandler.syncToRemote();
     }
+
 
 
     //---------------------|
@@ -129,8 +136,48 @@ public class Session {
     }
 
 
+
+    //----------------|
+    // EVENT HANDLING |
+    //----------------|
+
+    /**
+     * Sets a listener for new database live events. This can only be used by CarerSessions.
+     *
+     * @param onTaskCompleteCallback callback to be executed in the UI thread when a new event
+     *                               arrives. This callback will provide the TaskResult(event) as
+     *                               an argument.
+     * @return Boolean operation successful
+     */
+    public Boolean setLiveEventListener(OnTaskCompleteCallback onTaskCompleteCallback){
+        return sessionHandler.setLiveEventListener(onTaskCompleteCallback);
+    }
+
+    /**
+     * Creates an Event object and sends it to the remote database with a generation request.
+     * It then returns this event object
+     *
+     * @param eventType Type of event to generate
+     * @return Event object
+     */
+    public Event generateLiveEvent(EventType eventType){
+        return sessionHandler.generateLiveEvent(eventType);
+    }
+
+    /**
+     * Removes the given event from the live_events in the database. This should be called when
+     * the event has been dealt with.
+     *
+     * @param event Event object
+     */
+    public void disableLiveEvent(Event event){
+        sessionHandler.disableLiveEvent(event);
+    }
+
+
+
     //--------------------|
-    // UserSession Access-|
+    // UserSession Access |
     //--------------------|
 
     /**
