@@ -85,4 +85,32 @@
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
         android:layout_marginTop="8dp" />
+
+
+    <TextView
+        android:id="@+id/avatar_progress_explanation"
+        android:text="Setting up your dashboard"
+        android:textColor="@color/neon_dark_blue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@id/avatar_progress_bar"
+        app:layout_constraintEnd_toEndOf="@id/avatar_progress_bar"
+        app:layout_constraintStart_toStartOf="@id/avatar_progress_bar" />
+
+<!--    style="?android:attr/progressBarStyleHorizontal"-->
+    <ProgressBar
+        android:id="@+id/avatar_progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="126dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/avatar_caption"
+        app:layout_constraintVertical_bias="0.617" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
