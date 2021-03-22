@@ -24,7 +24,7 @@ public class EventBuilder {
         String uid = patientSession.getUID();
 
         // Create a timestamp
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss", Locale.UK);
         String timestamp = dateFormat.format(new Date()); // Find todays date
 
         return new Event(timestamp, uid, eventType);

@@ -7,16 +7,22 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.session.Session;
+import com.example.session.event.Event;
+import com.example.session.event.EventType;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class PatientDashboardFragment extends Fragment {
 
-    TextView patientTextView;
+    private TextView patientTextView;
+    private Button generateFallEvent;
+    private Button generateLeftEvent;
+
 
     private Session session;
 
@@ -31,6 +37,11 @@ public class PatientDashboardFragment extends Fragment {
         // Sey hello to user (for testing)
         patientTextView = view.findViewById(R.id.patient_textView);
         patientTextView.setText("Hello "+session.getUser().userInfo.email);
+
+        generateFallEvent = view.findViewById(R.id.generate_fall_event);
+        generateLeftEvent = view.findViewById(R.id.generate_left_house_event);
+        generateFallEvent.setOnClickListener(v -> session.generateLiveEvent(EventType.FELL));
+        generateLeftEvent.setOnClickListener(v -> session.generateLiveEvent(EventType.LEFT_HOUSE));
 
         return view;
     }

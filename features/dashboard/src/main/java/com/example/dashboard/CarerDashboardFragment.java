@@ -1,5 +1,6 @@
 package com.example.dashboard;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -10,6 +11,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.session.Session;
+import com.example.session.event.Event;
+import com.example.session.event.EventType;
+import com.example.threads.OnTaskCompleteCallback;
+import com.example.threads.TaskResult;
+import com.example.ui.ProTecAlerts;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,6 +37,25 @@ public class CarerDashboardFragment extends Fragment {
         // Say hello to user (for testing
         carerTextView = view.findViewById(R.id.carer_textView);
         carerTextView.setText("Hello "+session.getUser().userInfo.email);
+
+        // Set listener for patient events
+        session.setLiveEventListener(taskResult -> {
+            Event event = (Event) taskResult.getData();
+            if (event == null)
+                return;
+
+            String msg = event.patientUid;
+            if (event.eventType == EventType.FELL){
+                msg += " has fallen down!";
+            } else
+            if (event.eventType == EventType.LEFT_HOUSE){
+                msg += " has left the house!";
+            }
+
+            ProTecAlerts.warning(getActivity(), msg);
+            session.disableLiveEvent(event);
+
+        });
 
         return view;
     }
