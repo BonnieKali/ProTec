@@ -1,5 +1,6 @@
 package com.example.dashboard;
 
+
 import android.app.Activity;
 import android.os.Bundle;
 
@@ -13,6 +14,9 @@ import android.widget.TextView;
 
 import com.example.actions.Actions;
 import com.example.session.Session;
+import com.example.session.event.Event;
+import com.example.session.event.EventType;
+import com.example.ui.ProTecAlerts;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,6 +42,27 @@ public class CarerDashboardFragment extends Fragment {
 
         // Start service for notifications
         startNotificationService();
+
+        // Set listener for patient events
+        session.setLiveEventListener(taskResult -> {
+            Event event = (Event) taskResult.getData();
+            if (event == null)
+                return;
+
+            String msg = event.patientUid;
+            if (event.eventType == EventType.FELL){
+                msg += " has fallen down!";
+            } else
+            if (event.eventType == EventType.LEFT_HOUSE){
+                msg += " has left the house!";
+            }
+
+            ProTecAlerts.warning(getActivity(), msg);
+            session.disableLiveEvent(event);
+
+        });
+
+
         return view;
     }
 
