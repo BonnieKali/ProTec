@@ -63,10 +63,10 @@ public class NotificationService extends Service {
                 return;
             }
 
-            String title = "Patient has ";
+            String title = "Patient";
             String msg = event.patientUid;
             if (event.eventType == EventType.FELL){
-                title += "fallen!";
+                title += " has fallen!";
                 msg += " has fallen!!! Please check up on him.";
             }
             else if (event.eventType == EventType.LEFT_HOUSE){

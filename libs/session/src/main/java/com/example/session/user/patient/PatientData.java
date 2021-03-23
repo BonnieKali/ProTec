@@ -10,6 +10,7 @@ public class PatientData extends UserData {
     public LocationData locationData;
     public BiomarkerData biomarkerData;
 
+
     /*
         PLACE MORE OBJECTS HERE
      */
@@ -22,6 +23,7 @@ public class PatientData extends UserData {
         super();
         locationData = new LocationData();
         biomarkerData = new BiomarkerData();
+
 
         /*
             PLACE MORE OBJECTS HERE
@@ -39,6 +41,7 @@ public class PatientData extends UserData {
         super();
         this.locationData = locationData;
         this.biomarkerData = biomarkerData;
+
 
         /*
             PLACE MORE OBJECTS HERE
