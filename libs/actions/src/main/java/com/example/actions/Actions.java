@@ -9,6 +9,8 @@ public class Actions {
     static final String loginStartId = "ProTec.login.open";
     static final String dashboardStartId = "ProTec.dashboard.open";
 
+    static final String notificationServiceId = "ProTec.service.NotificationService";
+
     /**
      * Creates Intent to go to welcome screen
      *
@@ -30,13 +32,23 @@ public class Actions {
     }
 
     /**
-     * Narrows down the IntentFilter search to package-level scope, and returns the new Intent
-     * object.
+     * Creates Intent for notification Service
      *
-     * @param context Application context
-     * @param actionId IntentFilter id
+      * @param context Application context
      * @return Intent object
      */
+    public static Intent getNotificationServiceIntent(Context context) {
+        return internalIntent(context, notificationServiceId);
+    }
+
+        /**
+         * Narrows down the IntentFilter search to package-level scope, and returns the new Intent
+         * object.
+         *
+         * @param context Application context
+         * @param actionId IntentFilter id
+         * @return Intent object
+         */
     private static Intent internalIntent(Context context, String actionId){
         return new Intent(actionId).setPackage(context.getPackageName());
     }

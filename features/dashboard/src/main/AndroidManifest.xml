@@ -3,9 +3,19 @@
     package="com.example.dashboard">
 
     <application android:theme="@style/AppTheme">
+        <service
+            android:name=".service.NotificationService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="ProTec.service.NotificationService" />
+            </intent-filter>
+        </service>
+
         <activity android:name=".DashboardActivity">
             <intent-filter>
                 <action android:name="ProTec.dashboard.open" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
