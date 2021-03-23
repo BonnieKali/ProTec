@@ -1,0 +1,4 @@
+com/example/notifications/BuildConfig.java
+ com.example.notifications.BuildConfig
+com/example/notifications/ProTecNotificationsManager.java
+ com.example.notifications.ProTecNotificationsManager

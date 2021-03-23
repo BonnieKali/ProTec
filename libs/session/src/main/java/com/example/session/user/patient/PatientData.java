@@ -24,7 +24,7 @@ public class PatientData extends UserData {
         super();
         locationData = new LocationData();
         biomarkerData = new BiomarkerData();
-        reconstructionData = new ReconstructionData(0);
+        reconstructionData = new ReconstructionData(0, "hellow");
 
         /*
             PLACE MORE OBJECTS HERE

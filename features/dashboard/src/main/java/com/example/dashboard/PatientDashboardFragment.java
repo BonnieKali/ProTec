@@ -15,13 +15,19 @@ import com.example.session.Session;
 import com.example.session.event.Event;
 import com.example.session.event.EventType;
 import com.example.session.user.UserInfo;
+import com.example.session.user.UserSession;
+import com.example.session.user.data.location.LocationTuple;
 import com.example.session.user.patient.PatientData;
 import com.example.session.user.patient.PatientSession;
 import com.example.threads.BackgroundPool;
 import com.example.threads.OnTaskCompleteCallback;
+import com.example.threads.RunnableProcess;
 import com.example.threads.RunnableTask;
 import com.example.threads.TaskResult;
 import com.example.ui.ProTecAlerts;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,6 +48,7 @@ public class PatientDashboardFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_patient_dashboard, container, false);
 
         session = Session.getInstance();
+        session.syncToRemote();
 
         // Sey hello to user (for testing)
         patientTextView = view.findViewById(R.id.patient_textView);
@@ -58,7 +65,6 @@ public class PatientDashboardFragment extends Fragment {
     }
 
     private void doExamples() {
-
         PatientSession patientSession = (PatientSession) session.getUser();
 
         String id = patientSession.userInfo.id;
@@ -80,7 +86,14 @@ public class PatientDashboardFragment extends Fragment {
         OnTaskCompleteCallback uiCallback = taskResult -> {
             Integer result = (Integer) taskResult.getData();
 //            ((PatientSession)session.getUser()).patientData.reconstructionData.sensor_data = result; // Same as below
-            patientSession.patientData.reconstructionData.sensor_data = result;
+
+            LocationTuple locationTuple1 = new LocationTuple(1L,1L,"today");
+            LocationTuple locationTuple2 = new LocationTuple(2L,2L,"tomorrow");
+
+            patientSession.patientData.locationData.cur_loc = locationTuple2;
+            patientSession.patientData.locationData.all_locations.add(locationTuple1);
+            patientSession.patientData.locationData.all_locations.add(locationTuple2);
+
 //            patientSession.patientData.locationData // James' data
             ProTecAlerts.warning(getActivity(), "the data has returned as: "+result);
             session.saveState();
