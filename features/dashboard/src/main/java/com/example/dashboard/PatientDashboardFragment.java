@@ -1,5 +1,7 @@
 package com.example.dashboard;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,8 +9,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.actions.Actions;
 import com.example.session.Session;
 
 /**
@@ -32,6 +36,33 @@ public class PatientDashboardFragment extends Fragment {
         patientTextView = view.findViewById(R.id.patient_textView);
         patientTextView.setText("Hello "+session.getUser().userInfo.email);
 
+        // Set Listeners for clickable items
+        setOnClickListeners(view);
+
         return view;
     }
+
+    /**
+     * custom on click listener
+     * @param view view of the inflated view (all elements on screen)
+     */
+    private void setOnClickListeners(View view) {
+        setBioTestButtonListener(view.findViewById(R.id.dashboard_to_BioTest)); // Bio Button
+    }
+
+    /**
+     * Listener for the BioTest Button
+     * @param button_toBioTest: Button
+     */
+    private void setBioTestButtonListener(Button button_toBioTest) {
+        button_toBioTest.setOnClickListener(v -> {
+            Activity act = getActivity();
+            if(act != null){
+                Intent intent_BioTest = Actions.openBioTestIntent(act);
+                act.startActivity(intent_BioTest);
+            }
+        });
+    }
+
+
 }

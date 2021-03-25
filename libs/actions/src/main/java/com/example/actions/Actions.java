@@ -8,9 +8,9 @@ public class Actions {
     // Custom IntentFilter ids
     static final String loginStartId = "ProTec.login.open";
     static final String dashboardStartId = "ProTec.dashboard.open";
+    static final String bioTestId = "ProTec.bioTest.open";
 
     static final String notificationServiceId = "ProTec.service.NotificationService";
-
     /**
      * Creates Intent to go to welcome screen
      *
@@ -19,6 +19,16 @@ public class Actions {
      */
     public static Intent openLoginIntent(Context context){
         return internalIntent(context, loginStartId);
+    }
+
+    /**
+     * Creates Intent to go to go to bio Test view
+     *
+     * @param context Application context
+     * @return Intent object
+     */
+    public static Intent openBioTestIntent(Context context){
+        return internalIntent(context, bioTestId);
     }
 
     /**
