@@ -18,7 +18,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-<!--    <ImageView-->
+    <Button
+        android:id="@+id/dashboard_to_BioTest"
+        style="@style/AppTheme.FilledButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BioTest"
+        app:layout_constraintBottom_toTopOf="@+id/patient_textView"
+        app:layout_constraintEnd_toEndOf="@+id/patient_textView"
+        app:layout_constraintStart_toStartOf="@+id/patient_textView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--    <ImageView-->
 <!--        android:id="@+id/imageView_social_twitter"-->
 <!--        android:layout_width="32dp"-->
 <!--        android:layout_height="32dp"-->
