@@ -48,6 +48,22 @@ public class PatientDashboardFragment extends Fragment {
      */
     private void setOnClickListeners(View view) {
         setBioTestButtonListener(view.findViewById(R.id.dashboard_to_BioTest)); // Bio Button
+        setOpenMapButtonListener(view.findViewById(R.id.open_map_btn)); // Bio Button
+    }
+
+    /**
+     * Sets up what happens when the button is clicked and opens the
+     * map
+     * @param button_open_map
+     */
+    private void setOpenMapButtonListener(Button button_open_map) {
+        button_open_map.setOnClickListener(v -> {
+            Activity act = getActivity();
+            if(act != null){
+                Intent intent = Actions.openMapIntent(act);
+                act.startActivity(intent);
+            }
+        });
     }
 
     /**

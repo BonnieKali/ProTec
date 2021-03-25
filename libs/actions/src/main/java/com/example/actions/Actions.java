@@ -9,6 +9,7 @@ public class Actions {
     static final String loginStartId = "ProTec.login.open";
     static final String dashboardStartId = "ProTec.dashboard.open";
     static final String bioTestId = "ProTec.bioTest.open";
+    static final String mapOpenId = "ProTec.map.open";
 
     static final String notificationServiceId = "ProTec.service.NotificationService";
     /**
@@ -39,6 +40,16 @@ public class Actions {
      */
     public static Intent openDashboardIntent(Context context){
         return internalIntent(context, dashboardStartId);
+    }
+
+    /**
+     * Creates Intent to go to map
+     *
+     * @param context Application context
+     * @return Intent object
+     */
+    public static Intent openMapIntent(Context context){
+        return internalIntent(context, mapOpenId);
     }
 
     /**

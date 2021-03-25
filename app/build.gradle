@@ -35,6 +35,7 @@ dependencies {
     implementation project(':features:login')
     implementation project(':features:dashboard')
     implementation project(':features:bio_test')
+    implementation project(':features:map')
 
     implementation project(':libs:ui')
     implementation project(':libs:actions')
