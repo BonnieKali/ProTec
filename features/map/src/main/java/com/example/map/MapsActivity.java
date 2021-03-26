@@ -7,9 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
@@ -18,7 +16,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.map.geofence.GeoFenceHelper;
-import com.example.map.geofence.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
@@ -69,6 +66,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setOnMapLongClickListener(this);
+        // check permissions straight away
+        checkGeofencePermissions();
         initialiseMap();
     }
 
@@ -86,7 +85,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setTiltGesturesEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
     }
-
 
     // -- Geofencing -- //
     @Override
@@ -193,7 +191,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         public void onFailure(@NonNull Exception e) {
                             String errorMessage = geofenceHelper.getErrorString(e);
                             String msg = "Please turn on location and make sure it is high accuracy";
-                            Log.d(TAG, msg);
+                            Log.e(TAG, msg);
                             Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
                         }
                     });

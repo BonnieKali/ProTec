@@ -1,26 +1,14 @@
 package com.example.map.geofence;
-
-import android.Manifest;
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.os.Build;
-import android.util.Log;
-import android.widget.Toast;
-
 import com.example.map.R;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.maps.model.LatLng;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
 /**
  * James Hanratty
@@ -30,9 +18,6 @@ public class GeoFenceHelper extends ContextWrapper {
 
     private static final String TAG = String.valueOf(R.string.GeoFence_TAG);
     PendingIntent geoPendingIntent;
-
-    public final static int PERMISSION_REQUEST_GEOFENCE_CODE_BACKGROUND = 1000;
-    public final static int PERMISSION_REQUEST_GEOFENCE_CODE_NO_BACKGROUND = 1001;
 
     public GeoFenceHelper(Context base) {
         super(base);
@@ -109,61 +94,6 @@ public class GeoFenceHelper extends ContextWrapper {
             }
         }
         return e.getLocalizedMessage();
-    }
-
-    /**
-     * checks the Geofence permissions and asks if they are not granted
-     * Requires API 25 or above so that permission granting can happen automatically.
-     * @param context   The context of the activity that called this method
-     * @param activity  The Activity
-     * @return          true if all permissions are granted
-     */
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    public static boolean checkPermissions(Context context, Activity activity) {
-        boolean fullAccess = true;
-        // SDK >= 29 requires background location
-        if (Build.VERSION.SDK_INT >= 29) {
-            if (context.checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                    context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                    context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-                activity.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_GEOFENCE_CODE_BACKGROUND);
-                fullAccess = false;
-            }
-        } else {
-            if (context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                    context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                activity.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_GEOFENCE_CODE_NO_BACKGROUND);
-                fullAccess = false;
-            }
-        }
-        return fullAccess;
-    }
-
-    /**
-     * This method determines if the appropriate permissions were granted to use the geofence
-     * and will return all true if they were
-     * @param requestCode   the request code
-     * @param grantResults  the permissions granted or not granted
-     * @result permissionsGranted a boolean array where
-     * 1st is if permissions were granted and 2nd index is if request code was correct
-     */
-    public static boolean onRequestPermissionsResult(int requestCode, @NonNull int[] grantResults){
-        // first is if permissions were granted, 2nd is if requestcode was correct
-        boolean permissionsGranted = false;
-        if (requestCode == PERMISSION_REQUEST_GEOFENCE_CODE_BACKGROUND) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
-                permissionsGranted= true;
-            } else {
-                permissionsGranted= false;
-            }
-        }else if (requestCode == PERMISSION_REQUEST_GEOFENCE_CODE_NO_BACKGROUND){
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                permissionsGranted = true;
-            } else {
-                permissionsGranted = false;
-            }
-        }
-        return permissionsGranted;
     }
 }
 
