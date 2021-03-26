@@ -16,6 +16,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.map.geofence.GeoFenceHelper;
+import com.example.session.Session;
+import com.example.session.user.UserSession;
+import com.example.session.user.data.location.SimpleGeofence;
+import com.example.map.location.Locator;
+import com.example.session.user.data.location.LocationDataPatient;
+import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
@@ -31,13 +37,18 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
 
-    private static final String TAG = String.valueOf(R.string.GeoFence_TAG);
+    private static final String TAG = "myMap";
     private GoogleMap mMap;
     private GeofencingClient geofencingClient;
     private GeoFenceHelper geofenceHelper;
 
+    private Locator locator;
+
     int FINE_LOCATION_ACCESS_REQUEST_CODE = 1029;
     int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 1039;
+
+    // TODO: Get the patientData // how to get this?
+    UserSession user = Session.getInstance().getUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +62,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         geofencingClient = LocationServices.getGeofencingClient(this);
         geofenceHelper = new GeoFenceHelper(this);
+        locator = new Locator(this);
     }
 
+    /**
+     * Start locating the user by setting up the locator listener
+     */
+    private void startLocating(){
+        if (checkGeofencePermissions()){
+            locator.startLocationUpdates(user);
+        }
+    }
+
+    // -- Set Up -- //
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -67,7 +89,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.setOnMapLongClickListener(this);
         // check permissions straight away
-        checkGeofencePermissions();
+//        checkGeofencePermissions();
+        startLocating();
         initialiseMap();
     }
 
@@ -85,14 +108,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setTiltGesturesEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
     }
+    // ---------------
 
-    // -- Geofencing -- //
+    // -- Actions -- //
     @Override
     public void onMapLongClick(LatLng latLng) {
         Log.d(TAG, "Long click for " + latLng.toString());
         mMap.clear();
         addGeofence(latLng, 200);
     }
+    // ----------------
 
     // -- Permission Checking -- //
     /**
@@ -159,44 +184,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return false;
         }
     }
-    // -----------------------------
-
-    /**
-     * Adds a geofence to the map by creating a geofence, request and then pending intent
-     * @param latLng
-     * @param radius
-     */
-    @SuppressLint("MissingPermission")
-    private void addGeofence(LatLng latLng, float radius) {
-        Log.d(TAG, "Adding geofence for " + latLng.toString());
-        String id = "test";
-        com.google.android.gms.location.Geofence geofence = geofenceHelper.createGeofence(id, latLng, radius, com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_DWELL | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_EXIT);
-        GeofencingRequest geofencingRequest = geofenceHelper.createGeofenceRequest(geofence);
-        PendingIntent pendingIntent = geofenceHelper.createPendingIntent();
-
-        // check permissions and then add geofence
-        if (checkGeofencePermissions()) {
-            geofencingClient.addGeofences(geofencingRequest, pendingIntent)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d(TAG, "onSuccess: Geofence Added...");
-                            Toast.makeText(getApplicationContext(), "added geofence", Toast.LENGTH_SHORT).show();
-                            addMarker(latLng);
-                            addCircle(latLng, 200);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            String errorMessage = geofenceHelper.getErrorString(e);
-                            String msg = "Please turn on location and make sure it is high accuracy";
-                            Log.e(TAG, msg);
-                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
-    }
 
     /**
      * This method is called when the user has responded to giving permissions
@@ -221,20 +208,57 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }else if (requestCode == FINE_LOCATION_ACCESS_REQUEST_CODE){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED ){
                 mMap.setMyLocationEnabled(true);
+                startLocating();    // start locating
                 if (!(Build.VERSION.SDK_INT >= 29)) {
                     Toast.makeText(getApplicationContext(), "Geofences enabled!", Toast.LENGTH_SHORT).show();
                 }
             }else{
-                    Toast.makeText(getApplicationContext(), "Location needed!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Location needed!", Toast.LENGTH_LONG).show();
             }
         }
     }
+    // -----------------------------
 
+    // -- Geofencing -- //
     /**
-     * Checks if the correct permissions have been granted to use geofencing and if not,
-     * asks for them
-     * @return
+     * Adds a geofence to the map by creating a geofence, request and then pending intent
+     * @param latLng
+     * @param radius
      */
+    @SuppressLint("MissingPermission")
+    private void addGeofence(LatLng latLng, float radius) {
+        Log.d(TAG, "Adding geofence for " + latLng.toString());
+        String id = "test";
+        com.google.android.gms.location.Geofence geofence = geofenceHelper.createGeofence(id, latLng, radius, com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_DWELL | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_EXIT);
+        SimpleGeofence simpleGeofence = new SimpleGeofence(id, latLng, radius, com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_DWELL | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_EXIT, 5000, Geofence.NEVER_EXPIRE);
+        GeofencingRequest geofencingRequest = geofenceHelper.createGeofenceRequest(geofence);
+        PendingIntent pendingIntent = geofenceHelper.createPendingIntent();
+
+        // check permissions and then add geofence
+        if (checkGeofencePermissions()) {
+            geofencingClient.addGeofences(geofencingRequest, pendingIntent)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(TAG, "onSuccess: Geofence Added...");
+                            Toast.makeText(getApplicationContext(), "added geofence", Toast.LENGTH_SHORT).show();
+                            addMarker(latLng);
+                            addCircle(latLng, 200);
+//                            patientData.addSimpleGeofence(simpleGeofence);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            String errorMessage = geofenceHelper.getErrorString(e);
+                            String msg = "Please turn on location and make sure it is high accuracy";
+                            Log.e(TAG, msg);
+                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+    }
+    // -------------------
 
     // -- Extra Functionality -- //
     /**
@@ -262,4 +286,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         circleOptions.strokeWidth(4);
         mMap.addCircle(circleOptions);
     }
+    // ----------------------------
 }

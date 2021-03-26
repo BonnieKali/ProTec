@@ -1,4 +1,4 @@
-package com.example.map.geofence;
+package com.example.session.user.data.location;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.maps.model.LatLng;
@@ -19,7 +19,6 @@ public class SimpleGeofence {
         this.loiteringDelay = loiteringDelay;
         this.expirationDuration = expirationDuration;
     }
-
 
     public Geofence toGeofence(){
         Geofence geofence = new Geofence.Builder()

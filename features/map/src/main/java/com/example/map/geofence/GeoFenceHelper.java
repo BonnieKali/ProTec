@@ -16,7 +16,7 @@ import com.google.android.gms.maps.model.LatLng;
  */
 public class GeoFenceHelper extends ContextWrapper {
 
-    private static final String TAG = String.valueOf(R.string.GeoFence_TAG);
+    private static final String TAG = "myMap";
     PendingIntent geoPendingIntent;
 
     public GeoFenceHelper(Context base) {

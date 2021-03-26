@@ -15,7 +15,7 @@ import java.util.List;
 
 public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
-    private static final String TAG = String.valueOf(R.string.GeoFence_TAG);
+    private static final String TAG = "myMap";;
 
     /**
      * This method is called when a user interacts with 1 or more geofences
@@ -26,6 +26,7 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d(TAG,"Recieved intent");
         processGeofenceEvent(context, intent);
     }
 
@@ -57,7 +58,8 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
         switch (transitionType) {
             case Geofence.GEOFENCE_TRANSITION_ENTER:
-                Toast.makeText(context, "GEOFENCE_TRANSITION_ENTER", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "GEOFENCE_TRANSITION_ENTER" + transitionType);
+                Toast.makeText(context, "GEOFENCE_TRANSITION_ENTER toast", Toast.LENGTH_SHORT).show();
 //                notificationHelper.sendHighPriorityNotification("GEOFENCE_TRANSITION_ENTER", "", MapsActivity.class);
                 break;
 //            case Geofence.GEOFENCE_TRANSITION_DWELL:
@@ -65,6 +67,7 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 //                notificationHelper.sendHighPriorityNotification("GEOFENCE_TRANSITION_DWELL", "", MapsActivity.class);
 //                break;
             case Geofence.GEOFENCE_TRANSITION_EXIT:
+                Log.d(TAG, "GEOFENCE_TRANSITION_EXIT" + transitionType);
                 Toast.makeText(context, "GEOFENCE_TRANSITION_EXIT", Toast.LENGTH_SHORT).show();
 //                notificationHelper.sendHighPriorityNotification("GEOFENCE_TRANSITION_EXIT", "", MapsActivity.class);
                 break;
