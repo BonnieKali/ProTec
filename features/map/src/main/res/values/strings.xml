@@ -1,3 +1,5 @@
 <resources>
     <string name="title_activity_maps">Map</string>
+    <string name="GeoFence_TAG">geofence</string>
+    <string name="Dirction_TAG">direction</string>
 </resources>
