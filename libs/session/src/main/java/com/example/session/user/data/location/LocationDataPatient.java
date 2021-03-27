@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,23 +19,23 @@ import androidx.annotation.RequiresApi;
 public class LocationDataPatient extends LocationData{
     private static final String TAG = "LocationDataPatient";
 
-    private HashSet<SimpleGeofence> geofences;
+    private HashMap<String,SimpleGeofence> geofences;
     private List<myLocation> locations;
 
-    public LocationDataPatient(HashSet<SimpleGeofence> geofences, List<myLocation> locations){
+    public LocationDataPatient(HashMap<String, SimpleGeofence> geofences, List<myLocation> locations){
         this.geofences = geofences;
         this.locations = locations;
     }
     public LocationDataPatient(){
-        this.geofences = new HashSet<SimpleGeofence>();
+        this.geofences = new HashMap<String, SimpleGeofence>();
         this.locations = new ArrayList<myLocation>();
     }
 
 
 
-    public boolean addSimpleGeofence(SimpleGeofence geofence){
+    public void addSimpleGeofence(SimpleGeofence geofence){
         Log.d(TAG,"Adding simple geofence: " + geofence);
-        return geofences.add(geofence);
+        geofences.put(geofence.getID(), geofence);
     }
 
     public boolean addLocation(Location location){
@@ -43,13 +44,13 @@ public class LocationDataPatient extends LocationData{
     }
 
     public static LocationDataPatient createDummy(){
-        HashSet<SimpleGeofence> geofences = new HashSet<>();
+        HashMap<String, SimpleGeofence> geofences = new HashMap<>();
         List<myLocation> locations = new ArrayList<myLocation>();
         return new LocationDataPatient(geofences, locations);
     }
 
     // -- Getters -- //
-    public HashSet<SimpleGeofence> getGeofences() {
+    public HashMap<String, SimpleGeofence> getGeofences() {
         return geofences;
     }
 
@@ -63,8 +64,7 @@ public class LocationDataPatient extends LocationData{
     public String toString(){
         String locations = this.locations.stream().map(Object::toString)
                 .collect(Collectors.joining(", "));
-        String geofences = this.geofences.stream().map(Object::toString)
-                .collect(Collectors.joining(", "));
+        String geofences = this.geofences.toString();
 
         String str = "Locations: "+ "\n Geofences:" + geofences;
         return str;

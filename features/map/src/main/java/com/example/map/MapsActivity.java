@@ -17,13 +17,21 @@ import android.widget.Toast;
 
 import com.example.map.geofence.GeoFenceHelper;
 import com.example.session.Session;
+import com.example.session.remote.RemoteDB;
 import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
+import com.example.session.user.UserSessionBuilder;
 import com.example.session.user.carer.CarerSession;
+import com.example.session.user.data.location.LocationDataCarer;
 import com.example.session.user.data.location.SimpleGeofence;
 import com.example.map.location.Locator;
 import com.example.session.user.data.location.LocationDataPatient;
+import com.example.session.user.patient.PatientData;
 import com.example.session.user.patient.PatientSession;
+import com.example.threads.BackgroundPool;
+import com.example.threads.OnTaskCompleteCallback;
+import com.example.threads.RunnableTask;
+import com.example.threads.TaskResult;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -37,6 +45,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
 
@@ -66,11 +80,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         geofencingClient = LocationServices.getGeofencingClient(this);
         geofenceHelper = new GeoFenceHelper(this);
         locator = new Locator(this);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            Log.i(TAG, "Patient : " + ((PatientSession) user).patientData.locationData.toString());
-            Log.i(TAG, "Patient : " + ((PatientSession) user).patientData.locationData.getLocations().get(0));
-        }
     }
 
     /**
@@ -128,18 +137,78 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setTiltGesturesEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
-        showGeofences();
+        loadGeofences();
     }
 
     /**
      * Shows the geofences but does not create them since they already exist?
      * Well need to actually check they exist
      */
-    private void showGeofences(){
+    private void loadGeofences(){
+        Log.d(TAG,"Loading Geofences");
+        // get the patients geofence
         if (user.getType() == UserInfo.UserType.PATIENT){
-            LocationDataPatient locationData = ((PatientSession) Session.getInstance().getUser()).patientData.locationData;
-            for (SimpleGeofence geofence : locationData.getGeofences()){
-                showGeofence(geofence);
+            List<PatientSession> patient = Arrays.asList(new PatientSession[]{(PatientSession) user});
+            showGeofences(patient);
+        // Get the carers geofences which are those of their patients
+        }else if (user.getType() == UserInfo.UserType.CARER){
+            String patient_id_of_carer = "NdSBSeOx47TC9cGRKFe35tsXBU83";
+            HashSet<String> patient_ids = ((CarerSession) user).carerData.patients;
+
+            // background process to get patients from carers
+            RunnableTask get_patients = () ->
+                new TaskResult<List>(getPatientsFromDB(patient_ids, patient_id_of_carer));
+
+            // method called when get_patients has completeds
+            OnTaskCompleteCallback callback = taskResult -> {
+                showGeofences((List<PatientSession>) taskResult.getData());
+            };
+
+            // run the task
+            BackgroundPool.attachTask(get_patients, callback);
+
+        }
+    }
+
+    /**
+     * This is the method the background task runs which retrieves the
+     * patients of the carer
+     * @param patient_ids
+     * @param patient_id_of_carer
+     * @return
+     */
+    private List<PatientSession> getPatientsFromDB(HashSet<String> patient_ids, String patient_id_of_carer) {
+        Log.d(TAG,"Getting patients for carer: " + user.userInfo.getUserName());
+        List<PatientSession> patients = new ArrayList<>();
+        // artifically add patient id to this carer for testing
+        ((CarerSession) user).carerData.addPatient(patient_id_of_carer);
+        Session.getInstance().saveState();
+        for (String id : patient_ids) {
+            try {
+                patients.add(Session.getInstance().retrievePatientFromRemote(id));
+            } catch (RemoteDB.WrongUserTypeException e) {
+                Log.e(TAG, "Error retireveing patient " + id + " for carer " + user);
+                Log.e(TAG, "Error:" + e);
+                e.printStackTrace();
+            } catch (RemoteDB.UserNotFoundException e) {
+                Log.e(TAG, "Error retireveing patient " + id + " for carer " + user);
+                Log.e(TAG, "Error:" + e);
+                e.printStackTrace();
+            }
+        }
+        return patients;
+    }
+
+    /**
+     * Is the callback fro showing the Geofences of patients
+     * @param patients
+     */
+    private void showGeofences(List<PatientSession> patients){
+        for (PatientSession patient : patients) {
+            for (String ID : patient.patientData.locationData.getGeofences().keySet()) {
+                SimpleGeofence geofence = patient.patientData.locationData.getGeofences().get(ID);
+                Log.d(TAG,"Showing Geofence" + geofence + "\nfor patient: " + patient.userInfo.getUserName());
+                showGeofence(geofence, patient.userInfo.getUserName());
             }
         }
     }
@@ -148,10 +217,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * Shows a single geofence
      * @param geofence
      */
-    private void showGeofence(SimpleGeofence geofence){
+    private void showGeofence(SimpleGeofence geofence, String title){
         LatLng position = geofence.getPosition();
         float radius = geofence.getRadius();
-        addMarker(position, user.userInfo.getUserName());
+        addMarker(position, title);
         addCircle(position, radius);
     }
     // ---------------
@@ -160,8 +229,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapLongClick(LatLng latLng) {
         Log.d(TAG, "Long click for " + latLng.toString());
-        mMap.clear();
-        addGeofence(latLng, 200);
+        if (user.getType() == UserInfo.UserType.PATIENT) {
+            mMap.clear();
+            addGeofence(latLng, 200);
+        }else{
+            Toast.makeText(getApplicationContext(), "Only patients may make Geofences",Toast.LENGTH_LONG).show();
+        }
     }
     // ----------------
 
@@ -274,7 +347,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @SuppressLint("MissingPermission")
     private void addGeofence(LatLng latLng, float radius) {
         Log.d(TAG, "Adding geofence for " + latLng.toString());
-        String id = "test";
+        String id = user.userInfo.id;
         com.google.android.gms.location.Geofence geofence = geofenceHelper.createGeofence(id, latLng, radius, com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_DWELL | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_EXIT);
         SimpleGeofence simpleGeofence = new SimpleGeofence(id, latLng, radius, com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_DWELL | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_EXIT, 5000, Geofence.NEVER_EXPIRE);
         GeofencingRequest geofencingRequest = geofenceHelper.createGeofenceRequest(geofence);
@@ -293,6 +366,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             if (user.getType() == UserInfo.UserType.PATIENT) {
                                 PatientSession patientSession = (PatientSession) user;
                                 patientSession.patientData.locationData.addSimpleGeofence(simpleGeofence);
+//                                Log.d(TAG, "Success on adding simplegeofence? + ");
+                                Session.getInstance().saveState();  // save state with new geofence
                             }
                         }
                     })

@@ -95,5 +95,6 @@ public class GeoFenceHelper extends ContextWrapper {
         }
         return e.getLocalizedMessage();
     }
+
 }
 

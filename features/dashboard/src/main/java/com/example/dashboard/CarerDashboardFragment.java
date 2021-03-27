@@ -1,6 +1,7 @@
 package com.example.dashboard;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.actions.Actions;
@@ -38,8 +40,35 @@ public class CarerDashboardFragment extends Fragment {
 
         // Start service for notifications
         startNotificationService();
+        // Set Listeners for clickable items
+        setOnClickListeners(view);
+
         return view;
     }
+
+    /**
+     * custom on click listener
+     * @param view view of the inflated view (all elements on screen)
+     */
+    private void setOnClickListeners(View view) {
+        setOpenMapButtonListener(view.findViewById(R.id.open_map_btn)); // Map Button
+    }
+
+    /**
+     * Sets up what happens when the button is clicked and opens the
+     * map
+     * @param button_open_map
+     */
+    private void setOpenMapButtonListener(Button button_open_map) {
+        button_open_map.setOnClickListener(v -> {
+            Activity act = getActivity();
+            if(act != null){
+                Intent intent = Actions.openMapIntent(act);
+                act.startActivity(intent);
+            }
+        });
+    }
+
 
     /**
      * Starts the notification service in the background
