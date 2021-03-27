@@ -312,4 +312,22 @@ public class RemoteDB {
         return result;
     }
 
+
+
+    //-------------------|
+    // Custom Exceptions |
+    //-------------------|
+
+    public static class UserNotFoundException extends Exception{
+        public UserNotFoundException(String msg){
+            super(msg);
+        }
+    }
+
+    public static class WrongUserTypeException extends Exception {
+        public WrongUserTypeException(String msg) {
+            super(msg);
+        }
+    }
+
 }
