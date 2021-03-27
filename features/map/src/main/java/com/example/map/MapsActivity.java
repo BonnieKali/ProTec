@@ -17,10 +17,13 @@ import android.widget.Toast;
 
 import com.example.map.geofence.GeoFenceHelper;
 import com.example.session.Session;
+import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
+import com.example.session.user.carer.CarerSession;
 import com.example.session.user.data.location.SimpleGeofence;
 import com.example.map.location.Locator;
 import com.example.session.user.data.location.LocationDataPatient;
+import com.example.session.user.patient.PatientSession;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -63,6 +66,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         geofencingClient = LocationServices.getGeofencingClient(this);
         geofenceHelper = new GeoFenceHelper(this);
         locator = new Locator(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Log.i(TAG, "Patient : " + ((PatientSession) user).patientData.locationData.toString());
+            Log.i(TAG, "Patient : " + ((PatientSession) user).patientData.locationData.getLocations().get(0));
+        }
     }
 
     /**
@@ -75,6 +83,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     // -- Set Up -- //
+
+    /**
+     * Initialises the user to be either patient or carer
+     */
+    private void initialiseUser(){
+        if (user.getType() == UserInfo.UserType.PATIENT){
+            this.user = (PatientSession) user;
+        }else if (user.getType() == UserInfo.UserType.CARER){
+            this.user = (CarerSession) user;
+        }
+    }
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -107,6 +127,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setScrollGesturesEnabled(true);
         mMap.getUiSettings().setTiltGesturesEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
+
+        showGeofences();
+    }
+
+    /**
+     * Shows the geofences but does not create them since they already exist?
+     * Well need to actually check they exist
+     */
+    private void showGeofences(){
+        if (user.getType() == UserInfo.UserType.PATIENT){
+            LocationDataPatient locationData = ((PatientSession) Session.getInstance().getUser()).patientData.locationData;
+            for (SimpleGeofence geofence : locationData.getGeofences()){
+                showGeofence(geofence);
+            }
+        }
+    }
+
+    /**
+     * Shows a single geofence
+     * @param geofence
+     */
+    private void showGeofence(SimpleGeofence geofence){
+        LatLng position = geofence.getPosition();
+        float radius = geofence.getRadius();
+        addMarker(position, user.userInfo.getUserName());
+        addCircle(position, radius);
     }
     // ---------------
 
@@ -242,9 +288,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         public void onSuccess(Void aVoid) {
                             Log.d(TAG, "onSuccess: Geofence Added...");
                             Toast.makeText(getApplicationContext(), "added geofence", Toast.LENGTH_SHORT).show();
-                            addMarker(latLng);
+                            addMarker(latLng, user.userInfo.getUserName());
                             addCircle(latLng, 200);
-//                            patientData.addSimpleGeofence(simpleGeofence);
+                            if (user.getType() == UserInfo.UserType.PATIENT) {
+                                PatientSession patientSession = (PatientSession) user;
+                                patientSession.patientData.locationData.addSimpleGeofence(simpleGeofence);
+                            }
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -265,9 +314,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * Adds a marker to the map
      * @param latLng
      */
-    private void addMarker(LatLng latLng) {
+    private void addMarker(LatLng latLng,String title) {
         Log.d(TAG,"Adding marker for " + latLng.toString());
-        MarkerOptions markerOptions = new MarkerOptions().position(latLng);
+        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(title);
         mMap.addMarker(markerOptions);
     }
 

@@ -8,6 +8,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.map.R;
+import com.example.session.Session;
+import com.example.session.event.EventType;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
@@ -69,6 +71,8 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
             case Geofence.GEOFENCE_TRANSITION_EXIT:
                 Log.d(TAG, "GEOFENCE_TRANSITION_EXIT" + transitionType);
                 Toast.makeText(context, "GEOFENCE_TRANSITION_EXIT", Toast.LENGTH_SHORT).show();
+                // will tell carers that person has left the house
+                Session.getInstance().generateLiveEvent(EventType.LEFT_HOUSE);
 //                notificationHelper.sendHighPriorityNotification("GEOFENCE_TRANSITION_EXIT", "", MapsActivity.class);
                 break;
         }

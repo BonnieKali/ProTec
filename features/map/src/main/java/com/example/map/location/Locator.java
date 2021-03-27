@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.map.R;
+import com.example.session.Session;
 import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
 import com.example.session.user.data.location.LocationDataPatient;
@@ -73,15 +74,24 @@ public class Locator extends ContextWrapper {
 
         @Override
         public void onLocationChanged(Location location) {
+            // stop getting location update if user is signed out.
+            if (!Session.getInstance().isUserSignedIn()){
+                Log.d(TAG,"User is not signed in: " + user);
+                stopLocationUpdates();
+                return;
+            }
             Log.d("locations","new location: "+location.toString());
             if (location != null){
                 double tlat = location.getLatitude();
                 double tlong = location.getLongitude();
 
                 // add location if user is a patient
-                if (user.getType() == UserInfo.UserType.PATIENT) {
+                UserSession user = Session.getInstance().getUser();
+//                Log.d(TAG,"User is null: " + (user==null));
+                if (user != null && user.getType() == UserInfo.UserType.PATIENT) {
                     PatientSession patientSession  = (PatientSession) user;
                     patientSession.patientData.locationData.addLocation(location);
+//                    Log.d(TAG,"User is not null: " + user);
                 }
             }
         }

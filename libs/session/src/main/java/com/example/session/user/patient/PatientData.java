@@ -8,7 +8,7 @@ import com.example.session.user.data.location.LocationDataPatient;
 public class PatientData extends UserData {
 
     // Patient Specific data
-    public LocationData locationData;
+    public LocationDataPatient locationData;
     public BiomarkerData biomarkerData;
 
     /*
@@ -38,7 +38,7 @@ public class PatientData extends UserData {
      */
     public PatientData(LocationData locationData, BiomarkerData biomarkerData){
         super();
-        this.locationData = locationData;
+        this.locationData = (LocationDataPatient) locationData;
         this.biomarkerData = biomarkerData;
 
         /*

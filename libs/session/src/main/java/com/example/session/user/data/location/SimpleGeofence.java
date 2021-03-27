@@ -20,6 +20,23 @@ public class SimpleGeofence {
         this.expirationDuration = expirationDuration;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimpleGeofence geofence = (SimpleGeofence) o;
+        if (geofence.getID().equals(this.ID)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return this.ID.hashCode();
+    }
+
     public Geofence toGeofence(){
         Geofence geofence = new Geofence.Builder()
                 .setCircularRegion(position.latitude, position.longitude, radius)
@@ -29,5 +46,24 @@ public class SimpleGeofence {
                 .setExpirationDuration(expirationDuration)   // Geofence is always around
                 .build();
         return geofence;
+    }
+
+    // -- Getters -- //
+    public LatLng getPosition() {
+        return position;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public String getID(){
+        return this.ID;
+    }
+    // ----------------
+
+    public String toString(){
+        String str = "Geofence: " + this.ID;
+        return str;
     }
 }
