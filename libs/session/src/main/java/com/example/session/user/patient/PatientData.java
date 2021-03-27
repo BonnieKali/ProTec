@@ -3,13 +3,14 @@ package com.example.session.user.patient;
 import com.example.session.user.data.biomarker.BiomarkerData;
 import com.example.session.user.data.location.LocationData;
 import com.example.session.user.UserData;
+import com.example.session.user.data.location.LocationDataPatient;
 
 import java.util.ArrayList;
 
 public class PatientData extends UserData {
 
     // Patient Specific data
-    public LocationData locationData;
+    public LocationDataPatient locationData;
     public BiomarkerData biomarkerData;
 
     /*
@@ -22,7 +23,7 @@ public class PatientData extends UserData {
      */
     public PatientData(){
         super();
-        locationData = new LocationData();
+        locationData = new LocationDataPatient();
         biomarkerData = initializeBiomarkerData();
 
         /*
@@ -39,7 +40,7 @@ public class PatientData extends UserData {
      */
     public PatientData(LocationData locationData, BiomarkerData biomarkerData){
         super();
-        this.locationData = locationData;
+        this.locationData = (LocationDataPatient) locationData;
         this.biomarkerData = biomarkerData;
 
         /*
