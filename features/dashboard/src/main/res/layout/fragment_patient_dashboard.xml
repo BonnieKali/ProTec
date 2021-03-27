@@ -26,8 +26,10 @@
         android:text="BioTest"
         app:layout_constraintBottom_toTopOf="@+id/patient_textView"
         app:layout_constraintEnd_toEndOf="@+id/patient_textView"
+        app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintStart_toStartOf="@+id/patient_textView"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.493" />
 
     <!--    <ImageView-->
 <!--        android:id="@+id/imageView_social_twitter"-->

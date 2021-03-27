@@ -4,31 +4,155 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BioTestButtonFragment">
+    tools:context=".BioTestButtonFragment"
+    android:id="@+id/screen_layout">
 
     <!-- TODO: Update blank fragment layout -->
 
-
     <Button
         android:id="@+id/button_bioCounter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Press ME"
+        android:layout_width="230px"
+        android:layout_height="200px"
+        android:textColor="@color/white"
+        android:text="Press Me"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView_patientId_bioCounter"
+        android:id="@+id/textView_button_counter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="patient id"
+        android:text="On Target"
         android:textSize="20sp"
-        android:layout_marginBottom="36dp"
-        app:layout_constraintBottom_toTopOf="@+id/button_bioCounter"
-        app:layout_constraintEnd_toEndOf="@+id/button_bioCounter"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="@+id/button_bioCounter" />
+        app:layout_constraintBottom_toBottomOf="@+id/textView_accuracy"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView_accuracy"
+        app:layout_constraintTop_toTopOf="@+id/textView_accuracy"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView_button_counter_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/textView_button_counter"
+        app:layout_constraintStart_toStartOf="@+id/textView_button_counter"
+        app:layout_constraintTop_toBottomOf="@+id/textView_button_counter" />
+
+    <TextView
+        android:id="@+id/textView_screen_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_accuracy"
+        app:layout_constraintEnd_toStartOf="@+id/textView_accuracy"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView_accuracy" />
+
+    <TextView
+        android:id="@+id/textView_screen_counter_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/textView_screen_counter"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toStartOf="@+id/textView_screen_counter"
+        app:layout_constraintTop_toBottomOf="@+id/textView_screen_counter" />
+
+    <TextView
+        android:id="@+id/textView_accuracy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Accuracy(%)"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.94" />
+
+    <TextView
+        android:id="@+id/textView_accuracy_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0.00"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/textView_accuracy"
+        app:layout_constraintStart_toStartOf="@+id/textView_accuracy"
+        app:layout_constraintTop_toBottomOf="@+id/textView_accuracy" />
+
+
+    <TextView
+        android:id="@+id/textView_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test Time:"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.42"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.050000012" />
+
+
+    <TextView
+        android:id="@+id/textView_timer_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" "
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_timer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.174"
+        app:layout_constraintStart_toEndOf="@+id/textView_timer"
+        app:layout_constraintTop_toTopOf="@+id/textView_timer"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView_speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Speed:"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/textView_screen_counter"
+        app:layout_constraintEnd_toEndOf="@+id/textView_screen_counter"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/textView_screen_counter"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.966" />
+
+    <TextView
+        android:id="@+id/textView_speed_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_speed"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.095"
+        app:layout_constraintStart_toEndOf="@+id/textView_speed"
+        app:layout_constraintTop_toTopOf="@+id/textView_speed"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/button_bio_restart_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Restart Test"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_speed_value"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView_speed_value"
+        app:layout_constraintTop_toTopOf="@+id/textView_speed_value"
+        tools:text="Restart Test" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
