@@ -5,6 +5,8 @@ import com.example.session.user.data.location.LocationData;
 import com.example.session.user.UserData;
 import com.example.session.user.data.location.LocationDataPatient;
 
+import java.util.ArrayList;
+
 public class PatientData extends UserData {
 
     // Patient Specific data
@@ -22,7 +24,7 @@ public class PatientData extends UserData {
     public PatientData(){
         super();
         locationData = new LocationDataPatient();
-        biomarkerData = new BiomarkerData(0);
+        biomarkerData = initializeBiomarkerData();
 
         /*
             PLACE MORE OBJECTS HERE
@@ -53,6 +55,19 @@ public class PatientData extends UserData {
                 "locationData=" + locationData +
                 ", biomarkerData=" + biomarkerData +
                 '}';
+    }
+
+
+    /***
+     * Initialize and returns a BiomarkerData object
+     * @return initilzied BiomarkerData
+     */
+    public BiomarkerData initializeBiomarkerData(){
+        ArrayList<Double> accuracy_static_list = new ArrayList<Double>();
+        ArrayList<Double> accuracy_dynamic_list = new ArrayList<Double>();
+        ArrayList<Double> speed_static_list = new ArrayList<Double>();
+        ArrayList<Double> speed_dynamic_list = new ArrayList<Double>();
+        return new BiomarkerData(accuracy_static_list, accuracy_dynamic_list, speed_static_list, speed_dynamic_list);
     }
 
 }
