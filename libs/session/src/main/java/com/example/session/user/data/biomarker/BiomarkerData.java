@@ -20,10 +20,10 @@ public class BiomarkerData {
      * @param speed_dynamic
      */
     public BiomarkerData(ArrayList<Double> accuracy_static, ArrayList<Double> accuracy_dynamic, ArrayList<Double> speed_static, ArrayList<Double> speed_dynamic) {
-        accuracy_static_list = new ArrayList<Double>(accuracy_static);
-        accuracy_dynamic_list = new ArrayList<Double>(accuracy_dynamic);
-        speed_static_list = new ArrayList<Double>(speed_static);
-        speed_dynamic_list = new ArrayList<Double>(speed_dynamic);
+        accuracy_static_list = accuracy_static;
+        accuracy_dynamic_list = accuracy_dynamic;
+        speed_static_list = speed_static;
+        speed_dynamic_list = speed_dynamic;
         // -- DEBUG --
         String listString = "";
         for (double s : accuracy_dynamic_list)
