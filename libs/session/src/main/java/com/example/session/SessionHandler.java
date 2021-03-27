@@ -254,4 +254,31 @@ public class SessionHandler {
         remoteDB.disableEvent(event);
     }
 
+
+
+    //-----------------------|
+    // Patient Remote Access |
+    //-----------------------|
+
+    /**
+     * Returns a PatientSession from the remote database. This is used by carer accounts to retrieve
+     * patient data. This is a BLOCKING statement, so it should not be run in the UI thread.
+     *
+     * @param patientId Unique patient id
+     * @return PatientSession
+     */
+    public PatientSession retrievePatientFromRemote(String patientId) throws
+            RemoteDB.UserNotFoundException,
+            RemoteDB.WrongUserTypeException {
+        UserSession user = remoteDB.getUser(patientId);
+        if (user == null){
+            throw new RemoteDB.UserNotFoundException("User was not found in the database");
+        }
+        else if(user.userInfo.userType == UserInfo.UserType.CARER){
+            throw new RemoteDB.WrongUserTypeException("User was a carer and not a patient");
+        }
+        return (PatientSession) user;
+    }
+
+
 }
