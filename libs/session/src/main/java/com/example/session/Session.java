@@ -6,6 +6,7 @@ import android.util.Log;
 import com.example.session.event.Event;
 import com.example.session.event.EventBuilder;
 import com.example.session.event.EventType;
+import com.example.session.remote.RemoteDB;
 import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
 import com.example.session.user.patient.PatientSession;
@@ -187,6 +188,22 @@ public class Session {
      */
     public UserSession getUser(){
         return sessionHandler.userSession;
+    }
+    
+    /**
+     * Returns a PatientSession from the remote database. This is used by carer accounts to retrieve
+     * patient data. It returns null if it fails for any reason. This is a BLOCKING statement, so it
+     * should not be run in the UI thread.
+     *
+     * @param patientId Unique patient id
+     * @return PatientSession
+     * @throws RemoteDB.WrongUserTypeException
+     * @throws RemoteDB.UserNotFoundException
+     */
+    public PatientSession retrievePatientFromRemote(String patientId) throws
+            RemoteDB.WrongUserTypeException,
+            RemoteDB.UserNotFoundException {
+        return sessionHandler.retrievePatientFromRemote(patientId);
     }
 
 
