@@ -153,7 +153,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Get the carers geofences which are those of their patients
         }else if (user.getType() == UserInfo.UserType.CARER){
             String patient_id_of_carer = "NdSBSeOx47TC9cGRKFe35tsXBU83";
-            HashSet<String> patient_ids = ((CarerSession) user).carerData.patients;
+            HashSet<String> patient_ids = ((CarerSession) user).carerData.relationship.getPatientIDs();
             Log.d(TAG,"Patient Ids assigned to carer: " + patient_ids);
 
             // background process to get patients from carers

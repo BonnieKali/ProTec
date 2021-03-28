@@ -5,6 +5,7 @@ import com.example.session.user.data.location.LocationData;
 import com.example.session.user.UserData;
 import com.example.session.user.data.location.LocationDataPatient;
 import com.example.session.user.data.relationship.Relationship;
+import com.example.session.user.data.relationship.RelationshipPatient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ public class PatientData extends UserData {
     // Patient Specific data
     public LocationDataPatient locationData;
     public BiomarkerData biomarkerData;
-    public Relationship relationship;
+    public RelationshipPatient relationship;
     /*
         PLACE MORE OBJECTS HERE
      */
@@ -27,7 +28,7 @@ public class PatientData extends UserData {
         super();
         locationData = new LocationDataPatient();
         biomarkerData = initializeBiomarkerData();
-        relationship = new Relationship();
+        relationship = new RelationshipPatient();
 
         /*
             PLACE MORE OBJECTS HERE
@@ -45,7 +46,7 @@ public class PatientData extends UserData {
         super();
         this.locationData = (LocationDataPatient) locationData;
         this.biomarkerData = biomarkerData;
-        this.relationship = relationship;
+        this.relationship = (RelationshipPatient) relationship;
 
         /*
             PLACE MORE OBJECTS HERE

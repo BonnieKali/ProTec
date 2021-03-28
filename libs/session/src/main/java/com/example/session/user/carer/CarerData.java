@@ -1,6 +1,8 @@
 package com.example.session.user.carer;
 
 import com.example.session.user.UserData;
+import com.example.session.user.data.relationship.Relationship;
+import com.example.session.user.data.relationship.RelationshipCarer;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,24 +11,25 @@ import java.util.List;
 public class CarerData extends UserData {
 
     // List containing all patient ids assigned to this carer
-    public HashSet<String> patients;
+//    public HashSet<String> patients;
+    public RelationshipCarer relationship;
 
     /**
      * Default Empty Constructor
      */
     public CarerData(){
         super();
-        this.patients = new HashSet<>();
+        this.relationship = new RelationshipCarer();
     }
 
     /**
      * Class holding all carer-specific data
      *
-     * @param patients
+     * @param relationship
      */
-    public CarerData(HashSet<String> patients){
+    public CarerData(Relationship relationship){
         super();
-        this.patients = patients;
+        this.relationship = (RelationshipCarer) relationship;
     }
 
     /**
@@ -35,15 +38,15 @@ public class CarerData extends UserData {
      * @return
      */
     public boolean addPatient(String id){
-        return patients.add(id);
+        return relationship.getPatientIDs().add(id);
     }
 
-    public boolean removePatient(String id){ return patients.remove(id);}
+    public boolean removePatient(String id){ return relationship.getPatientIDs().remove(id);}
 
     @Override
     public String toString() {
         return "CarerData{" +
-                "patients=" + patients +
+                "patients=" + relationship.getPatientIDs() +
                 '}';
     }
 
