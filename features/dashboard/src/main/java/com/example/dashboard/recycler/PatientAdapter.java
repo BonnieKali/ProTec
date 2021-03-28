@@ -9,6 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.dashboard.R;
+import com.example.session.Session;
+import com.example.session.user.UserSession;
+import com.example.session.user.carer.CarerSession;
 
 import java.util.ArrayList;
 
@@ -129,7 +132,8 @@ public class PatientAdapter extends RecyclerView.Adapter<PatientAdapter.PatientV
      */
     private void setUpPatient(PatientItem currentItem, PatientViewHolder holder){
         // set background colour along with removing btns to add and remove
-        if (currentItem.isBelongToCarer()){
+        CarerSession user = (CarerSession) Session.getInstance().getUser(); // we know carer is loading this
+        if (currentItem.isBelongToCarer(user.getUID())){
             holder.cardBackground.setBackgroundColor(context.getResources().getColor(R.color.light_green));
             holder.mPatientAddImage.setVisibility(View.INVISIBLE);
             holder.mPatientRemoveImage.setVisibility(View.VISIBLE);

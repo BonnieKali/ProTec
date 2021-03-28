@@ -81,6 +81,12 @@ public class Session {
     }
 
     /**
+     * Saves the current patient session to local database in a background thread
+     * @param patientState
+     */
+    public void savePatientState(PatientSession patientState){sessionHandler.savePatientState(patientState);}
+
+    /**
      * Saves all user data to the remote database in a background thread.
      */
     public void syncToRemote(){

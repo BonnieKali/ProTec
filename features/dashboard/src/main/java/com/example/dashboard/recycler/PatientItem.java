@@ -1,5 +1,6 @@
 package com.example.dashboard.recycler;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -16,13 +17,15 @@ public class PatientItem {
     private String mText2;
     private boolean belongToCarer;
     private String ID;
+    private PatientSession session;
 
-    public PatientItem(int mImageResource, String mText1, String mText2, boolean belongToCarer, String ID){
+    public PatientItem(int mImageResource, PatientSession session){
         this.mImageResource = mImageResource;
-        this.mText1 = mText1;
-        this.mText2 = mText2;
-        this.belongToCarer = belongToCarer;
-        this.ID = ID;
+        this.mText1 = session.userInfo.getUserName();
+        this.mText2 = session.userInfo.email;
+//        this.belongToCarer = belongToCarer;
+        this.ID = session.getUID();
+        this.session = session;
     }
 
 
@@ -40,12 +43,21 @@ public class PatientItem {
         return mText2;
     }
 
-    public boolean isBelongToCarer() {
-        return belongToCarer;
+    public boolean isBelongToCarer(String ID) {
+        for (String carerID:session.patientData.relationship.getCarerIDs()){
+            if (ID.equals(carerID)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getID() {
         return ID;
+    }
+
+    public PatientSession getSession(){
+        return this.session;
     }
 
     // --------------
@@ -72,13 +84,9 @@ public class PatientItem {
 
     public static ArrayList<PatientItem> initialisePatients(View view, List<PatientSession> patientSessions){
         ArrayList<PatientItem> patientItems = new ArrayList<>();
-        FrameLayout cardBackground = view.findViewById(R.id.patient_card_frame_layout);
+        Log.d("PatientItem","Patient Sessions: " + patientSessions);
         for (PatientSession patient : patientSessions){
-            String name = patient.userInfo.getUserName();
-            String bio_data = patient.patientData.biomarkerData.getBiomarkers().toString();
-            String ID = patient.getUID();
-            patientItems.add(new PatientItem(R.drawable.ic_person, name,bio_data, true, ID));
-//            cardBackground.setBackgroundColor(view.getResources().getColor(R.color.light_green));
+            patientItems.add(new PatientItem(R.drawable.ic_person, patient));
         }
         return patientItems;
     }

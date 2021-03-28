@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import static com.example.dashboard.recycler.PatientItem.initialisePatients;
 
@@ -75,50 +76,23 @@ public class CarerDashboardFragment extends Fragment {
         setOnClickListeners(view);
 
 //        initialisePatientView(view);
-        loadPatients(view);
-
+//        loadPatients(view);
+        loadAllPatients(view);
         return view;
     }
 
+    /**
+     * Loads all the data from every patient in the remote database
+     * @param v
+     */
     private void loadAllPatients(View v){
         UserSession user = session.getUser();
         HashMap<String, UserInfo.UserType> allUsers;
-        String patient_id_of_carer = "NdSBSeOx47TC9cGRKFe35tsXBU83";
+//        String patient_id_of_carer = "NdSBSeOx47TC9cGRKFe35tsXBU83";
 //        HashSet<String> patient_ids = ((CarerSession) user).carerData.patients;
-        try {
-            allUsers = (HashMap<String, UserInfo.UserType>) session.retrieveUserIDsFromRemote();
-        } catch (RemoteDB.WrongUserTypeException e) {
-            e.printStackTrace();
-        } catch (RemoteDB.UserNotFoundException e) {
-            e.printStackTrace();
-        }
-
-
-//        // background process to get patients from carers
-//        RunnableTask get_patients = () ->
-//                new TaskResult<List>(getPatientsFromDB(patient_ids, patient_id_of_carer));
-//
-//        // method called when get_patients has completeds
-//        OnTaskCompleteCallback callback = taskResult -> {
-//            initialisePatientView(v, (List<PatientSession>) taskResult.getData());
-//        };
-//
-//        // run the task
-//        BackgroundPool.attachTask(get_patients, callback);
-    }
-
-    /**
-     * Loads the patients from the database that belong to the carer
-     * @param v
-     */
-    private void loadPatients(View v){
-        UserSession user = session.getUser();
-        String patient_id_of_carer = "NdSBSeOx47TC9cGRKFe35tsXBU83";
-        HashSet<String> patient_ids = ((CarerSession) user).carerData.patients;
-
         // background process to get patients from carers
         RunnableTask get_patients = () ->
-                new TaskResult<List>(getPatientsFromDB(patient_ids, patient_id_of_carer));
+                new TaskResult<List>(getAllPatientsFromDB());
 
         // method called when get_patients has completeds
         OnTaskCompleteCallback callback = taskResult -> {
@@ -129,37 +103,34 @@ public class CarerDashboardFragment extends Fragment {
         BackgroundPool.attachTask(get_patients, callback);
     }
 
-
-
     /**
-     * This is the method the background task runs which retrieves the
-     * patients of the carer
-     * @param patient_ids
-     * @param patient_id_of_carer
+     * Gets the PatientSession for every patient in the database
      * @return
      */
-    private List<PatientSession> getPatientsFromDB(HashSet<String> patient_ids, String patient_id_of_carer) {
-        UserSession user = session.getUser();
-        Log.d(TAG,"Getting patients for carer: " + user.userInfo.getUserName());
-        List<PatientSession> patients = new ArrayList<>();
-        // artifically add patient id to this carer for testing
-//        ((CarerSession) user).carerData.addPatient(patient_id_of_carer);
-//        Session.getInstance().saveState();
-
-        for (String id : patient_ids) {
-            try {
-                patients.add(Session.getInstance().retrievePatientFromRemote(id));
-            } catch (RemoteDB.WrongUserTypeException e) {
-                Log.e(TAG, "Error retireveing patient " + id + " for carer " + user);
-                Log.e(TAG, "Error:" + e);
-                e.printStackTrace();
-            } catch (RemoteDB.UserNotFoundException e) {
-                Log.e(TAG, "Error retireveing patient " + id + " for carer " + user);
-                Log.e(TAG, "Error:" + e);
-                e.printStackTrace();
+    private List<PatientSession> getAllPatientsFromDB() {
+        Log.d(TAG,"Getting All users ");
+        List<PatientSession> users = new ArrayList<>();
+        try {
+            Map<String, UserInfo.UserType> userID_Types = session.retrieveUserIDsFromRemote();
+            for (String id: userID_Types.keySet()){
+                // only get patients
+                Log.d(TAG,"Checking patient: " + id);
+                if (userID_Types.get(id) == UserInfo.UserType.PATIENT) {
+                    PatientSession patient = session.retrievePatientFromRemote(id);
+                    users.add(patient);
+                }
             }
+        } catch (RemoteDB.WrongUserTypeException e) {
+            Log.e(TAG, "Error retireveing all users");
+            Log.e(TAG, "Error:" + e);
+            e.printStackTrace();
+        } catch (RemoteDB.UserNotFoundException e) {
+            Log.e(TAG, "Error retireveing all users");
+            Log.e(TAG, "Error:" + e);
+            e.printStackTrace();
         }
-        return patients;
+        Log.d(TAG,"Users are: " + users);
+        return users;
     }
 
     // -- Recycler Viewer -- //
@@ -202,11 +173,18 @@ public class CarerDashboardFragment extends Fragment {
      */
     private void removePatient(int position, View v) {
         PatientItem patient =  patientItems.get(position);
-        patient.setBelongToCarer(false);
+        PatientSession patientSession = patient.getSession();
+
+        patientSession.patientData.relationship.removeCarer(user.getUID());
         user.carerData.removePatient(patient.getID());
+
+        Log.d(TAG, "Patient after being removed: " + patientSession.patientData);
+        Log.d(TAG, "carer after removing Patient: " + user.carerData);
+
         Toast.makeText(getContext(),"Patient Removed",Toast.LENGTH_SHORT).show();
         mAdapter.notifyItemChanged(position);   // this calls PatientAdapter.onBindViewHolder
         session.saveState();
+        session.savePatientState(patientSession);
     }
 
     /**
@@ -217,11 +195,18 @@ public class CarerDashboardFragment extends Fragment {
     private void addPatient(int position, View v) {
         // set the patient to belong to the carer
         PatientItem patient =  patientItems.get(position);
-        patient.setBelongToCarer(true);
+        PatientSession patientSession = patient.getSession();
+
+        patientSession.patientData.relationship.addCarer(user.getUID());
         user.carerData.addPatient(patient.getID());
+
+        Log.d(TAG, "Patient after being added: " + patientSession.patientData);
+        Log.d(TAG, "carer after adding Patient: " + user.carerData);
+
         Toast.makeText(getContext(), "Patient Added", Toast.LENGTH_SHORT).show();
         mAdapter.notifyItemChanged(position); // this calls PatientAdapter.onBindViewHolder
         session.saveState();
+        session.savePatientState(patientSession);
     }
 
     /**
