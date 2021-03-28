@@ -26,6 +26,8 @@ import com.google.gson.stream.JsonReader;
 
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -84,6 +86,66 @@ public class RemoteDB {
         } else {
             Log.d(TAG, "updateUser: Updated Patient account");
             dRef.child(PATIENTS).child(uid).updateChildren(jsonMap);
+        }
+    }
+
+    /**
+     * Updates a list of users to the remote database
+     * @param userSessions
+     */
+    public void updateUsers(HashSet<UserSession> userSessions){
+        Log.d(TAG,"Updating users: " + userSessions.toString());
+        for (UserSession userSession:userSessions) {
+            String uid = userSession.getUID();
+            // Turn userSession object into a JSON Map
+            Map<String, Object> jsonMap = mapObject(userSession);
+
+            // Overwrite the previous UserType entry assigned to this UID
+            dRef.child(USERS).child(uid).setValue(userSession.getType().toString());
+
+            // Send the JSON data to the corresponding database table
+            if (userSession.getType() == UserInfo.UserType.CARER) {
+                Log.d(TAG, "updateUser: Updating Carer account");
+                dRef.child(CARERS).child(uid).updateChildren(jsonMap);
+            } else {
+                Log.d(TAG, "updateUser: Updated Patient account");
+                dRef.child(PATIENTS).child(uid).updateChildren(jsonMap);
+            }
+        }
+    }
+
+    /**
+     * Get all the users in the database
+     * @return
+     */
+    public String getAllUsers(){
+        String result = "";
+        try {
+            Task<DataSnapshot> task;
+            task = dRef.child(USERS).get();
+            Tasks.await(task);
+            if (task.isSuccessful()) {
+                Log.d(TAG, "getAllUsers: Success");
+    
+                if(task.getResult() != null){
+                    result = String.valueOf(task.getResult().getValue());
+                    Log.d(TAG, "getAllUsers: Result is "+ result);
+                }else{
+                    Log.w(TAG, "getAllUsers: Result is null");
+                }
+            }
+            else {
+                Log.e("firebase", "Error getting data", task.getException());
+            }
+        } catch (ExecutionException e) {
+            Log.w(TAG, "getAllUsers: Failure", e);
+        } catch (InterruptedException e) {
+            Log.w(TAG, "getAllUsers: Failure", e);
+        }
+        if (result.equals("")) {
+            return null;
+        }else{
+            return result;
         }
     }
 

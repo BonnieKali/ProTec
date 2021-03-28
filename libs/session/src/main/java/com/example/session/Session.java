@@ -12,6 +12,8 @@ import com.example.session.user.UserSession;
 import com.example.session.user.patient.PatientSession;
 import com.example.threads.OnTaskCompleteCallback;
 
+import java.util.Map;
+
 
 public class Session {
     private static final String TAG = "Session";
@@ -77,6 +79,12 @@ public class Session {
     public void saveState(){
         sessionHandler.saveState();
     }
+
+    /**
+     * Saves the current patient session to local database in a background thread
+     * @param patientState
+     */
+    public void savePatientState(PatientSession patientState){sessionHandler.savePatientState(patientState);}
 
     /**
      * Saves all user data to the remote database in a background thread.
@@ -206,5 +214,16 @@ public class Session {
         return sessionHandler.retrievePatientFromRemote(patientId);
     }
 
-
+    /**
+     * Returns all the patients IDs that are currently registered regardless of their carer
+     * @return
+     * @throws RemoteDB.WrongUserTypeException
+     * @throws RemoteDB.UserNotFoundException
+     */
+    public Map<String, UserInfo.UserType> retrieveUserIDsFromRemote() throws
+            RemoteDB.WrongUserTypeException,
+            RemoteDB.UserNotFoundException {
+        Map<String, UserInfo.UserType> userID_Type = sessionHandler.retrieveUserIDsFromRemote();
+        return userID_Type;
+    }
 }

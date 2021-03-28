@@ -17,6 +17,14 @@ import com.example.threads.BackgroundPool;
 import com.example.threads.OnTaskCompleteCallback;
 import com.example.threads.RunnableTask;
 import com.example.threads.TaskResult;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public class SessionHandler {
     private static final String TAG = "SessionHandler";
@@ -30,6 +38,7 @@ public class SessionHandler {
 
     // Keeps all local user session information
     public UserSession userSession;
+    public HashSet<UserSession> userSessions;
 
 
     /**
@@ -43,7 +52,12 @@ public class SessionHandler {
         remoteDB = new RemoteDB();
 
         userSession = UserSessionBuilder.fromLocal(localDB);
+        // TODO Update userSessions to localDB
+        userSessions = new HashSet<>();
+        // TODO Is this needed in order for current user to get saved to remoteDB?
+        userSessions.add(userSession);
     }
+
 
 
 
@@ -56,6 +70,11 @@ public class SessionHandler {
      */
     public void saveState() {
         BackgroundPool.attachProcess(() -> localDB.saveUserSession(userSession));
+    }
+
+    public void savePatientState(PatientSession patientState) {
+        userSessions.add(patientState);
+        BackgroundPool.attachProcess(() -> localDB.saveUserSession(patientState));
     }
 
     /**
@@ -77,7 +96,8 @@ public class SessionHandler {
      * Saves all user data to the remote database in current thread (blocking statement).
      */
     public void syncToRemoteBlock(){
-        remoteDB.updateUser(userSession.getUID(), userSession);
+        remoteDB.updateUsers(userSessions);
+//        remoteDB.updateUser(userSession.getUID(), userSession);
     }
 
 
@@ -271,6 +291,8 @@ public class SessionHandler {
             RemoteDB.UserNotFoundException,
             RemoteDB.WrongUserTypeException {
         UserSession user = remoteDB.getUser(patientId);
+        // TODO only add sessions to userSessions when they have been modified
+//        userSessions.add(user); // forces all usersessions to be updated, We want only modified users to be uploaded
         if (user == null){
             throw new RemoteDB.UserNotFoundException("User was not found in the database");
         }
@@ -280,5 +302,18 @@ public class SessionHandler {
         return (PatientSession) user;
     }
 
-
+    /**
+     * Returns a mapping between the user ID and their UserType for evcery user in the database
+     * @return
+     * @throws RemoteDB.UserNotFoundException
+     * @throws RemoteDB.WrongUserTypeException
+     */
+    public Map<String, UserInfo.UserType> retrieveUserIDsFromRemote() throws
+            RemoteDB.UserNotFoundException,
+            RemoteDB.WrongUserTypeException {
+        String all_users = remoteDB.getAllUsers();
+        HashMap<String,UserInfo.UserType> userId_Type = new Gson().fromJson(all_users, new TypeToken<HashMap<String, UserInfo.UserType>>(){}.getType());
+        Log.d(TAG,"userId_Type Map: " + userId_Type.values());
+        return userId_Type;
+    }
 }
