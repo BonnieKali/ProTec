@@ -11,12 +11,14 @@ import android.widget.Toast;
 
 public class BioActivity extends AppCompatActivity {
 
+    SensorAccelerometer sensor_acc;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bio);
-//        showFragment(new BioTestButtonFragment());
-        showFragment(new BiomarkerTests());
+        setContentView(R.layout.activity_bio);                  // content view
+        sensor_acc = new SensorAccelerometer( this );   // getting the sensor
+        showFragment(new BiomarkerTests());                     // show fragment
     }
 
 
