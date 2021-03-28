@@ -17,6 +17,11 @@ import com.example.threads.BackgroundPool;
 import com.example.threads.OnTaskCompleteCallback;
 import com.example.threads.RunnableTask;
 import com.example.threads.TaskResult;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SessionHandler {
     private static final String TAG = "SessionHandler";
@@ -280,5 +285,18 @@ public class SessionHandler {
         return (PatientSession) user;
     }
 
-
+    /**
+     * Returns a mapping between the user ID and their UserType for evcery user in the database
+     * @return
+     * @throws RemoteDB.UserNotFoundException
+     * @throws RemoteDB.WrongUserTypeException
+     */
+    public Map<String, UserInfo.UserType> retrieveUserIDsFromRemote() throws
+            RemoteDB.UserNotFoundException,
+            RemoteDB.WrongUserTypeException {
+        String all_users = remoteDB.getAllUsers();
+        HashMap<String,UserInfo.UserType> userId_Type = new Gson().fromJson(all_users, new TypeToken<HashMap<String, UserInfo.UserType>>(){}.getType());
+        Log.d(TAG,"userId_Type Map: " + userId_Type.values());
+        return userId_Type;
+    }
 }

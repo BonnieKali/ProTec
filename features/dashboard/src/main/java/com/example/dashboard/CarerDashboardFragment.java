@@ -22,8 +22,22 @@ import com.example.actions.Actions;
 import com.example.dashboard.recycler.PatientAdapter;
 import com.example.dashboard.recycler.PatientItem;
 import com.example.session.Session;
+import com.example.session.remote.RemoteDB;
+import com.example.session.user.UserInfo;
+import com.example.session.user.UserSession;
+import com.example.session.user.carer.CarerSession;
+import com.example.session.user.patient.PatientSession;
+import com.example.threads.BackgroundPool;
+import com.example.threads.OnTaskCompleteCallback;
+import com.example.threads.RunnableTask;
+import com.example.threads.TaskResult;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
+import static com.example.dashboard.recycler.PatientItem.initialisePatients;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,6 +54,7 @@ public class CarerDashboardFragment extends Fragment {
     TextView carerTextView;
 
     private Session session;
+    private CarerSession user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,6 +63,7 @@ public class CarerDashboardFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_carer_dashboard, container, false);
 
         session = Session.getInstance();
+        user = (CarerSession) session.getUser();
 
         // Say hello to user (for testing
         carerTextView = view.findViewById(R.id.carer_textView);
@@ -58,26 +74,108 @@ public class CarerDashboardFragment extends Fragment {
         // Set Listeners for clickable items
         setOnClickListeners(view);
 
-        initialisePatientView(view);
+//        initialisePatientView(view);
+        loadPatients(view);
 
         return view;
     }
 
+    private void loadAllPatients(View v){
+        UserSession user = session.getUser();
+        HashMap<String, UserInfo.UserType> allUsers;
+        String patient_id_of_carer = "NdSBSeOx47TC9cGRKFe35tsXBU83";
+//        HashSet<String> patient_ids = ((CarerSession) user).carerData.patients;
+        try {
+            allUsers = (HashMap<String, UserInfo.UserType>) session.retrieveUserIDsFromRemote();
+        } catch (RemoteDB.WrongUserTypeException e) {
+            e.printStackTrace();
+        } catch (RemoteDB.UserNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+//        // background process to get patients from carers
+//        RunnableTask get_patients = () ->
+//                new TaskResult<List>(getPatientsFromDB(patient_ids, patient_id_of_carer));
+//
+//        // method called when get_patients has completeds
+//        OnTaskCompleteCallback callback = taskResult -> {
+//            initialisePatientView(v, (List<PatientSession>) taskResult.getData());
+//        };
+//
+//        // run the task
+//        BackgroundPool.attachTask(get_patients, callback);
+    }
+
+    /**
+     * Loads the patients from the database that belong to the carer
+     * @param v
+     */
+    private void loadPatients(View v){
+        UserSession user = session.getUser();
+        String patient_id_of_carer = "NdSBSeOx47TC9cGRKFe35tsXBU83";
+        HashSet<String> patient_ids = ((CarerSession) user).carerData.patients;
+
+        // background process to get patients from carers
+        RunnableTask get_patients = () ->
+                new TaskResult<List>(getPatientsFromDB(patient_ids, patient_id_of_carer));
+
+        // method called when get_patients has completeds
+        OnTaskCompleteCallback callback = taskResult -> {
+            initialisePatientView(v, (List<PatientSession>) taskResult.getData());
+        };
+
+        // run the task
+        BackgroundPool.attachTask(get_patients, callback);
+    }
+
+
+
+    /**
+     * This is the method the background task runs which retrieves the
+     * patients of the carer
+     * @param patient_ids
+     * @param patient_id_of_carer
+     * @return
+     */
+    private List<PatientSession> getPatientsFromDB(HashSet<String> patient_ids, String patient_id_of_carer) {
+        UserSession user = session.getUser();
+        Log.d(TAG,"Getting patients for carer: " + user.userInfo.getUserName());
+        List<PatientSession> patients = new ArrayList<>();
+        // artifically add patient id to this carer for testing
+//        ((CarerSession) user).carerData.addPatient(patient_id_of_carer);
+//        Session.getInstance().saveState();
+
+        for (String id : patient_ids) {
+            try {
+                patients.add(Session.getInstance().retrievePatientFromRemote(id));
+            } catch (RemoteDB.WrongUserTypeException e) {
+                Log.e(TAG, "Error retireveing patient " + id + " for carer " + user);
+                Log.e(TAG, "Error:" + e);
+                e.printStackTrace();
+            } catch (RemoteDB.UserNotFoundException e) {
+                Log.e(TAG, "Error retireveing patient " + id + " for carer " + user);
+                Log.e(TAG, "Error:" + e);
+                e.printStackTrace();
+            }
+        }
+        return patients;
+    }
+
+    // -- Recycler Viewer -- //
     /**
      * Initialise the Patient Recycler Viewer
      * @param view
      */
-    private void initialisePatientView(View view) {
-        patientItems = new ArrayList<>();
-        patientItems.add(new PatientItem(R.drawable.ic_person, "Ilie","is Gay"));
-        patientItems.add(new PatientItem(R.drawable.ic_person, "Hamesz","is Straight"));
-
+    private void initialisePatientView(View view, List<PatientSession> patientSessions ) {
+        patientItems = PatientItem.initialisePatients(view, patientSessions);
         mRecyclerView = view.findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this.getContext());
-        mAdapter = new PatientAdapter(patientItems);
+        mAdapter = new PatientAdapter(patientItems, getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
+
         // se this on item click listener for when someone touches the patient list
         mAdapter.setOnItemClickListener(new PatientAdapter.OnItemClickListener() {
             @Override
@@ -103,34 +201,27 @@ public class CarerDashboardFragment extends Fragment {
      * @param v
      */
     private void removePatient(int position, View v) {
-        // set + visibility true
-        ImageView plus = (ImageView) v.findViewById(R.id.image_patient_add);
-        plus.setVisibility(v.VISIBLE);
-        // set - unvisible
-        ImageView remove = (ImageView) v.findViewById(R.id.image_patient_remove);
-        remove.setVisibility(v.INVISIBLE);
+        PatientItem patient =  patientItems.get(position);
+        patient.setBelongToCarer(false);
+        user.carerData.removePatient(patient.getID());
         Toast.makeText(getContext(),"Patient Removed",Toast.LENGTH_SHORT).show();
-        // change the background
-        FrameLayout cardBackground = (FrameLayout) v.findViewById(R.id.patient_card_frame_layout);
-        cardBackground.setBackgroundColor(getResources().getColor(R.color.light_red));
+        mAdapter.notifyItemChanged(position);   // this calls PatientAdapter.onBindViewHolder
+        session.saveState();
     }
 
     /**
-     * Adds the patient to the careers list of patients
+     * Adds the patient to the carers list of patients
      * @param position
      * @param v
      */
     private void addPatient(int position, View v) {
-        // set + visibility true
-        ImageView remove = (ImageView) v.findViewById(R.id.image_patient_remove);
-        remove.setVisibility(v.VISIBLE);
-        // set - unvisible
-        ImageView plus = (ImageView) v.findViewById(R.id.image_patient_add);
-        plus.setVisibility(v.INVISIBLE);
-        Toast.makeText(getContext(),"Patient Added",Toast.LENGTH_SHORT).show();
-        // change the background
-        FrameLayout cardBackground = (FrameLayout) v.findViewById(R.id.patient_card_frame_layout);
-        cardBackground.setBackgroundColor(getResources().getColor(R.color.light_green));
+        // set the patient to belong to the carer
+        PatientItem patient =  patientItems.get(position);
+        patient.setBelongToCarer(true);
+        user.carerData.addPatient(patient.getID());
+        Toast.makeText(getContext(), "Patient Added", Toast.LENGTH_SHORT).show();
+        mAdapter.notifyItemChanged(position); // this calls PatientAdapter.onBindViewHolder
+        session.saveState();
     }
 
     /**
@@ -139,9 +230,13 @@ public class CarerDashboardFragment extends Fragment {
      * @param position
      */
     private void changeItem(int position) {
-        patientItems.get(position).setmText2("Ilie is super gay");
-        mAdapter.notifyItemChanged(position);
+        // this seems to induce a wierd bug where the
+//        patientItems.get(position).setmText2("Ilie is super gay");
+//        mAdapter.notifyItemChanged(position);
     }
+    // ----------------------------
+
+    // -- Button Listeners -- //
 
     /**
      * custom on click listener
@@ -165,6 +260,7 @@ public class CarerDashboardFragment extends Fragment {
             }
         });
     }
+    // -- -------------- -- //
 
 
     /**

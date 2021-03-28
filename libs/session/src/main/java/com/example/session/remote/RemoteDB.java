@@ -87,6 +87,41 @@ public class RemoteDB {
         }
     }
 
+    /**
+     * Get all the users in the database
+     * @return
+     */
+    public String getAllUsers(){
+        String result = "";
+        try {
+            Task<DataSnapshot> task;
+            task = dRef.child(USERS).get();
+            Tasks.await(task);
+            if (task.isSuccessful()) {
+                Log.d(TAG, "getAllUsers: Success");
+    
+                if(task.getResult() != null){
+                    result = String.valueOf(task.getResult().getValue());
+                    Log.d(TAG, "getAllUsers: Result is "+ result);
+                }else{
+                    Log.w(TAG, "getAllUsers: Result is null");
+                }
+            }
+            else {
+                Log.e("firebase", "Error getting data", task.getException());
+            }
+        } catch (ExecutionException e) {
+            Log.w(TAG, "getAllUsers: Failure", e);
+        } catch (InterruptedException e) {
+            Log.w(TAG, "getAllUsers: Failure", e);
+        }
+        if (result.equals("")) {
+            return null;
+        }else{
+            return result;
+        }
+    }
+
 
     /**
      * Retrieves the entry for the requested user from the remote database, and returns an

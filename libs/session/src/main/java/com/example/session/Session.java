@@ -12,6 +12,8 @@ import com.example.session.user.UserSession;
 import com.example.session.user.patient.PatientSession;
 import com.example.threads.OnTaskCompleteCallback;
 
+import java.util.Map;
+
 
 public class Session {
     private static final String TAG = "Session";
@@ -206,5 +208,16 @@ public class Session {
         return sessionHandler.retrievePatientFromRemote(patientId);
     }
 
-
+    /**
+     * Returns all the patients IDs that are currently registered regardless of their carer
+     * @return
+     * @throws RemoteDB.WrongUserTypeException
+     * @throws RemoteDB.UserNotFoundException
+     */
+    public Map<String, UserInfo.UserType> retrieveUserIDsFromRemote() throws
+            RemoteDB.WrongUserTypeException,
+            RemoteDB.UserNotFoundException {
+        Map<String, UserInfo.UserType> userID_Type = sessionHandler.retrieveUserIDsFromRemote();
+        return userID_Type;
+    }
 }

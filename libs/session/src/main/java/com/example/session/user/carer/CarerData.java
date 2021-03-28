@@ -38,6 +38,8 @@ public class CarerData extends UserData {
         return patients.add(id);
     }
 
+    public boolean removePatient(String id){ return patients.remove(id);}
+
     @Override
     public String toString() {
         return "CarerData{" +
