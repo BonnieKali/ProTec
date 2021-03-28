@@ -154,6 +154,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }else if (user.getType() == UserInfo.UserType.CARER){
             String patient_id_of_carer = "NdSBSeOx47TC9cGRKFe35tsXBU83";
             HashSet<String> patient_ids = ((CarerSession) user).carerData.patients;
+            Log.d(TAG,"Patient Ids assigned to carer: " + patient_ids);
 
             // background process to get patients from carers
             RunnableTask get_patients = () ->
@@ -181,8 +182,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d(TAG,"Getting patients for carer: " + user.userInfo.getUserName());
         List<PatientSession> patients = new ArrayList<>();
         // artifically add patient id to this carer for testing
-        ((CarerSession) user).carerData.addPatient(patient_id_of_carer);
-        Session.getInstance().saveState();
+//        ((CarerSession) user).carerData.addPatient(patient_id_of_carer);
+//        Session.getInstance().saveState();
         for (String id : patient_ids) {
             try {
                 patients.add(Session.getInstance().retrievePatientFromRemote(id));
