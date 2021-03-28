@@ -6,5 +6,6 @@ package com.example.session.event;
  */
 public enum EventType {
     LEFT_HOUSE,
-    FELL
+    FELL,
+    ENTER_HOUSE
 }

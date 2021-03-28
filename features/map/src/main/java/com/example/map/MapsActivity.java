@@ -16,6 +16,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.map.geofence.GeoFenceHelper;
+import com.example.map.map.MapHelper;
 import com.example.session.Session;
 import com.example.session.remote.RemoteDB;
 import com.example.session.user.UserInfo;
@@ -52,20 +53,22 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import static com.example.map.map.MapHelper.initialiseMap;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
 
+    private static final int FINE_LOCATION_ACCESS_REQUEST_CODE = 1029;
+    private static final int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 1039;
     private static final String TAG = "myMap";
+
     private GoogleMap mMap;
     private GeofencingClient geofencingClient;
     private GeoFenceHelper geofenceHelper;
 
     private Locator locator;
 
-    int FINE_LOCATION_ACCESS_REQUEST_CODE = 1029;
-    int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 1039;
-
     // TODO: Get the patientData // how to get this?
-    UserSession user = Session.getInstance().getUser();
+    UserSession user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,15 +78,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        Log.d(TAG, "Inside maps activity ugigiug");
+        Log.d(TAG, "Inside maps activity");
 
         geofencingClient = LocationServices.getGeofencingClient(this);
         geofenceHelper = new GeoFenceHelper(this);
         locator = new Locator(this);
+        initialiseUser();
     }
 
     /**
-     * Start locating the user by setting up the locator listener
+     * Start locating the user by setting up the locator listener and asking/checking
+     * for permissions
      */
     private void startLocating(){
         if (checkGeofencePermissions()){
@@ -92,11 +97,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     // -- Set Up -- //
-
     /**
      * Initialises the user to be either patient or carer
      */
     private void initialiseUser(){
+        user = ((UserSession) Session.getInstance().getUser());
         if (user.getType() == UserInfo.UserType.PATIENT){
             this.user = (PatientSession) user;
         }else if (user.getType() == UserInfo.UserType.CARER){
@@ -117,114 +122,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setOnMapLongClickListener(this);
-        // check permissions straight away
-//        checkGeofencePermissions();
-        startLocating();
-        initialiseMap();
+        startLocating();    // check permissions
+        MapHelper.initialiseMap(mMap);
+        GeoFenceHelper.loadGeofences(user, mMap);
     }
-
-    /**
-     * Makes the map look nice and starting location is edinburgh
-     */
-    private void initialiseMap() {
-        Log.d(TAG, "Initialising Map");
-        LatLng edinbuirgh = new LatLng(55.953251, -3.188267);
-        mMap.addMarker(new MarkerOptions().position(edinbuirgh).title("Marker in Edinburgh"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(edinbuirgh));
-        mMap.getUiSettings().setCompassEnabled(true);
-        mMap.getUiSettings().setRotateGesturesEnabled(true);
-        mMap.getUiSettings().setScrollGesturesEnabled(true);
-        mMap.getUiSettings().setTiltGesturesEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
-
-        loadGeofences();
-    }
-
-    /**
-     * Shows the geofences but does not create them since they already exist?
-     * Well need to actually check they exist
-     */
-    private void loadGeofences(){
-        Log.d(TAG,"Loading Geofences");
-        // get the patients geofence
-        if (user.getType() == UserInfo.UserType.PATIENT){
-            List<PatientSession> patient = Arrays.asList(new PatientSession[]{(PatientSession) user});
-            showGeofences(patient);
-        // Get the carers geofences which are those of their patients
-        }else if (user.getType() == UserInfo.UserType.CARER){
-            String patient_id_of_carer = "NdSBSeOx47TC9cGRKFe35tsXBU83";
-            HashSet<String> patient_ids = ((CarerSession) user).carerData.relationship.getPatientIDs();
-            Log.d(TAG,"Patient Ids assigned to carer: " + patient_ids);
-
-            // background process to get patients from carers
-            RunnableTask get_patients = () ->
-                new TaskResult<List>(getPatientsFromDB(patient_ids, patient_id_of_carer));
-
-            // method called when get_patients has completeds
-            OnTaskCompleteCallback callback = taskResult -> {
-                showGeofences((List<PatientSession>) taskResult.getData());
-            };
-
-            // run the task
-            BackgroundPool.attachTask(get_patients, callback);
-
-        }
-    }
-
-    /**
-     * This is the method the background task runs which retrieves the
-     * patients of the carer
-     * @param patient_ids
-     * @param patient_id_of_carer
-     * @return
-     */
-    private List<PatientSession> getPatientsFromDB(HashSet<String> patient_ids, String patient_id_of_carer) {
-        Log.d(TAG,"Getting patients for carer: " + user.userInfo.getUserName());
-        List<PatientSession> patients = new ArrayList<>();
-        // artifically add patient id to this carer for testing
-//        ((CarerSession) user).carerData.addPatient(patient_id_of_carer);
-//        Session.getInstance().saveState();
-        for (String id : patient_ids) {
-            try {
-                patients.add(Session.getInstance().retrievePatientFromRemote(id));
-            } catch (RemoteDB.WrongUserTypeException e) {
-                Log.e(TAG, "Error retireveing patient " + id + " for carer " + user);
-                Log.e(TAG, "Error:" + e);
-                e.printStackTrace();
-            } catch (RemoteDB.UserNotFoundException e) {
-                Log.e(TAG, "Error retireveing patient " + id + " for carer " + user);
-                Log.e(TAG, "Error:" + e);
-                e.printStackTrace();
-            }
-        }
-        return patients;
-    }
-
-    /**
-     * Is the callback fro showing the Geofences of patients
-     * @param patients
-     */
-    private void showGeofences(List<PatientSession> patients){
-        for (PatientSession patient : patients) {
-            for (String ID : patient.patientData.locationData.getGeofences().keySet()) {
-                SimpleGeofence geofence = patient.patientData.locationData.getGeofences().get(ID);
-                Log.d(TAG,"Showing Geofence" + geofence + "\nfor patient: " + patient.userInfo.getUserName());
-                showGeofence(geofence, patient.userInfo.getUserName());
-            }
-        }
-    }
-
-    /**
-     * Shows a single geofence
-     * @param geofence
-     */
-    private void showGeofence(SimpleGeofence geofence, String title){
-        LatLng position = geofence.getPosition();
-        float radius = geofence.getRadius();
-        addMarker(position, title);
-        addCircle(position, radius);
-    }
-    // ---------------
 
     // -- Actions -- //
     @Override
@@ -349,6 +250,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void addGeofence(LatLng latLng, float radius) {
         Log.d(TAG, "Adding geofence for " + latLng.toString());
         String id = user.userInfo.id;
+
         com.google.android.gms.location.Geofence geofence = geofenceHelper.createGeofence(id, latLng, radius, com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_DWELL | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_EXIT);
         SimpleGeofence simpleGeofence = new SimpleGeofence(id, latLng, radius, com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_DWELL | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_EXIT, 5000, Geofence.NEVER_EXPIRE);
         GeofencingRequest geofencingRequest = geofenceHelper.createGeofenceRequest(geofence);
@@ -362,8 +264,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         public void onSuccess(Void aVoid) {
                             Log.d(TAG, "onSuccess: Geofence Added...");
                             Toast.makeText(getApplicationContext(), "added geofence", Toast.LENGTH_SHORT).show();
-                            addMarker(latLng, user.userInfo.getUserName());
-                            addCircle(latLng, 200);
+                            MapHelper.addMarker(mMap, latLng, user.userInfo.getUserName());
+                            MapHelper.addCircle(mMap, latLng, 200);
                             if (user.getType() == UserInfo.UserType.PATIENT) {
                                 PatientSession patientSession = (PatientSession) user;
                                 patientSession.patientData.locationData.addSimpleGeofence(simpleGeofence);
@@ -383,33 +285,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     });
         }
     }
-    // -------------------
-
-    // -- Extra Functionality -- //
-    /**
-     * Adds a marker to the map
-     * @param latLng
-     */
-    private void addMarker(LatLng latLng,String title) {
-        Log.d(TAG,"Adding marker for " + latLng.toString());
-        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(title);
-        mMap.addMarker(markerOptions);
-    }
-
-    /**
-     * Adds a circle to the map
-     * @param latLng
-     * @param r
-     */
-    private void addCircle(LatLng latLng, float r) {
-        Log.d(TAG,"Adding Circle for " + latLng.toString());
-        CircleOptions circleOptions = new CircleOptions();
-        circleOptions.center(latLng);
-        circleOptions.radius(r);
-        circleOptions.strokeColor(Color.argb(255, 255, 0,0));
-        circleOptions.fillColor(Color.argb(64, 255, 0,0));
-        circleOptions.strokeWidth(4);
-        mMap.addCircle(circleOptions);
-    }
-    // ----------------------------
 }
