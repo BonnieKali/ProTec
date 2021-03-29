@@ -7,6 +7,7 @@ import com.example.session.event.Event;
 import com.example.session.event.EventBuilder;
 import com.example.session.event.EventType;
 import com.example.session.local.LocalDB;
+import com.example.session.local.LocalLiveData;
 import com.example.session.remote.Authentication;
 import com.example.session.remote.RemoteDB;
 import com.example.session.user.UserInfo;
@@ -17,6 +18,14 @@ import com.example.threads.BackgroundPool;
 import com.example.threads.OnTaskCompleteCallback;
 import com.example.threads.RunnableTask;
 import com.example.threads.TaskResult;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public class SessionHandler {
     private static final String TAG = "SessionHandler";
@@ -30,6 +39,7 @@ public class SessionHandler {
 
     // Keeps all local user session information
     public UserSession userSession;
+    public HashSet<UserSession> userSessions;
 
 
     /**
@@ -43,9 +53,82 @@ public class SessionHandler {
         remoteDB = new RemoteDB();
 
         userSession = UserSessionBuilder.fromLocal(localDB);
+        // TODO Update userSessions to localDB
+//        userSessions = new HashSet<>();
+        // TODO Is this needed in order for current user to get saved to remoteDB?
+//        userSessions.add(userSession);
     }
 
+    //-------------|
+    // Data access |
+    //-------------|
 
+    public void addPatientModified(PatientSession patientState) {
+        BackgroundPool.attachProcess(() -> localDB.addPatientModified(patientState));
+//        userSessions.add(patientState);
+//        BackgroundPool.attachProcess(() -> localDB.saveUserSession(patientState));
+    }
+
+    /**
+     * Updates the localData with remote data
+     */
+    private void updateLocalData(){
+        Log.d(TAG,"Updating local data...");
+        // Get user id map from remote, and save to localDB
+        HashMap<String, UserInfo.UserType> allUserTypes = remoteDB.getAllUsers();
+        // Get all patient objects from remote, and save to localDB
+        HashMap<String, PatientSession> allPatientIDSessions = remoteDB.getAllPatients();
+        HashSet<PatientSession> allPatientSessions  = new HashSet<PatientSession>( allPatientIDSessions.values() );
+        Log.d("debug","All patient sessions from remote data: " + allPatientSessions);
+        // now update locallivedata
+        localDB.updateAllPatientSessions(allUserTypes, allPatientSessions);
+    }
+
+    /**
+     * Updates the local Data with remote Database data and calls uiCallback
+     * @param uiCallback
+     */
+    public void updateLocalDataFromRemote(OnTaskCompleteCallback uiCallback){
+        // Log out user in background thread
+        RunnableTask task = () -> {
+            // Save any unsaved changes to remote database
+            updateLocalData();
+            return new TaskResult<>(false);
+        };
+        BackgroundPool.attachTask(task, uiCallback);
+    }
+
+    /**
+     * Updates the local data from remote with blocking
+     */
+    public void updateLocalDataFromRemote(){
+        updateLocalData();
+    }
+
+     // -- retrieve data
+    public HashSet<PatientSession> retrieveModifiedPatientSessions() {
+        return localDB.retrieveModifiedPatientSessions();
+    }
+
+    public HashSet<PatientSession> retrieveAllPatientSessions() {
+        return localDB.retrieveAllPatientSessions();
+    }
+
+    public HashSet<PatientSession> retrieveCarerPatientSessions(){
+        return localDB.retrieveCarerPatientSessions();
+    }
+
+    public HashMap<String, UserInfo.UserType> retrieveUserIdTypeMap(){
+        return localDB.retrieveUserIdTypeMap();
+    }
+    public boolean removePatientFromCarer(PatientSession patientSession) {
+        return localDB.removePatientFromCarer(patientSession);
+    }
+    public boolean addPatientFromCarer(PatientSession patientSession) {
+        return localDB.addPatientFromCarer(patientSession);
+    }
+
+    // ------------
 
     //-----------------------|
     // State synchronization |
@@ -71,12 +154,27 @@ public class SessionHandler {
      */
     public void syncToRemote() {
         BackgroundPool.attachProcess(() -> remoteDB.updateUser(userSession.getUID(), userSession));
+
+        BackgroundPool.attachProcess(() -> {
+            try {
+                remoteDB.updateRemoteDBwithLocalDB(localDB);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
     }
 
     /**
      * Saves all user data to the remote database in current thread (blocking statement).
      */
     public void syncToRemoteBlock(){
+//        remoteDB.updateUsers(userSessions);
+        try {
+            remoteDB.updateRemoteDBwithLocalDB(localDB);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         remoteDB.updateUser(userSession.getUID(), userSession);
     }
 
@@ -104,6 +202,7 @@ public class SessionHandler {
         RunnableTask task = () -> {
             // Save any unsaved changes to remote database
             syncToRemoteBlock();
+            localDB.resetLiveData();    // clear the live data
 
             // Reset local session variables
             authentication.logOut();
@@ -253,32 +352,4 @@ public class SessionHandler {
     public void disableLiveEvent(Event event){
         remoteDB.disableEvent(event);
     }
-
-
-
-    //-----------------------|
-    // Patient Remote Access |
-    //-----------------------|
-
-    /**
-     * Returns a PatientSession from the remote database. This is used by carer accounts to retrieve
-     * patient data. This is a BLOCKING statement, so it should not be run in the UI thread.
-     *
-     * @param patientId Unique patient id
-     * @return PatientSession
-     */
-    public PatientSession retrievePatientFromRemote(String patientId) throws
-            RemoteDB.UserNotFoundException,
-            RemoteDB.WrongUserTypeException {
-        UserSession user = remoteDB.getUser(patientId);
-        if (user == null){
-            throw new RemoteDB.UserNotFoundException("User was not found in the database");
-        }
-        else if(user.userInfo.userType == UserInfo.UserType.CARER){
-            throw new RemoteDB.WrongUserTypeException("User was a carer and not a patient");
-        }
-        return (PatientSession) user;
-    }
-
-
 }

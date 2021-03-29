@@ -57,6 +57,10 @@ public class LocationDataPatient extends LocationData{
     public List<myLocation> getLocations() {
         return locations;
     }
+
+    public myLocation getLastKnownLocation(){
+        return this.locations.get(this.locations.size() - 1);
+    }
     // ----------------
 
     @RequiresApi(api = Build.VERSION_CODES.N)
