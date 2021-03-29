@@ -5,9 +5,12 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.example.dashboard.R;
+import com.example.session.Session;
+import com.example.session.user.carer.CarerSession;
 import com.example.session.user.patient.PatientSession;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class PatientItem {
@@ -43,13 +46,17 @@ public class PatientItem {
         return mText2;
     }
 
+    /**
+     * Checks if a patient belongs to a carer by checking the carerIDs assigned to the patient using
+     * a given carerID
+     * @param ID: carers ID
+     * @return
+     */
     public boolean isBelongToCarer(String ID) {
-        for (String carerID:session.patientData.relationship.getCarerIDs()){
-            if (ID.equals(carerID)){
-                return true;
-            }
-        }
-        return false;
+        Log.d("debug","Checking patientItem to see if carer ID belongs in it: " + ID);
+        Log.d("debug","patienttems session carer ids: " + session.patientData.relationship);
+        //TODO check the localLiveData for this instead of here
+        return session.patientData.isAssignedCarer(ID);
     }
 
     public String getID() {
@@ -82,7 +89,7 @@ public class PatientItem {
     // ----------------
 
 
-    public static ArrayList<PatientItem> initialisePatients(View view, List<PatientSession> patientSessions){
+    public static ArrayList<PatientItem> initialisePatients(View view, HashSet<PatientSession> patientSessions){
         ArrayList<PatientItem> patientItems = new ArrayList<>();
         Log.d("PatientItem","Patient Sessions: " + patientSessions);
         for (PatientSession patient : patientSessions){

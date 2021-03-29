@@ -18,7 +18,7 @@ import com.example.session.user.data.location.LocationDataPatient;
 import com.example.session.user.patient.PatientSession;
 
 public class Locator extends ContextWrapper {
-    private static final String TAG = "myMap";
+    private static final String TAG = "myLocator";
 
     private LocationManager locationManager;
     private LocationListener locationListener;

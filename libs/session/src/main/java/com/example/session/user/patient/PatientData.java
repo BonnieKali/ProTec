@@ -1,5 +1,7 @@
 package com.example.session.user.patient;
 
+import android.util.Log;
+
 import com.example.session.user.data.biomarker.BiomarkerData;
 import com.example.session.user.data.location.LocationData;
 import com.example.session.user.UserData;
@@ -54,11 +56,20 @@ public class PatientData extends UserData {
 
     }
 
+    /**
+     * Checks if the carer is assigned to the patient
+     * @param carerID
+     * @return
+     */
+    public boolean isAssignedCarer(String carerID){
+        Log.d("debug","Checking if patient data contains carer id: " + carerID);
+        Log.d("debug","CarerIds: " + relationship.getCarerIDs());
+        return relationship.getCarerIDs().contains(carerID);
+    }
+
     @Override
     public String toString() {
         return "PatientData{" +
-                "locationData=" + locationData +
-                ", biomarkerData=" + biomarkerData +
                 ", relationship="+ relationship +
                 '}';
     }

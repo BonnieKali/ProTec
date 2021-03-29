@@ -18,4 +18,10 @@ public class PatientSession extends UserSession {
         this.patientData = patientData;
     }
 
+    @Override
+    public String toString(){
+        String a = "Name: " + this.userInfo.getUserName() + " ";
+        return a + patientData.toString();
+    }
+
 }

@@ -6,12 +6,15 @@ import android.util.Log;
 import com.example.session.event.Event;
 import com.example.session.event.EventBuilder;
 import com.example.session.event.EventType;
+import com.example.session.local.LocalLiveData;
 import com.example.session.remote.RemoteDB;
 import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
 import com.example.session.user.patient.PatientSession;
 import com.example.threads.OnTaskCompleteCallback;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 
@@ -84,7 +87,9 @@ public class Session {
      * Saves the current patient session to local database in a background thread
      * @param patientState
      */
-    public void savePatientState(PatientSession patientState){sessionHandler.savePatientState(patientState);}
+    public void savePatientState(PatientSession patientState){
+        sessionHandler.addPatientModified(patientState);
+    }
 
     /**
      * Saves all user data to the remote database in a background thread.
@@ -198,32 +203,74 @@ public class Session {
         return sessionHandler.userSession;
     }
     
+//    /**
+//     * Returns a PatientSession from the remote database. This is used by carer accounts to retrieve
+//     * patient data. It returns null if it fails for any reason. This is a BLOCKING statement, so it
+//     * should not be run in the UI thread.
+//     *
+//     * @param patientId Unique patient id
+//     * @return PatientSession
+//     * @throws RemoteDB.WrongUserTypeException
+//     * @throws RemoteDB.UserNotFoundException
+//     */
+//    public PatientSession retrievePatientFromRemote(String patientId) throws
+//            RemoteDB.WrongUserTypeException,
+//            RemoteDB.UserNotFoundException {
+//        return sessionHandler.retrievePatientFromRemote(patientId);
+//    }
+
+//    /**
+//     * Returns all the patients IDs that are currently registered regardless of their carer
+//     * @return
+//     * @throws RemoteDB.WrongUserTypeException
+//     * @throws RemoteDB.UserNotFoundException
+//     */
+//    public Map<String, UserInfo.UserType> retrieveUserIDsFromRemote() throws
+//            RemoteDB.WrongUserTypeException,
+//            RemoteDB.UserNotFoundException {
+////        Map<String, UserInfo.UserType> userID_Type = sessionHandler.retrieveUserIDsFromRemote();
+//        return sessionHandler.retrieveUserIDsFromRemote();
+//    }
+
+    // -- Data Access -- //
     /**
-     * Returns a PatientSession from the remote database. This is used by carer accounts to retrieve
-     * patient data. It returns null if it fails for any reason. This is a BLOCKING statement, so it
-     * should not be run in the UI thread.
-     *
-     * @param patientId Unique patient id
-     * @return PatientSession
-     * @throws RemoteDB.WrongUserTypeException
-     * @throws RemoteDB.UserNotFoundException
+     * Updates the local data from remote with blocking
      */
-    public PatientSession retrievePatientFromRemote(String patientId) throws
-            RemoteDB.WrongUserTypeException,
-            RemoteDB.UserNotFoundException {
-        return sessionHandler.retrievePatientFromRemote(patientId);
+    public void updateLocalDataFromRemote(){
+        sessionHandler.updateLocalDataFromRemote();
     }
 
     /**
-     * Returns all the patients IDs that are currently registered regardless of their carer
-     * @return
-     * @throws RemoteDB.WrongUserTypeException
-     * @throws RemoteDB.UserNotFoundException
+     * Updates the local Data with remote Database data and calls uiCallback
+     * @param uiCallback
      */
-    public Map<String, UserInfo.UserType> retrieveUserIDsFromRemote() throws
-            RemoteDB.WrongUserTypeException,
-            RemoteDB.UserNotFoundException {
-        Map<String, UserInfo.UserType> userID_Type = sessionHandler.retrieveUserIDsFromRemote();
-        return userID_Type;
+    public void updateLocalDataFromRemote(OnTaskCompleteCallback uiCallback){
+        Log.d(TAG,"updating local data with remote data");
+        sessionHandler.updateLocalDataFromRemote(uiCallback);
     }
+
+    public HashSet<PatientSession> retrieveModifiedPatientSessions(){
+        return sessionHandler.retrieveModifiedPatientSessions();
+    }
+
+    public HashSet<PatientSession> retrieveAllPatientSessions() {
+        return sessionHandler.retrieveAllPatientSessions();
+    }
+
+    public HashSet<PatientSession> retrieveCarerPatientSessions(){
+        return sessionHandler.retrieveCarerPatientSessions();
+    }
+
+    public HashMap<String, UserInfo.UserType> retrieveUserIdTypeMap(){
+        return sessionHandler.retrieveUserIdTypeMap();
+    }
+
+    public boolean removePatientFromCarer(PatientSession patientSession){
+        return sessionHandler.removePatientFromCarer(patientSession);}
+
+    public boolean addPatientFromCarer(PatientSession patientSession) {
+        return sessionHandler.addPatientFromCarer(patientSession);
+    }
+
+    // -------------------
 }
