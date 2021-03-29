@@ -3,6 +3,7 @@
     package="com.example.bio_test">
 
     <application android:theme="@style/AppTheme">
+
         <activity android:name=".BioActivity">
             <intent-filter>
                 <action android:name="ProTec.bioTest.open" />

@@ -1,30 +1,32 @@
 package com.example.bio_test;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 public class BioActivity extends AppCompatActivity {
 
-    SensorAccelerometer sensor_acc;
+    FallDetector fall_detector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bio);                  // content view
-        sensor_acc = new SensorAccelerometer( this );   // getting the sensor
-        showFragment(new BiomarkerTests());                     // show fragment
+//        showFragment(new BiomarkerTests());                     // show fragment
+        showFragment(new FallDetectorFragment());
     }
 
 
     private void showFragment(Fragment fragment){
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container_biomarker, fragment).commit();
+
     }
 
+    private void showFragmentFallDetector(){
+        FallDetectorFragment fragment = new FallDetectorFragment();
+        Bundle bundle = new Bundle();
+        fragment.setArguments(bundle);
+    }
 
 }
