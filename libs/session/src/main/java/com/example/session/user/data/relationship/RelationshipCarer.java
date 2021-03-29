@@ -1,5 +1,7 @@
 package com.example.session.user.data.relationship;
 
+import android.util.Log;
+
 import java.util.HashSet;
 
 /**
@@ -22,11 +24,13 @@ public class RelationshipCarer extends Relationship{
         return this.patientIDs;
     }
 
-    public boolean addCarer(String id){
+    public boolean addPatient(String id){
+        Log.d(TAG,"Adding Patient " + id);
         return this.patientIDs.add(id);
     }
 
-    public boolean removeCarer(String id){
+    public boolean removePatient(String id){
+        Log.d(TAG,"Removing Patient " + id);
         return this.patientIDs.remove(id);
     }
 

@@ -29,6 +29,7 @@ import com.example.session.user.carer.CarerSession;
 import com.example.session.user.patient.PatientSession;
 import com.example.threads.BackgroundPool;
 import com.example.threads.OnTaskCompleteCallback;
+import com.example.threads.RunnableProcess;
 import com.example.threads.RunnableTask;
 import com.example.threads.TaskResult;
 
@@ -66,6 +67,7 @@ public class CarerDashboardFragment extends Fragment {
         session = Session.getInstance();
         user = (CarerSession) session.getUser();
 
+
         // Say hello to user (for testing
         carerTextView = view.findViewById(R.id.carer_textView);
         carerTextView.setText("Hello "+session.getUser().userInfo.email);
@@ -86,51 +88,20 @@ public class CarerDashboardFragment extends Fragment {
      * @param v
      */
     private void loadAllPatients(View v){
-        UserSession user = session.getUser();
-        HashMap<String, UserInfo.UserType> allUsers;
-//        String patient_id_of_carer = "NdSBSeOx47TC9cGRKFe35tsXBU83";
-//        HashSet<String> patient_ids = ((CarerSession) user).carerData.patients;
-        // background process to get patients from carers
-        RunnableTask get_patients = () ->
-                new TaskResult<List>(getAllPatientsFromDB());
-
-        // method called when get_patients has completeds
         OnTaskCompleteCallback callback = taskResult -> {
-            initialisePatientView(v, (List<PatientSession>) taskResult.getData());
+            initialisePatientView(v);
         };
-
         // run the task
-        BackgroundPool.attachTask(get_patients, callback);
+        session.updateLocalDataFromRemote(callback);
     }
 
     /**
      * Gets the PatientSession for every patient in the database
      * @return
      */
-    private List<PatientSession> getAllPatientsFromDB() {
-        Log.d(TAG,"Getting All users ");
-        List<PatientSession> users = new ArrayList<>();
-        try {
-            Map<String, UserInfo.UserType> userID_Types = session.retrieveUserIDsFromRemote();
-            for (String id: userID_Types.keySet()){
-                // only get patients
-                Log.d(TAG,"Checking patient: " + id);
-                if (userID_Types.get(id) == UserInfo.UserType.PATIENT) {
-                    PatientSession patient = session.retrievePatientFromRemote(id);
-                    users.add(patient);
-                }
-            }
-        } catch (RemoteDB.WrongUserTypeException e) {
-            Log.e(TAG, "Error retireveing all users");
-            Log.e(TAG, "Error:" + e);
-            e.printStackTrace();
-        } catch (RemoteDB.UserNotFoundException e) {
-            Log.e(TAG, "Error retireveing all users");
-            Log.e(TAG, "Error:" + e);
-            e.printStackTrace();
-        }
-        Log.d(TAG,"Users are: " + users);
-        return users;
+    private HashSet<PatientSession> getAllPatientsFromDB() {
+        Log.d(TAG, "Getting All users ");
+        return Session.getInstance().retrieveAllPatientSessions();
     }
 
     // -- Recycler Viewer -- //
@@ -138,7 +109,9 @@ public class CarerDashboardFragment extends Fragment {
      * Initialise the Patient Recycler Viewer
      * @param view
      */
-    private void initialisePatientView(View view, List<PatientSession> patientSessions ) {
+    private void initialisePatientView(View view) {
+        HashSet<PatientSession> patientSessions = session.retrieveAllPatientSessions();
+        Log.d(TAG,"All patient sessions loaded: " + patientSessions);
         patientItems = PatientItem.initialisePatients(view, patientSessions);
         mRecyclerView = view.findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
@@ -176,7 +149,7 @@ public class CarerDashboardFragment extends Fragment {
         PatientSession patientSession = patient.getSession();
 
         patientSession.patientData.relationship.removeCarer(user.getUID());
-        user.carerData.removePatient(patient.getID());
+        user.carerData.removePatient(patientSession);
 
         Log.d(TAG, "Patient after being removed: " + patientSession.patientData);
         Log.d(TAG, "carer after removing Patient: " + user.carerData);
@@ -198,7 +171,7 @@ public class CarerDashboardFragment extends Fragment {
         PatientSession patientSession = patient.getSession();
 
         patientSession.patientData.relationship.addCarer(user.getUID());
-        user.carerData.addPatient(patient.getID());
+        user.carerData.addPatient(patientSession);
 
         Log.d(TAG, "Patient after being added: " + patientSession.patientData);
         Log.d(TAG, "carer after adding Patient: " + user.carerData);

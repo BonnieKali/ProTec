@@ -10,6 +10,9 @@ import com.example.session.user.carer.CarerSession;
 import com.example.session.user.patient.PatientSession;
 import com.google.gson.Gson;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 
 public class LocalDB {
     private static final String TAG = "LocalDB";
@@ -22,6 +25,9 @@ public class LocalDB {
 
     // Reference to SharedPreferences of application
     private final SharedPreferences sharedPreferences;
+
+    // Live data during runtime
+//    private static LocalLiveData localLiveData;
 
 
     /**
@@ -43,7 +49,7 @@ public class LocalDB {
         return sharedPreferences.getBoolean(USER_SESSION_EXISTS_KEY, false);
     }
 
-
+    // Save to local Disk -- //
     /**
      * Deletes the current user session from db. This should be called when the current user
      * chooses to log out.
@@ -60,7 +66,6 @@ public class LocalDB {
         // Apply changes
         editor.apply();
     }
-
 
     /**
      * Retrieves and builds a UserSession object from db.
@@ -93,7 +98,6 @@ public class LocalDB {
         }
     }
 
-
     /**
      * Saves the UserSession state in db
      *
@@ -121,6 +125,70 @@ public class LocalDB {
         // Apply changes
         editor.apply();
     }
+    // ------------------------
+
+    // -- Local Live Data -- //
+    /**
+     * Updates the localDB with remoteDB data, it is possible that the two data conflict because local
+     * changes have not been pushed to the remoteDB thus we need to merge changes but
+     * this is super complicated so instead just let the remote data overwrite this data.
+     * @param idMap
+     * @param allPatients
+     */
+    public void updateAllPatientSessions(HashMap<String, UserInfo.UserType> idMap, HashSet<PatientSession> allPatients){
+        Log.d(TAG,"Updating all patient sessions");
+        // TODO Merge the remoteDB and localDB data instead of just overwritting the localDB data
+        LocalLiveData.updateLocalLiveData(idMap, allPatients);
+    }
+
+    public void resetLiveData(){
+        LocalLiveData.resetLocalLiveData();}
 
 
+    /**
+     * Retrieves all patients stored in liveData static instance (if none exist locally it will
+     * return an empty hashset)
+     *
+     * @return HashSet with PatientSessions
+     * */
+    public HashSet<PatientSession> retrieveAllPatientSessions(){
+        return LocalLiveData.retrieveAllPatients();
+    }
+
+    /**
+     * Retrieves all user ids stored in liveData static instance and their associated types
+     *
+     * @return HashSet with PatientSessions
+     * */
+    public HashMap<String, UserInfo.UserType> retrieveUserIdTypeMap(){
+        return LocalLiveData.retrieveUserIdMap();
+    }
+
+    /**
+     * Adds a patientSession object to the modified hashset to act as a flag when pushing to remote
+     * database
+     *
+     * @param patientSession
+     * @return Boolean operation succeeded
+     */
+    public Boolean addPatientModified(PatientSession patientSession){
+        return LocalLiveData.addModifiedPatient(patientSession);
+    }
+
+    public HashSet<PatientSession> retrieveModifiedPatientSessions(){
+        return LocalLiveData.retrieveModifiedPatients();
+    }
+
+    public HashSet<PatientSession> retrieveCarerPatientSessions(){
+        return LocalLiveData.retrieveCarerPatientSessions();
+    }
+
+    public boolean removePatientFromCarer(PatientSession patientSession) {
+        return LocalLiveData.removePatientFromCarer(patientSession);
+    }
+
+    public boolean addPatientFromCarer(PatientSession patientSession) {
+        return LocalLiveData.addPatientFromCarer(patientSession);
+    }
+    // -----------------------
 }

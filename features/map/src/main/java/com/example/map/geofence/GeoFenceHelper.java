@@ -19,6 +19,7 @@ import com.example.session.user.data.location.SimpleGeofence;
 import com.example.session.user.patient.PatientSession;
 import com.example.threads.BackgroundPool;
 import com.example.threads.OnTaskCompleteCallback;
+import com.example.threads.RunnableProcess;
 import com.example.threads.RunnableTask;
 import com.example.threads.TaskResult;
 import com.google.android.gms.common.api.ApiException;
@@ -136,7 +137,7 @@ public class GeoFenceHelper extends ContextWrapper {
         Log.d(TAG,"Loading Geofences");
         // get the patients geofence
         if (user.getType() == UserInfo.UserType.PATIENT){
-            List<PatientSession> patient = Arrays.asList(new PatientSession[]{(PatientSession) user});
+            HashSet<PatientSession> patient = new HashSet<>(Arrays.asList(new PatientSession[]{(PatientSession) user}));
             showGeofences(patient, mMap);
             // Get the carers geofences which are those of their patients
         }else if (user.getType() == UserInfo.UserType.CARER){
@@ -146,12 +147,13 @@ public class GeoFenceHelper extends ContextWrapper {
 
             // background process to get patients from carers
             RunnableTask get_patients = () ->
-                    new TaskResult<List>(getPatientsFromDB(patient_ids, user));
+                    new TaskResult<HashSet>(getPatientsForCarer(user));
 
             // method called when get_patients has completeds
             OnTaskCompleteCallback callback = taskResult -> {
-                showGeofences((List<PatientSession>) taskResult.getData(), mMap);
+                showGeofences((HashSet<PatientSession>) taskResult.getData(), mMap);
             };
+
 
             // run the task
             BackgroundPool.attachTask(get_patients, callback);
@@ -161,36 +163,38 @@ public class GeoFenceHelper extends ContextWrapper {
     /**
      * This is the method the background task runs which retrieves the
      * patients of the carer
-     * @param patient_ids
+     * @param user
      * @return
      */
-    private static List<PatientSession> getPatientsFromDB(HashSet<String> patient_ids, UserSession user) {
+    private static HashSet<PatientSession> getPatientsForCarer(UserSession user) {
         Log.d(TAG,"Getting patients for carer: " + user.userInfo.getUserName());
-        List<PatientSession> patients = new ArrayList<>();
+//        HashSet<PatientSession> patients = (HashSet<PatientSession>) Session.getInstance().retrieveAllPatientSessions();
+        HashSet<PatientSession> patients = Session.getInstance().retrieveCarerPatientSessions();
+        return patients;
         // artifically add patient id to this carer for testing
 //        ((CarerSession) user).carerData.addPatient(patient_id_of_carer);
 //        Session.getInstance().saveState();
-        for (String id : patient_ids) {
-            try {
-                patients.add(Session.getInstance().retrievePatientFromRemote(id));
-            } catch (RemoteDB.WrongUserTypeException e) {
-                Log.e(TAG, "Error retireveing patient " + id + " for carer " + user);
-                Log.e(TAG, "Error:" + e);
-                e.printStackTrace();
-            } catch (RemoteDB.UserNotFoundException e) {
-                Log.e(TAG, "Error retireveing patient " + id + " for carer " + user);
-                Log.e(TAG, "Error:" + e);
-                e.printStackTrace();
-            }
-        }
-        return patients;
+//        for (String id : patient_ids) {
+//            try {
+//                patients.add(Session.getInstance().retrievePatientFromRemote(id));
+//            } catch (RemoteDB.WrongUserTypeException e) {
+//                Log.e(TAG, "Error retireveing patient " + id + " for carer " + user);
+//                Log.e(TAG, "Error:" + e);
+//                e.printStackTrace();
+//            } catch (RemoteDB.UserNotFoundException e) {
+//                Log.e(TAG, "Error retireveing patient " + id + " for carer " + user);
+//                Log.e(TAG, "Error:" + e);
+//                e.printStackTrace();
+//            }
+//        }
+//        return patients;
     }
 
     /**
      * Is the callback fro showing the Geofences of patients
      * @param patients
      */
-    private static void showGeofences(List<PatientSession> patients, GoogleMap mMap){
+    private static void showGeofences(HashSet<PatientSession> patients, GoogleMap mMap){
         for (PatientSession patient : patients) {
             for (String ID : patient.patientData.locationData.getGeofences().keySet()) {
                 SimpleGeofence geofence = patient.patientData.locationData.getGeofences().get(ID);

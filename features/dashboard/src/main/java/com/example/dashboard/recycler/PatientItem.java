@@ -8,6 +8,7 @@ import com.example.dashboard.R;
 import com.example.session.user.patient.PatientSession;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class PatientItem {
@@ -43,6 +44,12 @@ public class PatientItem {
         return mText2;
     }
 
+    /**
+     * Checks if the given carer string belongs to a carer by looking
+     * at the patients carers
+     * @param ID: carers ID
+     * @return
+     */
     public boolean isBelongToCarer(String ID) {
         for (String carerID:session.patientData.relationship.getCarerIDs()){
             if (ID.equals(carerID)){
@@ -82,7 +89,7 @@ public class PatientItem {
     // ----------------
 
 
-    public static ArrayList<PatientItem> initialisePatients(View view, List<PatientSession> patientSessions){
+    public static ArrayList<PatientItem> initialisePatients(View view, HashSet<PatientSession> patientSessions){
         ArrayList<PatientItem> patientItems = new ArrayList<>();
         Log.d("PatientItem","Patient Sessions: " + patientSessions);
         for (PatientSession patient : patientSessions){

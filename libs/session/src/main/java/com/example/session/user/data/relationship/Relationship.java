@@ -9,4 +9,6 @@ import java.util.List;
  * another
  */
 public abstract class Relationship {
+
+    protected static final String TAG = "Relationship";
 }

@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.session.event.Event;
+import com.example.session.local.LocalDB;
 import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
 import com.example.session.user.carer.CarerSession;
@@ -90,6 +91,74 @@ public class RemoteDB {
     }
 
     /**
+     * Updates the information and data stored in the remote Database with the
+     * modified data in the local live data
+     *
+     * @param localDB
+     */
+    public void updateRemoteDBwithLocalDB(LocalDB localDB) throws Exception {
+        HashSet<PatientSession> modifiedPatients = localDB.retrieveModifiedPatientSessions();
+        // Turn modified object into a JSON Map
+        for (PatientSession modified_patient : modifiedPatients) {
+            Map<String, Object> jsonModifiedPatientsMap = mapObject(modified_patient);
+            String uid = modified_patient.getUID();
+            // Overwrite the previous UserType entry assigned to this UID
+            dRef.child(USERS).child(uid).setValue(modified_patient.getType().toString());
+
+            // Send the JSON data to the corresponding database table
+            if (modified_patient.getType() == UserInfo.UserType.CARER) {
+                // should not be a ptient
+                throw new Exception("Carer was found in modified patient sessions");
+//                Log.d(TAG, "updateUser: Updating Carer account");
+//                dRef.child(CARERS).child(uid).updateChildren(jsonModifiedPatientsMap);
+            } else {
+                Log.d(TAG, "updateUser: Updated Patient account");
+                dRef.child(PATIENTS).child(uid).updateChildren(jsonModifiedPatientsMap);
+            }
+        }
+    }
+
+    /**
+     * Returns a HashMap<Patient ID, Patient Session> of all the patients in the remoteDB
+     *
+     * @return
+     */
+    public HashMap<String, PatientSession> getAllPatients(){
+        String result = "";
+        HashMap<String, PatientSession> patientIDSessionMap = new HashMap<>();
+        try {
+            Task<DataSnapshot> task;
+            task = dRef.child(PATIENTS).get();
+            Tasks.await(task);
+            if (task.isSuccessful()) {
+                Log.d(TAG, "getAllUsers: Success");
+
+                if(task.getResult() != null){
+                    result = String.valueOf(task.getResult().getValue());
+                    Log.d(TAG, "getAllUsers: Result is "+ result);
+                }else{
+                    Log.w(TAG, "getAllUsers: Result is null");
+                }
+            }
+            else {
+                Log.e("firebase", "Error getting data", task.getException());
+            }
+        } catch (ExecutionException e) {
+            Log.w(TAG, "getAllUsers: Failure", e);
+        } catch (InterruptedException e) {
+            Log.w(TAG, "getAllUsers: Failure", e);
+        }
+        if (result.equals("")) {
+            return patientIDSessionMap;
+        }else{
+            Gson gson = new Gson();
+            patientIDSessionMap = gson.fromJson(result, new TypeToken<HashMap<String, PatientSession>>(){}.getType());
+            Log.d(TAG,"patientIDSessionMap: " + patientIDSessionMap);
+            return patientIDSessionMap;
+        }
+    }
+
+    /**
      * Updates a list of users to the remote database
      * @param userSessions
      */
@@ -118,8 +187,9 @@ public class RemoteDB {
      * Get all the users in the database
      * @return
      */
-    public String getAllUsers(){
+    public HashMap<String, UserInfo.UserType> getAllUsers(){
         String result = "";
+        HashMap<String, UserInfo.UserType> userId_Type = new HashMap<>();
         try {
             Task<DataSnapshot> task;
             task = dRef.child(USERS).get();
@@ -143,9 +213,11 @@ public class RemoteDB {
             Log.w(TAG, "getAllUsers: Failure", e);
         }
         if (result.equals("")) {
-            return null;
+            return userId_Type;
         }else{
-            return result;
+            userId_Type = new Gson().fromJson(result, new TypeToken<HashMap<String, UserInfo.UserType>>(){}.getType());
+            Log.d(TAG,"userId_Type Map: " + userId_Type.values());
+            return userId_Type;
         }
     }
 
