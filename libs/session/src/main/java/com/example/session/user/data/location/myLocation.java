@@ -43,7 +43,7 @@ public class myLocation {
      */
     public String getPrettyDateTime(){
         Date date = new Date(lastSeenTime);
-        Format format = new SimpleDateFormat("dd/MM/yyy at HH:mm:ss");
+        Format format = new SimpleDateFormat("dd/MM/yyy HH:mm:ss");
         return format.format(date);
     }
 

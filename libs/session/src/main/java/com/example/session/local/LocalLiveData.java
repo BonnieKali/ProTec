@@ -83,7 +83,6 @@ public class LocalLiveData {
         if (allPatients == null){
             allPatients = new HashSet<>();
         }
-
         return allPatients;
     }
 

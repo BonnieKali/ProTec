@@ -45,6 +45,7 @@ public class RemoteDB {
     private static final String CARERS = "carers";
     private static final String LIVE_EVENTS = "live_events";
     private static final String PAST_EVENTS = "past_events";
+    private static final String RELATIONSHIPS = "relationships";
 
     // Database reference
     private FirebaseDatabase database;
@@ -100,6 +101,7 @@ public class RemoteDB {
         HashSet<PatientSession> modifiedPatients = localDB.retrieveModifiedPatientSessions();
         // Turn modified object into a JSON Map
         for (PatientSession modified_patient : modifiedPatients) {
+            Log.d(TAG, "Updating modified patient " + modified_patient.userInfo.getUserName());
             Map<String, Object> jsonModifiedPatientsMap = mapObject(modified_patient);
             String uid = modified_patient.getUID();
             // Overwrite the previous UserType entry assigned to this UID
@@ -112,7 +114,7 @@ public class RemoteDB {
 //                Log.d(TAG, "updateUser: Updating Carer account");
 //                dRef.child(CARERS).child(uid).updateChildren(jsonModifiedPatientsMap);
             } else {
-                Log.d(TAG, "updateUser: Updated Patient account");
+                Log.d(TAG, "updateUser: Updated modified Patient account " + modified_patient.userInfo.getUserName());
                 dRef.child(PATIENTS).child(uid).updateChildren(jsonModifiedPatientsMap);
             }
         }

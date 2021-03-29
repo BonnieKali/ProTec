@@ -31,6 +31,6 @@ public class RelationshipPatient extends Relationship{
     }
 
     public String toString(){
-        return this.carerIDs.toString();
+        return "Carer IDs: "+this.carerIDs.toString();
     }
 }

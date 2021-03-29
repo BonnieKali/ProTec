@@ -79,7 +79,7 @@ public class SessionHandler {
         // Get all patient objects from remote, and save to localDB
         HashMap<String, PatientSession> allPatientIDSessions = remoteDB.getAllPatients();
         HashSet<PatientSession> allPatientSessions  = new HashSet<PatientSession>( allPatientIDSessions.values() );
-        Log.d(TAG,"All patient sessions: " + allPatientSessions);
+        Log.d("debug","All patient sessions from remote data: " + allPatientSessions);
         // now update locallivedata
         localDB.updateAllPatientSessions(allUserTypes, allPatientSessions);
     }
@@ -352,46 +352,4 @@ public class SessionHandler {
     public void disableLiveEvent(Event event){
         remoteDB.disableEvent(event);
     }
-
-
-
-
-    //-----------------------|
-    // Patient Remote Access |
-    //-----------------------|
-
-//    /**
-//     * Returns a PatientSession from the remote database. This is used by carer accounts to retrieve
-//     * patient data. This is a BLOCKING statement, so it should not be run in the UI thread.
-//     *
-//     * @param patientId Unique patient id
-//     * @return PatientSession
-//     */
-//    public PatientSession retrievePatientFromRemote(String patientId) throws
-//            RemoteDB.UserNotFoundException,
-//            RemoteDB.WrongUserTypeException {
-//        UserSession user = remoteDB.getUser(patientId);
-//        // TODO only add sessions to userSessions when they have been modified
-////        userSessions.add(user); // forces all usersessions to be updated, We want only modified users to be uploaded
-//        if (user == null){
-//            throw new RemoteDB.UserNotFoundException("User was not found in the database");
-//        }
-//        else if(user.userInfo.userType == UserInfo.UserType.CARER){
-//            throw new RemoteDB.WrongUserTypeException("User was a carer and not a patient");
-//        }
-//        return (PatientSession) user;
-//    }
-
-//    /**
-//     * Returns a mapping between the user ID and their UserType for evcery user in the database
-//     * @return
-//     * @throws RemoteDB.UserNotFoundException
-//     * @throws RemoteDB.WrongUserTypeException
-//     */
-//    public Map<String, UserInfo.UserType> retrieveUserIDsFromRemote() throws
-//            RemoteDB.UserNotFoundException,
-//            RemoteDB.WrongUserTypeException {
-////        return remoteDB.getAllUsers();
-//        return localDB.retrieveUserIdMap();
-//    }
 }
