@@ -49,6 +49,15 @@ public class CarerData extends UserData {
         return Session.getInstance().retrieveCarerPatientSessions();
     }
 
+    /**
+     * Checks if the
+     * @param ID
+     * @return
+     */
+    public boolean isAssignedPatient(String ID){
+        return relationship.getPatientIDs().contains(ID);
+    }
+
     @Override
     public String toString() {
         return "CarerData{" +

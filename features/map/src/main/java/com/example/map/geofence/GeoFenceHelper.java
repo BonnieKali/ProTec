@@ -168,26 +168,8 @@ public class GeoFenceHelper extends ContextWrapper {
      */
     private static HashSet<PatientSession> getPatientsForCarer(UserSession user) {
         Log.d(TAG,"Getting patients for carer: " + user.userInfo.getUserName());
-//        HashSet<PatientSession> patients = (HashSet<PatientSession>) Session.getInstance().retrieveAllPatientSessions();
         HashSet<PatientSession> patients = Session.getInstance().retrieveCarerPatientSessions();
         return patients;
-        // artifically add patient id to this carer for testing
-//        ((CarerSession) user).carerData.addPatient(patient_id_of_carer);
-//        Session.getInstance().saveState();
-//        for (String id : patient_ids) {
-//            try {
-//                patients.add(Session.getInstance().retrievePatientFromRemote(id));
-//            } catch (RemoteDB.WrongUserTypeException e) {
-//                Log.e(TAG, "Error retireveing patient " + id + " for carer " + user);
-//                Log.e(TAG, "Error:" + e);
-//                e.printStackTrace();
-//            } catch (RemoteDB.UserNotFoundException e) {
-//                Log.e(TAG, "Error retireveing patient " + id + " for carer " + user);
-//                Log.e(TAG, "Error:" + e);
-//                e.printStackTrace();
-//            }
-//        }
-//        return patients;
     }
 
     /**

@@ -16,6 +16,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.map.geofence.GeoFenceHelper;
+import com.example.map.location.LocatorHelper;
 import com.example.map.map.MapHelper;
 import com.example.session.Session;
 import com.example.session.remote.RemoteDB;
@@ -43,6 +44,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -55,7 +57,9 @@ import java.util.List;
 
 import static com.example.map.map.MapHelper.initialiseMap;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
+        GoogleMap.OnMapLongClickListener,
+        GoogleMap.OnMarkerClickListener {
 
     private static final int FINE_LOCATION_ACCESS_REQUEST_CODE = 1029;
     private static final int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 1039;
@@ -125,6 +129,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startLocating();    // check permissions
         MapHelper.initialiseMap(mMap);
         GeoFenceHelper.loadGeofences(user, mMap);
+        LocatorHelper.loadAndDisplayPatients(user, mMap, this);
+        // Set a listener for marker click.
+        mMap.setOnMarkerClickListener(this);
+    }
+
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        // Return false to indicate that we have not consumed the event and that we wish
+        // for the default behavior to occur (which is for the camera to move such that the
+        // marker is centered and for the marker's info window to open, if it has one).
+        return false;
     }
 
     // -- Actions -- //

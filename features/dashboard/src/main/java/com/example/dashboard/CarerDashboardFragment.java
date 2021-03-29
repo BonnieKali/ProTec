@@ -76,10 +76,6 @@ public class CarerDashboardFragment extends Fragment {
         startNotificationService();
         // Set Listeners for clickable items
         setOnClickListeners(view);
-
-//        initialisePatientView(view);
-//        loadPatients(view);
-        loadAllPatients(view);
         return view;
     }
 
@@ -88,6 +84,7 @@ public class CarerDashboardFragment extends Fragment {
      * @param v
      */
     private void loadAllPatients(View v){
+        Log.d(TAG,"Loading All Data");
         OnTaskCompleteCallback callback = taskResult -> {
             initialisePatientView(v);
         };
@@ -170,6 +167,7 @@ public class CarerDashboardFragment extends Fragment {
         PatientItem patient =  patientItems.get(position);
         PatientSession patientSession = patient.getSession();
 
+        // TODO make a session method that updates both of these instead of manually doing it
         patientSession.patientData.relationship.addCarer(user.getUID());
         user.carerData.addPatient(patientSession);
 
@@ -232,5 +230,17 @@ public class CarerDashboardFragment extends Fragment {
         }else{
             Log.w(TAG, "Activity was null!. Cannot start service!");
         }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.d(TAG,"Resuming Activity...");
+        loadAllPatients(this.getView());
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
     }
 }

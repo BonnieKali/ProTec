@@ -6,8 +6,10 @@ import android.util.Log;
 import com.example.map.geofence.GeoFenceHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapHelper {
@@ -34,10 +36,10 @@ public class MapHelper {
      * Adds a marker to the map
      * @param latLng
      */
-    public static void addMarker(GoogleMap mMap, LatLng latLng, String title) {
+    public static Marker addMarker(GoogleMap mMap, LatLng latLng, String title) {
         Log.d(TAG,"Adding marker for " + latLng.toString());
         MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(title);
-        mMap.addMarker(markerOptions);
+        return mMap.addMarker(markerOptions);
     }
 
     /**
@@ -45,7 +47,7 @@ public class MapHelper {
      * @param latLng
      * @param r
      */
-    public static void addCircle(GoogleMap mMap, LatLng latLng, float r) {
+    public static Circle addCircle(GoogleMap mMap, LatLng latLng, float r) {
         Log.d(TAG,"Adding Circle for " + latLng.toString());
         CircleOptions circleOptions = new CircleOptions();
         circleOptions.center(latLng);
@@ -53,7 +55,7 @@ public class MapHelper {
         circleOptions.strokeColor(Color.argb(255, 255, 0,0));
         circleOptions.fillColor(Color.argb(64, 255, 0,0));
         circleOptions.strokeWidth(4);
-        mMap.addCircle(circleOptions);
+        return mMap.addCircle(circleOptions);
     }
 
 }

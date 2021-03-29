@@ -54,6 +54,15 @@ public class PatientData extends UserData {
 
     }
 
+    /**
+     * Checks if the carer is assigned to the patient
+     * @param carerID
+     * @return
+     */
+    public boolean isAssignedCarer(String carerID){
+        return relationship.getCarerIDs().contains(carerID);
+    }
+
     @Override
     public String toString() {
         return "PatientData{" +

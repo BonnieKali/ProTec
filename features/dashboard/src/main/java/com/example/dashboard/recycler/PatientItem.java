@@ -5,6 +5,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.example.dashboard.R;
+import com.example.session.Session;
+import com.example.session.user.carer.CarerSession;
 import com.example.session.user.patient.PatientSession;
 
 import java.util.ArrayList;
@@ -51,12 +53,8 @@ public class PatientItem {
      * @return
      */
     public boolean isBelongToCarer(String ID) {
-        for (String carerID:session.patientData.relationship.getCarerIDs()){
-            if (ID.equals(carerID)){
-                return true;
-            }
-        }
-        return false;
+        //TODO check the localLiveData for this instead of here
+        return session.patientData.isAssignedCarer(ID);
     }
 
     public String getID() {
