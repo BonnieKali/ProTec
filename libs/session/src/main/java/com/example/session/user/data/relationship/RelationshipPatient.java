@@ -19,6 +19,9 @@ public class RelationshipPatient extends Relationship{
     }
 
     public HashSet<String> getCarerIDs(){
+        if (carerIDs == null){
+            return new HashSet<String>();
+        }
         return this.carerIDs;
     }
 

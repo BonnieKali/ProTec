@@ -133,28 +133,36 @@ public class RemoteDB {
             task = dRef.child(PATIENTS).get();
             Tasks.await(task);
             if (task.isSuccessful()) {
-                Log.d(TAG, "getAllUsers: Success");
+                Log.d(TAG, "getAllPatients: Success");
 
                 if(task.getResult() != null){
                     result = String.valueOf(task.getResult().getValue());
-                    Log.d(TAG, "getAllUsers: Result is "+ result);
+//                    Log.d(TAG, "getAllPatients:");
                 }else{
-                    Log.w(TAG, "getAllUsers: Result is null");
+                    Log.w(TAG, "getAllPatients: Result is null");
                 }
             }
             else {
                 Log.e("firebase", "Error getting data", task.getException());
             }
         } catch (ExecutionException e) {
-            Log.w(TAG, "getAllUsers: Failure", e);
+            Log.w(TAG, "getAllPatients: Failure", e);
         } catch (InterruptedException e) {
-            Log.w(TAG, "getAllUsers: Failure", e);
+            Log.w(TAG, "getAllPatients: Failure", e);
         }
         if (result.equals("")) {
+            Log.w(TAG,"Result is nothing");
             return patientIDSessionMap;
         }else{
             Gson gson = new Gson();
-            patientIDSessionMap = gson.fromJson(result, new TypeToken<HashMap<String, PatientSession>>(){}.getType());
+            Log.d(TAG,"Parsing result");
+            try {
+                patientIDSessionMap = gson.fromJson(result, new TypeToken<HashMap<String, PatientSession>>() {
+                }.getType());
+            }catch(Exception exception){
+                Log.e(TAG, "Exception " + exception);
+                }
+                Log.d(TAG,"Finished parsing");
             Log.d(TAG,"patientIDSessionMap: " + patientIDSessionMap);
             return patientIDSessionMap;
         }

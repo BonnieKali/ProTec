@@ -9,10 +9,10 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.example.actions.Actions;
+import com.example.dashboard.carer.CarerDashboardFragment;
+import com.example.dashboard.patient.PatientDashboardFragment;
 import com.example.session.Session;
 import com.example.session.user.UserInfo;
-import com.example.threads.OnTaskCompleteCallback;
-import com.example.threads.TaskResult;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class DashboardActivity extends AppCompatActivity {

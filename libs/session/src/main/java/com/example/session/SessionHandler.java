@@ -76,8 +76,10 @@ public class SessionHandler {
         Log.d(TAG,"Updating local data...");
         // Get user id map from remote, and save to localDB
         HashMap<String, UserInfo.UserType> allUserTypes = remoteDB.getAllUsers();
+        Log.d("debug","All user types" + allUserTypes);
         // Get all patient objects from remote, and save to localDB
         HashMap<String, PatientSession> allPatientIDSessions = remoteDB.getAllPatients();
+        Log.d("debug","All patient session IDs" + allPatientIDSessions);
         HashSet<PatientSession> allPatientSessions  = new HashSet<PatientSession>( allPatientIDSessions.values() );
         Log.d("debug","All patient sessions from remote data: " + allPatientSessions);
         // now update locallivedata

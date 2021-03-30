@@ -1,8 +1,15 @@
 package com.example.map.direction;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
+import android.widget.Toast;
+
 import com.google.android.gms.maps.model.LatLng;
 
 public class DirectionHelper {
+    private static final String TAG = "DirectionHelper";
+
     /**
      * Creates the url string used to ask the directions API for directions
      * @param origin
@@ -25,6 +32,17 @@ public class DirectionHelper {
         // Building the url to the web service
         String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + api_key;
         return url;
+    }
+
+    public static Intent getGoogleMapsRequestIntent(LatLng destination){
+        String dest = String.format("%f,%f",destination.latitude, destination.longitude);
+        String mode = "w";
+        String name = "google.navigation";
+        String request = String.format("%s:q=%s&mode=%s",name, dest, mode);
+        Uri gmmIntentUri = Uri.parse(request);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        return mapIntent;
     }
 
 }
