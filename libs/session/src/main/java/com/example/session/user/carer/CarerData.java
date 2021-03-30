@@ -36,13 +36,11 @@ public class CarerData extends UserData {
     }
 
     public boolean removePatient(PatientSession patientSession){
-        relationship.removePatient(patientSession.getUID());
-        return Session.getInstance().removePatientFromCarer(patientSession);
+        return relationship.removePatient(patientSession.getUID());
     }
 
     public boolean addPatient(PatientSession patientSession){
-        relationship.addPatient(patientSession.getUID());
-        return Session.getInstance().addPatientFromCarer(patientSession);
+        return relationship.addPatient(patientSession.getUID());
     }
 
     public HashSet<PatientSession> getAssignedPatients(){
