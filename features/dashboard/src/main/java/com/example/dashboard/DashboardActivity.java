@@ -64,6 +64,4 @@ public class DashboardActivity extends AppCompatActivity {
             startActivity(Actions.openLoginIntent(this));
         });
     }
-
-
 }

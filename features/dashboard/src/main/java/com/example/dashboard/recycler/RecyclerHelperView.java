@@ -25,13 +25,11 @@ public class RecyclerHelperView {
     private RecyclerView.LayoutManager mLayoutManager;  // sets up the list viewer
 
     ArrayList<PatientItem> patientItems;
-    Context context;
     View view;
     CarerSession user;
     Session session;
 
-    public RecyclerHelperView(View view, CarerSession user, Context context) {
-        this.context = context;
+    public RecyclerHelperView(View view, CarerSession user) {
         this.view = view;
         this.user = user;
         this.session = Session.getInstance();
@@ -130,7 +128,6 @@ public class RecyclerHelperView {
      */
     private void changeItem(int position) {
         // this seems to induce a wierd bug where the
-//        patientItems.get(position).setmText2("Ilie is super gay");
 //        mAdapter.notifyItemChanged(position);
 //        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
     }

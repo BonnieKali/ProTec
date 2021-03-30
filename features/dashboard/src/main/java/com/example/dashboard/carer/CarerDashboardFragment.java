@@ -49,11 +49,10 @@ public class CarerDashboardFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_carer_dashboard, container, false);
-        Context context = getContext();
 
         session = Session.getInstance();
         user = (CarerSession) session.getUser();
-        recyclerHelperView = new RecyclerHelperView(view, user, context);
+        recyclerHelperView = new RecyclerHelperView(view, user);
 
         // Say hello to user (for testing
         carerTextView = view.findViewById(R.id.carer_textView);
