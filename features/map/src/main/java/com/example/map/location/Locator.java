@@ -22,6 +22,7 @@ public class Locator extends ContextWrapper {
 
     private LocationManager locationManager;
     private LocationListener locationListener;
+    private Location lastLocation;
     String bestprovider;
     Criteria criteria;
 
@@ -93,6 +94,8 @@ public class Locator extends ContextWrapper {
                     patientSession.patientData.locationData.addLocation(location);
 //                    Log.d(TAG,"User is not null: " + user);
                 }
+                // we still know the carers location but we do not save it to the database
+                lastLocation = location;
             }
         }
 
@@ -110,6 +113,10 @@ public class Locator extends ContextWrapper {
         public void onProviderDisabled(String s) {
 
         }
+    }
+
+    public Location getLastLocation(){
+        return this.lastLocation;
     }
 
 }

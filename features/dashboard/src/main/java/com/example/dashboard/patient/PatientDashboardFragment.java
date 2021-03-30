@@ -1,4 +1,4 @@
-package com.example.dashboard;
+package com.example.dashboard.patient;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.actions.Actions;
+import com.example.dashboard.R;
 import com.example.session.Session;
 
 /**

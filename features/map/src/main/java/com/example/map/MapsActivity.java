@@ -8,13 +8,19 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.map.direction.DirectionHelper;
+import com.example.map.direction.FetchURL;
+import com.example.map.direction.TaskLoadedCallback;
 import com.example.map.geofence.GeoFenceHelper;
 import com.example.map.location.LocatorHelper;
 import com.example.map.map.MapHelper;
@@ -46,6 +52,8 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -59,15 +67,19 @@ import static com.example.map.map.MapHelper.initialiseMap;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleMap.OnMapLongClickListener,
-        GoogleMap.OnMarkerClickListener {
+        GoogleMap.OnMarkerClickListener,
+        TaskLoadedCallback {
 
     private static final int FINE_LOCATION_ACCESS_REQUEST_CODE = 1029;
     private static final int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 1039;
     private static final String TAG = "myMap";
 
     private GoogleMap mMap;
+
     private GeofencingClient geofencingClient;
     private GeoFenceHelper geofenceHelper;
+
+    private Polyline currentPolyline; // used for displaying path
 
     private Locator locator;
 
@@ -132,6 +144,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LocatorHelper.loadAndDisplayPatients(user, mMap, this);
         // Set a listener for marker click.
         mMap.setOnMarkerClickListener(this);
+        //
+        openGoogleMaps(new LatLng(55.9533, -3.1883));
     }
 
     @Override
@@ -299,5 +313,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                     });
         }
+    }
+
+    // -- Directions -- //
+    private void openGoogleMaps(LatLng destination){
+        Intent mapIntent = DirectionHelper.getGoogleMapsRequestIntent(destination);
+        Log.d(TAG,"starting google maps with destination: " + destination);
+//        try {
+//            startActivity(mapIntent);
+//        }catch(Exception exception){
+//            Toast.makeText(getApplicationContext(), "Google Maps is not installed but it is required to get directions. Please install", Toast.LENGTH_LONG).show();
+            // manually display directions
+            Location lastKnownUserLocation = locator.getLastLocation();
+            LatLng test = new LatLng(55.9379, -3.1882);
+            LatLng startingPosition = new LatLng(test.latitude, test.longitude);
+            getDirections(startingPosition, destination);
+//        }
+    }
+
+    private void getDirections(LatLng startingPosition, LatLng destination){
+        MarkerOptions place1 = new MarkerOptions().position(new LatLng(startingPosition.latitude, startingPosition.longitude)).title("Starting Location");
+        MarkerOptions place2 = new MarkerOptions().position(new LatLng(destination.latitude, destination.longitude)).title("Destination");
+        String directionMode = "walking";
+        new FetchURL(this).execute(DirectionHelper.getUrl(place1.getPosition(), place2.getPosition(), directionMode, getString(R.string.google_maps_direction_key)), directionMode);
+    }
+
+    @Override
+    public void onTaskDone(Object... values) {
+        Log.d(TAG,"Finished getting directions");
+        if (currentPolyline != null)
+            currentPolyline.remove();
+        currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
     }
 }

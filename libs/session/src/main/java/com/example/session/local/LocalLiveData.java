@@ -94,6 +94,9 @@ public class LocalLiveData {
     }
 
     public static HashSet<PatientSession> retrieveCarerPatientSessions(){
+        if (carerPatientSessions == null){
+            return new HashSet<PatientSession>();
+        }
         return carerPatientSessions;
     }
 

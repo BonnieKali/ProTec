@@ -1,4 +1,4 @@
-package com.example.dashboard;
+package com.example.dashboard.carer;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.actions.Actions;
+import com.example.dashboard.R;
 import com.example.dashboard.recycler.PatientAdapter;
 import com.example.dashboard.recycler.PatientItem;
 import com.example.dashboard.recycler.RecyclerHelperView;
