@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.example.session.event.Event;
 import com.example.session.local.LocalDB;
+import com.example.session.patientNotifications.PatientNotification;
 import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
 import com.example.session.user.carer.CarerSession;
@@ -46,6 +47,8 @@ public class RemoteDB {
     private static final String LIVE_EVENTS = "live_events";
     private static final String PAST_EVENTS = "past_events";
     private static final String PATIENT_SETTINGS = "patient_settings";
+    private static final String LIVE_PATIENT_NOTIFICATIONS = "live_patient_notifications";
+    private static final String PAST_PATIENT_NOTIFICATIONS = "past_patient_notifications";
 
     // Database reference
     private FirebaseDatabase database;
@@ -268,6 +271,62 @@ public class RemoteDB {
         dRef.child(LIVE_EVENTS).addChildEventListener(eventListener);
     }
 
+
+
+    //-----------------------|
+    // PATIENT NOTIFICATIONS |
+    //-----------------------|
+
+    public void generatePatientNotification(PatientNotification patientNotification){
+        Map<String, Object> jsonMap = mapObject(patientNotification);
+
+        // Get event key
+        String key = patientNotification.getLiveKey();
+
+        // Save to remote
+        dRef.child(LIVE_PATIENT_NOTIFICATIONS).child(key).setValue(jsonMap);
+        dRef.child(PAST_PATIENT_NOTIFICATIONS).push().setValue(jsonMap);
+    }
+
+    public void disablePatientNotification(PatientNotification patientNotification){
+        // Retrieve the string corresponding to the event key from live_events and delete it
+        String key = patientNotification.getLiveKey();
+        dRef.child(LIVE_PATIENT_NOTIFICATIONS).child(key).removeValue();
+    }
+
+    public void setNewLivePatientNotificationListener(OnTaskCompleteCallback callback){
+        ChildEventListener eventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
+                Log.d(TAG, "onChildAdded: Added "+ snapshot.getValue());
+                String jsonObject = String.valueOf(snapshot.getValue());
+
+                Gson gson = new Gson();
+                JsonReader reader = new JsonReader(new StringReader(jsonObject));
+                reader.setLenient(true);
+                PatientNotification patientNotification = gson.fromJson(reader,
+                        PatientNotification.class);
+                callback.onComplete(new TaskResult<>(patientNotification));
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, String previousChildName) {}
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {}
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, String previousChildName) {}
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadEvent:onCancelled", databaseError.toException());
+            }
+        };
+
+        dRef.child(LIVE_PATIENT_NOTIFICATIONS).addChildEventListener(eventListener);
+    }
 
 
     //------------------|

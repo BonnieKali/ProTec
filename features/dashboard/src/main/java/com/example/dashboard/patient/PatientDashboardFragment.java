@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.example.session.Session;
  * A simple {@link Fragment} subclass.
  */
 public class PatientDashboardFragment extends Fragment {
+    private static final String TAG = "PatientDashboardFrag";
 
     TextView patientTextView;
 
@@ -37,11 +39,16 @@ public class PatientDashboardFragment extends Fragment {
         patientTextView = view.findViewById(R.id.patient_textView);
         patientTextView.setText("Hello "+session.getUser().userInfo.email);
 
+        // Start service for patient notifications
+        startPatientService();
+
         // Set Listeners for clickable items
         setOnClickListeners(view);
 
         return view;
     }
+
+
 
     /**
      * custom on click listener
@@ -79,6 +86,16 @@ public class PatientDashboardFragment extends Fragment {
                 act.startActivity(intent_BioTest);
             }
         });
+    }
+
+    private void startPatientService() {
+        Activity act = getActivity();
+        if (act != null){
+            Log.d(TAG, "Activity was not null!. Starting PatientService");
+            act.startService(Actions.getPatientServiceIntent(act));
+        }else{
+            Log.w(TAG, "Activity was null!. Cannot start PatientService!");
+        }
     }
 
 

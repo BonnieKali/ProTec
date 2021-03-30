@@ -4,11 +4,19 @@
 
     <application>
         <service
-            android:name=".BackgroundService"
+            android:name=".patient.PatientService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="ProTec.service.BackgroundService" />
+                <action android:name="ProTec.service.PatientService" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".carer.CarerService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="ProTec.service.CarerService" />
             </intent-filter>
         </service>
     </application>

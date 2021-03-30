@@ -8,6 +8,8 @@ import com.example.session.event.EventBuilder;
 import com.example.session.event.EventType;
 import com.example.session.local.LocalDB;
 import com.example.session.local.LocalLiveData;
+import com.example.session.patientNotifications.PatientNotification;
+import com.example.session.patientNotifications.PatientNotificationBuilder;
 import com.example.session.remote.Authentication;
 import com.example.session.remote.RemoteDB;
 import com.example.session.user.UserInfo;
@@ -350,5 +352,63 @@ public class SessionHandler {
      */
     public void disableLiveEvent(Event event){
         remoteDB.disableEvent(event);
+    }
+
+
+
+    //-----------------------|
+    // PATIENT NOTIFICATIONS |
+    //-----------------------|
+
+    /**
+     * Sends a patient notification listener for new live_patient_notifications
+     *
+     * @param callback callback to be executed in the UI thread when a new notification
+     *                 arrives. This callback will provide the TaskResult(PatientNotification) as
+     *                 an argument.
+     * @return Boolean success
+     */
+    public Boolean setLivePatientNotificationListener(OnTaskCompleteCallback callback){
+        // If the current user is a patient, do not set the listener
+        if (userSession.userInfo.userType == UserInfo.UserType.CARER) {
+            Log.w(TAG, "setLivePatientNotificationListener: Current user is a carer. No listener added");
+            return false;
+        }
+
+        remoteDB.setNewLivePatientNotificationListener(callback);
+        return true;
+    }
+
+    /**
+     * Generates a live patient notification.
+     *
+     * @param patientUid
+     * @param title
+     * @param msg
+     * @return
+     */
+    public PatientNotification generateLivePatientNotification(String patientUid,
+                                                               String title,
+                                                               String msg){
+        // Check if current user is patient and if so do not generate
+        if(userSession.userInfo.userType == UserInfo.UserType.PATIENT){
+            return null;
+        }
+
+        PatientNotification patientNotification = PatientNotificationBuilder.
+                buildPatientNotification(patientUid, title, msg);
+
+        remoteDB.generatePatientNotification(patientNotification);
+        return patientNotification;
+    }
+
+    /**
+     * Disables the live notification pointed by the input object (removes it from
+     * live_patient_notifications)
+     *
+     * @param patientNotification PatientNotification object
+     */
+    public void disableLivePatientNotification(PatientNotification patientNotification){
+        remoteDB.disablePatientNotification(patientNotification);
     }
 }

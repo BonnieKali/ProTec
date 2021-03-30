@@ -7,6 +7,8 @@ import com.example.session.event.Event;
 import com.example.session.event.EventBuilder;
 import com.example.session.event.EventType;
 import com.example.session.local.LocalLiveData;
+import com.example.session.patientNotifications.PatientNotification;
+import com.example.session.patientNotifications.PatientNotificationBuilder;
 import com.example.session.remote.RemoteDB;
 import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
@@ -265,6 +267,49 @@ public class Session {
      */
     public void disableLiveEvent(Event event){
         sessionHandler.disableLiveEvent(event);
+    }
+
+
+
+
+    //-----------------------|
+    // PATIENT NOTIFICATIONS |
+    //-----------------------|
+
+    /**
+     * Sends a patient notification listener for new live_patient_notifications
+     *
+     * @param callback callback to be executed in the UI thread when a new notification
+     *                 arrives. This callback will provide the TaskResult(PatientNotification) as
+     *                 an argument.
+     * @return Boolean success
+     */
+    public Boolean setLivePatientNotificationListener(OnTaskCompleteCallback callback){
+        return sessionHandler.setLivePatientNotificationListener(callback);
+    }
+
+    /**
+     * Generates a live patient notification.
+     *
+     * @param patientUid
+     * @param title
+     * @param msg
+     * @return
+     */
+    public PatientNotification generateLivePatientNotification(String patientUid,
+                                                               String title,
+                                                               String msg){
+        return sessionHandler.generateLivePatientNotification(patientUid, title, msg);
+    }
+
+    /**
+     * Disables the live notification pointed by the input object (removes it from
+     * live_patient_notifications)
+     *
+     * @param patientNotification PatientNotification object
+     */
+    public void disableLivePatientNotification(PatientNotification patientNotification){
+        sessionHandler.disableLivePatientNotification(patientNotification);
     }
 
 }

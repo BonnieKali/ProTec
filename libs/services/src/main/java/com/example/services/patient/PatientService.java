@@ -1,4 +1,4 @@
-package com.example.services;
+package com.example.services.patient;
 
 import android.app.Service;
 import android.content.Context;
@@ -8,12 +8,16 @@ import android.util.Log;
 
 import com.example.actions.Actions;
 import com.example.notifications.ProTecNotificationsManager;
+import com.example.services.FallDetectorService;
 import com.example.session.Session;
 import com.example.session.event.Event;
 import com.example.session.event.EventType;
+import com.example.session.patientNotifications.PatientNotification;
+import com.example.threads.OnTaskCompleteCallback;
+import com.example.threads.TaskResult;
 
-public class BackgroundService extends Service {
-    private static final String TAG = "BackgroundService";
+public class PatientService extends Service {
+    private static final String TAG = "PatientService";
 
     private Boolean isStarted = false;
 
@@ -22,13 +26,13 @@ public class BackgroundService extends Service {
     private ProTecNotificationsManager proTecNotificationsManager;
     private FallDetectorService fallDetectorService;
 
-    public BackgroundService() {
+
+    public PatientService() {
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
-//        throw new UnsupportedOperationException("Not yet implemented");
         return null;
     }
 
@@ -46,37 +50,31 @@ public class BackgroundService extends Service {
         }
     }
 
-
     /**
      * Initializes service functions and listeners.
      */
     private void initService() {
-        Log.d(TAG, "Service is initializing");
+        Log.d(TAG, "Patient Service is initializing");
         // Set listener for patient events
         if (session == null)
             return;
 
-        session.setLiveEventListener(taskResult -> {
-            Event event = (Event) taskResult.getData();
+        // Set listener for patient notifications
+        session.setLivePatientNotificationListener(taskResult -> {
+            PatientNotification pn = (PatientNotification) taskResult.getData();
 
-            if (event == null){
-                Log.w(TAG, "New event was received but is is null");
+            if (pn == null){
+                Log.w(TAG, "New patient notification was received but is is null");
                 return;
             }
 
-            String title = "Patient has ";
-            String msg = event.patientUid;
-            if (event.eventType == EventType.FELL){
-                title += "fallen!";
-                msg += " has fallen!!! Please check up on him.";
+            // If this notification is meant for the current user_patient then display it
+            if (pn.patientUid.equals(session.getUser().userInfo.id)){
+                proTecNotificationsManager.showSmallNotification(
+                        pn.title,
+                        pn.message,
+                        Actions.openDashboardIntent(context));
             }
-            else if (event.eventType == EventType.LEFT_HOUSE){
-                title += " has left their house!";
-                msg += " has left the house!!! Please check up on him";
-            }
-
-            proTecNotificationsManager.showSmallNotification(title, msg,
-                    Actions.openDashboardIntent(context));
         });
 
         // Initialize fall detector
