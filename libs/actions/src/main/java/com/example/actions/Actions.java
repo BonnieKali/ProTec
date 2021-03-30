@@ -11,7 +11,9 @@ public class Actions {
     static final String bioTestId = "ProTec.bioTest.open";
     static final String mapOpenId = "ProTec.map.open";
 
-    static final String notificationServiceId = "ProTec.service.NotificationService";
+//    static final String notificationServiceId = "ProTec.service.NotificationService";
+    static final String backgroundServiceId = "ProTec.service.BackgroundService";
+
     /**
      * Creates Intent to go to welcome screen
      *
@@ -52,14 +54,24 @@ public class Actions {
         return internalIntent(context, mapOpenId);
     }
 
+//    /**
+//     * Creates Intent for notification Service
+//     *
+//      * @param context Application context
+//     * @return Intent object
+//     */
+//    public static Intent getNotificationServiceIntent(Context context) {
+//        return internalIntent(context, notificationServiceId);
+//    }
+
     /**
-     * Creates Intent for notification Service
+     * Creates Intent for background Service
      *
-      * @param context Application context
+     * @param context Application context
      * @return Intent object
      */
-    public static Intent getNotificationServiceIntent(Context context) {
-        return internalIntent(context, notificationServiceId);
+    public static Intent geBackgroundServiceIntent(Context context) {
+        return internalIntent(context, backgroundServiceId);
     }
 
         /**

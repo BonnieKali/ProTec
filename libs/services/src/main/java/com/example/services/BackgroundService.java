@@ -1,10 +1,9 @@
-package com.example.dashboard.service;
+package com.example.services;
 
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.example.actions.Actions;
@@ -12,13 +11,9 @@ import com.example.notifications.ProTecNotificationsManager;
 import com.example.session.Session;
 import com.example.session.event.Event;
 import com.example.session.event.EventType;
-import com.example.threads.BackgroundPool;
-import com.example.threads.OnTaskCompleteCallback;
-import com.example.threads.RunnableTask;
-import com.example.threads.TaskResult;
 
-public class NotificationService extends Service {
-    private static final String TAG = "NotificationService";
+public class BackgroundService extends Service {
+    private static final String TAG = "BackgroundService";
 
     private Boolean isStarted = false;
 
@@ -26,14 +21,16 @@ public class NotificationService extends Service {
     private Session session;
     private ProTecNotificationsManager proTecNotificationsManager;
 
-    public NotificationService() { }
+
+    public BackgroundService() {
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
+//        throw new UnsupportedOperationException("Not yet implemented");
         return null;
     }
-
 
     @Override
     public void onCreate() {
@@ -49,12 +46,16 @@ public class NotificationService extends Service {
         }
     }
 
+
     /**
      * Initializes service functions and listeners.
      */
     private void initService() {
-
+        Log.d(TAG, "Service is initializing");
         // Set listener for patient events
+        if (session == null)
+            return;
+
         session.setLiveEventListener(taskResult -> {
             Event event = (Event) taskResult.getData();
 

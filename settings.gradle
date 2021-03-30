@@ -1,3 +1,4 @@
+include ':libs:services'
 include ':features:bio_test'
 include ':features:map'
 include ':libs:notifications'

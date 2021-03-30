@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.services">
+
+    <application>
+        <service
+            android:name=".BackgroundService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="ProTec.service.BackgroundService" />
+            </intent-filter>
+        </service>
+    </application>
+
+</manifest>

@@ -171,7 +171,6 @@ public class SessionHandler {
      * Saves all user data to the remote database in current thread (blocking statement).
      */
     public void syncToRemoteBlock(){
-//        remoteDB.updateUsers(userSessions);
         try {
             remoteDB.updateRemoteDBwithLocalDB(localDB);
         } catch (Exception e) {

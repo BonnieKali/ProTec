@@ -20,6 +20,7 @@
             <option value="$PROJECT_DIR$/libs" />
             <option value="$PROJECT_DIR$/libs/actions" />
             <option value="$PROJECT_DIR$/libs/notifications" />
+            <option value="$PROJECT_DIR$/libs/services" />
             <option value="$PROJECT_DIR$/libs/session" />
             <option value="$PROJECT_DIR$/libs/threads" />
             <option value="$PROJECT_DIR$/libs/ui" />

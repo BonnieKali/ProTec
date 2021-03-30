@@ -145,7 +145,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Set a listener for marker click.
         mMap.setOnMarkerClickListener(this);
         //
-        openGoogleMaps(new LatLng(55.9533, -3.1883));
+//        openGoogleMaps(new LatLng(55.9533, -3.1883));
     }
 
     @Override
