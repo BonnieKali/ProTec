@@ -1,6 +1,7 @@
 package com.example.dashboard.carer;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -82,7 +83,6 @@ public class CarerDashboardFragment extends Fragment {
         session.updateLocalDataFromRemote(callback);
     }
 
-    // -- Button Listeners -- //
     /**
      * custom on click listener
      * @param view view of the inflated view (all elements on screen)
@@ -106,8 +106,6 @@ public class CarerDashboardFragment extends Fragment {
             }
         });
     }
-    // -- -------------- -- //
-
 
     /**
      * Starts the notification service in the background

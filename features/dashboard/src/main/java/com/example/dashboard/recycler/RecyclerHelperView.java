@@ -3,6 +3,7 @@ package com.example.dashboard.recycler;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.dashboard.R;
 import com.example.session.Session;
@@ -24,7 +25,6 @@ public class RecyclerHelperView {
     private RecyclerView.LayoutManager mLayoutManager;  // sets up the list viewer
 
     ArrayList<PatientItem> patientItems;
-
     View view;
     CarerSession user;
     Session session;
@@ -128,8 +128,8 @@ public class RecyclerHelperView {
      */
     private void changeItem(int position) {
         // this seems to induce a wierd bug where the
-//        patientItems.get(position).setmText2("Ilie is super gay");
 //        mAdapter.notifyItemChanged(position);
+//        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
     }
     // ----------------------------
 
