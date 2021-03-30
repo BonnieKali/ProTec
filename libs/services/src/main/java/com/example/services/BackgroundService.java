@@ -20,7 +20,7 @@ public class BackgroundService extends Service {
     private Context context;
     private Session session;
     private ProTecNotificationsManager proTecNotificationsManager;
-
+    private FallDetectorService fallDetectorService;
 
     public BackgroundService() {
     }
@@ -78,5 +78,9 @@ public class BackgroundService extends Service {
             proTecNotificationsManager.showSmallNotification(title, msg,
                     Actions.openDashboardIntent(context));
         });
+
+        // Initialize fall detector
+        Log.i(TAG, "GETTING FALL DETECTOR SERVICE IN BACKGROUND");
+        fallDetectorService = new FallDetectorService(context);       // getting the sensor
     }
 }

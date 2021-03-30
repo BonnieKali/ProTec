@@ -52,7 +52,7 @@ public class CarerDashboardFragment extends Fragment {
 
         session = Session.getInstance();
         user = (CarerSession) session.getUser();
-        recyclerHelperView = new RecyclerHelperView(view, user);
+        recyclerHelperView = new RecyclerHelperView(view, user, context);
 
         // Say hello to user (for testing
         carerTextView = view.findViewById(R.id.carer_textView);

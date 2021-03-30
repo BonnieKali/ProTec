@@ -132,7 +132,7 @@ public class RecyclerHelperView {
         // this seems to induce a wierd bug where the
 //        patientItems.get(position).setmText2("Ilie is super gay");
 //        mAdapter.notifyItemChanged(position);
-        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(, "", Toast.LENGTH_SHORT).show();
     }
     // ----------------------------
 
