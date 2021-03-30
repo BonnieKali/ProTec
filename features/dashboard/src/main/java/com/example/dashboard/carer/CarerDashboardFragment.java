@@ -20,8 +20,14 @@ import com.example.session.Session;
 import com.example.session.user.carer.CarerSession;
 import com.example.session.user.patient.PatientSession;
 import com.example.threads.OnTaskCompleteCallback;
+import com.example.threads.TaskResult;
+import com.example.ui.ProTecAlerts;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,18 +35,13 @@ import java.util.HashSet;
 public class CarerDashboardFragment extends Fragment {
     private static final String TAG = "CarerDashboardFragment";
 
-//    private RecyclerView mRecyclerView; // shows patients
-//    private PatientAdapter mAdapter;  //deals with loading items to recyclerviewer
-//    private RecyclerView.LayoutManager mLayoutManager;  // sets up the list viewer
-//
-//    ArrayList<PatientItem> patientItems;
-
     TextView carerTextView;
 
     RecyclerHelperView recyclerHelperView;
 
     private Session session;
     private CarerSession user;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,9 +59,13 @@ public class CarerDashboardFragment extends Fragment {
 
         // Start service for notifications
         startBackgroundService();
+
         // Set Listeners for clickable items
         setOnClickListeners(view);
+
+        // Load patient list
         loadAllPatients(view);
+
         return view;
     }
 

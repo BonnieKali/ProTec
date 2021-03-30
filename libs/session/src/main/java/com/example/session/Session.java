@@ -11,7 +11,10 @@ import com.example.session.remote.RemoteDB;
 import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
 import com.example.session.user.patient.PatientSession;
+import com.example.threads.BackgroundPool;
 import com.example.threads.OnTaskCompleteCallback;
+import com.example.threads.RunnableTask;
+import com.example.threads.TaskResult;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -107,6 +110,24 @@ public class Session {
         sessionHandler.updateLocalDataFromRemote(uiCallback);
     }
 
+    /**
+     * Updates the value of the input settings key for the specified user.
+     *
+     * @param uid Unique user id
+     * @param settingKey Settings key to update
+     * @param settingValue New key value. This can be:
+     *                      <ul>
+     *                      <li>Boolean
+     *                      <li>Long
+     *                      <li>Double
+     *                      <li>String
+     *                      <li>Map&lt;String, Object&gt;
+     *                      <li>List&lt;Object&gt;
+     *                      </ul>
+     */
+    public void setPatientSetting(String uid, String settingKey, Object settingValue){
+        sessionHandler.setPatientSetting(uid, settingKey, settingValue);
+    }
 
     // -- retrieve data
 
@@ -120,6 +141,17 @@ public class Session {
 
     public HashMap<String, UserInfo.UserType> retrieveUserIdTypeMap(){
         return sessionHandler.retrieveUserIdTypeMap();
+    }
+
+    /**
+     * Retrieves all patient settings for a given patient and calls ui Callback with TaskResult
+     * (HashMap(setting_id -> setting_object))
+     *
+     * @param uid Patient unique id
+     * @param uiCallback callback executed on UI thread
+     */
+    public void getPatientSettings(String uid, OnTaskCompleteCallback uiCallback){
+        sessionHandler.getPatientSettings(uid, uiCallback);
     }
 
     // ------------

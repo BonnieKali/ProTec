@@ -97,32 +97,11 @@ public class RemoteDB {
      * @return
      */
     public HashMap<String, PatientSession> getAllPatients(){
-        String result = "";
         HashMap<String, PatientSession> patientIDSessionMap = new HashMap<>();
-        try {
-            Task<DataSnapshot> task;
-            task = dRef.child(PATIENTS).get();
-            Tasks.await(task);
-            if (task.isSuccessful()) {
-                Log.d(TAG, "getAllPatients: Success");
+        String result = getNode(dRef.child(PATIENTS));
 
-                if(task.getResult() != null){
-                    result = String.valueOf(task.getResult().getValue());
-                }else{
-                    Log.w(TAG, "getAllPatients: Result is null");
-                }
-            }
-            else {
-                Log.e("firebase", "Error getting data", task.getException());
-            }
-        } catch (ExecutionException e) {
-            Log.w(TAG, "getAllPatients: Failure", e);
-        } catch (InterruptedException e) {
-            Log.w(TAG, "getAllPatients: Failure", e);
-        }
         if (result.equals("")) {
             Log.w(TAG,"Result is nothing");
-            return patientIDSessionMap;
         }else{
             Gson gson = new Gson();
             Log.d(TAG,"Parsing result");
@@ -131,11 +110,11 @@ public class RemoteDB {
                 }.getType());
             }catch(Exception exception){
                 Log.e(TAG, "Exception " + exception);
-                }
+            }
                 Log.d(TAG,"Finished parsing");
             Log.d(TAG,"patientIDSessionMap: " + patientIDSessionMap);
-            return patientIDSessionMap;
         }
+        return patientIDSessionMap;
     }
 
     /**
@@ -143,37 +122,19 @@ public class RemoteDB {
      * @return
      */
     public HashMap<String, UserInfo.UserType> getAllUsers(){
-        String result = "";
         HashMap<String, UserInfo.UserType> userId_Type = new HashMap<>();
-        try {
-            Task<DataSnapshot> task;
-            task = dRef.child(USERS).get();
-            Tasks.await(task);
-            if (task.isSuccessful()) {
-                Log.d(TAG, "getAllUsers: Success");
-    
-                if(task.getResult() != null){
-                    result = String.valueOf(task.getResult().getValue());
-                    Log.d(TAG, "getAllUsers: Result is "+ result);
-                }else{
-                    Log.w(TAG, "getAllUsers: Result is null");
-                }
+        String result = getNode(dRef.child(USERS));
+
+        if (!result.equals("")) {
+            try{
+                userId_Type = new Gson().fromJson(result,
+                        new TypeToken<HashMap<String, UserInfo.UserType>>() {}.getType());
+                Log.d(TAG, "userId_Type Map: " + userId_Type.values());
+            }catch(Exception exception) {
+                Log.e(TAG, "Exception " + exception);
             }
-            else {
-                Log.e("firebase", "Error getting data", task.getException());
-            }
-        } catch (ExecutionException e) {
-            Log.w(TAG, "getAllUsers: Failure", e);
-        } catch (InterruptedException e) {
-            Log.w(TAG, "getAllUsers: Failure", e);
         }
-        if (result.equals("")) {
-            return userId_Type;
-        }else{
-            userId_Type = new Gson().fromJson(result, new TypeToken<HashMap<String, UserInfo.UserType>>(){}.getType());
-            Log.d(TAG,"userId_Type Map: " + userId_Type.values());
-            return userId_Type;
-        }
+        return userId_Type;
     }
 
 
@@ -187,45 +148,28 @@ public class RemoteDB {
      */
     public UserSession getUser(String uid){
         UserInfo.UserType userType = getUserType(uid);
+
         String result = "";
+        Gson gson = new Gson();
 
-        try {
-            Task<DataSnapshot> task;
-            if (userType == UserInfo.UserType.CARER){
-                task = dRef.child(CARERS).child(uid).get();
-            }else{
-                task = dRef.child(PATIENTS).child(uid).get();
-            }
-            Tasks.await(task);
-
-            if (task.isSuccessful()) {
-                Log.d(TAG, "getUser: Success");
-
-                if(task.getResult() != null){
-                    result = String.valueOf(task.getResult().getValue());
-                    Log.d(TAG, "getUser: Result is "+result);
-                }else{
-                    Log.w(TAG, "getUser: Result is null");
-                }
-            }
-            else {
-                Log.e("firebase", "Error getting data", task.getException());
-            }
-        } catch (ExecutionException e) {
-            Log.w(TAG, "getUser: Failure", e);
-        } catch (InterruptedException e) {
-            Log.w(TAG, "getUser: Failure", e);
+        if (userType == UserInfo.UserType.CARER){
+            result = getNode(dRef.child(CARERS).child(uid));
+        }else{
+            result = getNode(dRef.child(PATIENTS).child(uid));
         }
 
         if (result.equals("")){
             return null;
         } else {
-            Gson gson = new Gson();
-
-            if (userType == UserInfo.UserType.CARER){
-                return gson.fromJson(result, CarerSession.class);
-            }else{
-                return gson.fromJson(result, PatientSession.class);
+            try{
+                if (userType == UserInfo.UserType.CARER){
+                    return gson.fromJson(result, CarerSession.class);
+                }else{
+                    return gson.fromJson(result, PatientSession.class);
+                }
+            }catch(Exception exception){
+                Log.e(TAG, "Exception " + exception);
+                return null;
             }
         }
     }
@@ -238,30 +182,7 @@ public class RemoteDB {
      * @return object of UserType enum
      */
     private UserInfo.UserType getUserType(String uid){
-        String result = "";
-
-        try {
-            Task<DataSnapshot> task = dRef.child(USERS).child(uid).get();
-            Tasks.await(task);
-
-            if (task.isSuccessful()) {
-                Log.d(TAG, "getUserType: Success");
-
-                if(task.getResult() != null){
-                    result = String.valueOf(task.getResult().getValue());
-                    Log.d(TAG, "getUserType: Result is "+result);
-                }else{
-                    Log.w(TAG, "getUserType: Result is null");
-                }
-            }
-            else {
-                Log.e("firebase", "Error getting data", task.getException());
-            }
-        } catch (ExecutionException e) {
-            Log.w(TAG, "getUserType: Failure", e);
-        } catch (InterruptedException e) {
-            Log.w(TAG, "getUserType: Failure", e);
-        }
+        String result = getNode(dRef.child(USERS).child(uid));
 
         if (result.equals("")){
             return null;
@@ -348,6 +269,45 @@ public class RemoteDB {
     }
 
 
+
+    //------------------|
+    // PATIENT SETTINGS |
+    //------------------|
+
+    /**
+     * Retrieves all Settings entries for the specified patient.
+     *
+     * Returns a hashmap containing he settingKey -> settingValue. This is a blocking statement.
+     *
+     * @param uid Unique patient id
+     * @return Map (setting_key -> setting_value)
+     */
+    public Map<String, Object> getPatientSettings(String uid){
+        String result = getNode(dRef.child(PATIENT_SETTINGS).child(uid));
+        Map<String, Object> ret = new HashMap<>();
+        Gson gson = new Gson();
+
+        Log.d(TAG,"getPatientSettings: returned: "+ result);
+
+        if (!result.equals("")) {
+            try {
+                ret = gson.fromJson(result, new TypeToken<HashMap<String, Object>>() {
+                }.getType());
+            } catch (Exception exception) {
+                Log.e(TAG, "Exception " + exception);
+            }
+        }
+        return ret;
+    }
+
+    public void setPatientSetting(String uid, String settingKey, Object settingValue){
+        Log.d(TAG, "SetPatientSetting is called with: " + uid + " " + settingKey + " " +
+                settingValue.toString());
+        dRef.child(PATIENT_SETTINGS).child(uid).child(settingKey).setValue(settingValue);
+    }
+
+
+
     //-----------|
     // UTILITIES |
     //-----------|
@@ -363,6 +323,42 @@ public class RemoteDB {
         String userSessionString = json.toJson(object, object.getClass());
         return json.fromJson(userSessionString,
                 new TypeToken<HashMap<String, Object>>() {}.getType());
+    }
+
+
+    /**
+     * Retrieves database reference as json string
+     *
+     * @param ref DatabaseReference
+     * @return String data
+     */
+    private String getNode(DatabaseReference ref){
+        String result = "";
+
+        try {
+            Task<DataSnapshot> task = ref.get();
+            Tasks.await(task);
+
+            if (task.isSuccessful()) {
+                Log.d(TAG, "getNode: Success");
+
+                if(task.getResult() != null){
+                    result = String.valueOf(task.getResult().getValue());
+                    Log.d(TAG, "getNode: Result is "+result);
+                }else{
+                    Log.w(TAG, "getNode: Result is null");
+                }
+            }
+            else {
+                Log.e("firebase", "Error getting data", task.getException());
+            }
+        } catch (ExecutionException e) {
+            Log.w(TAG, "getNode: Failure", e);
+        } catch (InterruptedException e) {
+            Log.w(TAG, "getNode: Failure", e);
+        }
+
+        return result;
     }
 
 }

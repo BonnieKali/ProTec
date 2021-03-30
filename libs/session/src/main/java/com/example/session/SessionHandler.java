@@ -99,6 +99,17 @@ public class SessionHandler {
         localDB.updateAllPatientSessions(allUserTypes, allPatientSessions);
     }
 
+    /**
+     * Updates the value of the input settings key for the specified user
+     *
+     * @param uid Unique user id
+     * @param settingKey Settings key to update
+     * @param settingValue New key value
+     */
+    public void setPatientSetting(String uid, String settingKey, Object settingValue){
+        remoteDB.setPatientSetting(uid, settingKey, settingValue);
+    }
+
 
      // -- retrieve data
 
@@ -112,6 +123,21 @@ public class SessionHandler {
 
     public HashMap<String, UserInfo.UserType> retrieveUserIdTypeMap(){
         return localDB.retrieveUserIdTypeMap();
+    }
+
+    /**
+     * Retrieves all patient settings for a given patient and calls ui Callback with TaskResult
+     * (HashMap(setting_id -> setting_object))
+     *
+     * @param uid Patient unique id
+     * @param uiCallback callback executed on UI thread
+     */
+    public void getPatientSettings(String uid, OnTaskCompleteCallback uiCallback){
+        RunnableTask task = () -> {
+            Map<String, Object> res = remoteDB.getPatientSettings(uid);
+            return new TaskResult<>(res);
+        };
+        BackgroundPool.attachTask(task, uiCallback);
     }
 
     // ------------
