@@ -53,20 +53,33 @@ public class SessionHandler {
         remoteDB = new RemoteDB();
 
         userSession = UserSessionBuilder.fromLocal(localDB);
-        // TODO Update userSessions to localDB
-//        userSessions = new HashSet<>();
-        // TODO Is this needed in order for current user to get saved to remoteDB?
-//        userSessions.add(userSession);
     }
+
+
 
     //-------------|
     // Data access |
     //-------------|
 
-    public void addPatientModified(PatientSession patientState) {
-        BackgroundPool.attachProcess(() -> localDB.addPatientModified(patientState));
-//        userSessions.add(patientState);
-//        BackgroundPool.attachProcess(() -> localDB.saveUserSession(patientState));
+    /**
+     * Updates the local data from remote with blocking
+     */
+    public void updateLocalDataFromRemote(){
+        updateLocalData();
+    }
+
+    /**
+     * Updates the local Data with remote Database data and calls uiCallback
+     * @param uiCallback
+     */
+    public void updateLocalDataFromRemote(OnTaskCompleteCallback uiCallback){
+        // Log out user in background thread
+        RunnableTask task = () -> {
+            // Save any unsaved changes to remote database
+            updateLocalData();
+            return new TaskResult<>(false);
+        };
+        BackgroundPool.attachTask(task, uiCallback);
     }
 
     /**
@@ -86,31 +99,8 @@ public class SessionHandler {
         localDB.updateAllPatientSessions(allUserTypes, allPatientSessions);
     }
 
-    /**
-     * Updates the local Data with remote Database data and calls uiCallback
-     * @param uiCallback
-     */
-    public void updateLocalDataFromRemote(OnTaskCompleteCallback uiCallback){
-        // Log out user in background thread
-        RunnableTask task = () -> {
-            // Save any unsaved changes to remote database
-            updateLocalData();
-            return new TaskResult<>(false);
-        };
-        BackgroundPool.attachTask(task, uiCallback);
-    }
-
-    /**
-     * Updates the local data from remote with blocking
-     */
-    public void updateLocalDataFromRemote(){
-        updateLocalData();
-    }
 
      // -- retrieve data
-    public HashSet<PatientSession> retrieveModifiedPatientSessions() {
-        return localDB.retrieveModifiedPatientSessions();
-    }
 
     public HashSet<PatientSession> retrieveAllPatientSessions() {
         return localDB.retrieveAllPatientSessions();
@@ -123,14 +113,10 @@ public class SessionHandler {
     public HashMap<String, UserInfo.UserType> retrieveUserIdTypeMap(){
         return localDB.retrieveUserIdTypeMap();
     }
-    public boolean removePatientFromCarer(PatientSession patientSession) {
-        return localDB.removePatientFromCarer(patientSession);
-    }
-    public boolean addPatientFromCarer(PatientSession patientSession) {
-        return localDB.addPatientFromCarer(patientSession);
-    }
 
     // ------------
+
+
 
     //-----------------------|
     // State synchronization |
@@ -156,26 +142,12 @@ public class SessionHandler {
      */
     public void syncToRemote() {
         BackgroundPool.attachProcess(() -> remoteDB.updateUser(userSession.getUID(), userSession));
-
-        BackgroundPool.attachProcess(() -> {
-            try {
-                remoteDB.updateRemoteDBwithLocalDB(localDB);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
     }
 
     /**
      * Saves all user data to the remote database in current thread (blocking statement).
      */
     public void syncToRemoteBlock(){
-        try {
-            remoteDB.updateRemoteDBwithLocalDB(localDB);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         remoteDB.updateUser(userSession.getUID(), userSession);
     }
 

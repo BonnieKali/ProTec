@@ -45,7 +45,7 @@ public class RemoteDB {
     private static final String CARERS = "carers";
     private static final String LIVE_EVENTS = "live_events";
     private static final String PAST_EVENTS = "past_events";
-    private static final String RELATIONSHIPS = "relationships";
+    private static final String PATIENT_SETTINGS = "patient_settings";
 
     // Database reference
     private FirebaseDatabase database;
@@ -92,35 +92,6 @@ public class RemoteDB {
     }
 
     /**
-     * Updates the information and data stored in the remote Database with the
-     * modified data in the local live data
-     *
-     * @param localDB
-     */
-    public void updateRemoteDBwithLocalDB(LocalDB localDB) throws Exception {
-        HashSet<PatientSession> modifiedPatients = localDB.retrieveModifiedPatientSessions();
-        // Turn modified object into a JSON Map
-        for (PatientSession modified_patient : modifiedPatients) {
-            Log.d(TAG, "Updating modified patient " + modified_patient.userInfo.getUserName());
-            Map<String, Object> jsonModifiedPatientsMap = mapObject(modified_patient);
-            String uid = modified_patient.getUID();
-            // Overwrite the previous UserType entry assigned to this UID
-            dRef.child(USERS).child(uid).setValue(modified_patient.getType().toString());
-
-            // Send the JSON data to the corresponding database table
-            if (modified_patient.getType() == UserInfo.UserType.CARER) {
-                // should not be a ptient
-                throw new Exception("Carer was found in modified patient sessions");
-//                Log.d(TAG, "updateUser: Updating Carer account");
-//                dRef.child(CARERS).child(uid).updateChildren(jsonModifiedPatientsMap);
-            } else {
-                Log.d(TAG, "updateUser: Updated modified Patient account " + modified_patient.userInfo.getUserName());
-                dRef.child(PATIENTS).child(uid).updateChildren(jsonModifiedPatientsMap);
-            }
-        }
-    }
-
-    /**
      * Returns a HashMap<Patient ID, Patient Session> of all the patients in the remoteDB
      *
      * @return
@@ -137,7 +108,6 @@ public class RemoteDB {
 
                 if(task.getResult() != null){
                     result = String.valueOf(task.getResult().getValue());
-//                    Log.d(TAG, "getAllPatients:");
                 }else{
                     Log.w(TAG, "getAllPatients: Result is null");
                 }
@@ -165,31 +135,6 @@ public class RemoteDB {
                 Log.d(TAG,"Finished parsing");
             Log.d(TAG,"patientIDSessionMap: " + patientIDSessionMap);
             return patientIDSessionMap;
-        }
-    }
-
-    /**
-     * Updates a list of users to the remote database
-     * @param userSessions
-     */
-    public void updateUsers(HashSet<UserSession> userSessions){
-        Log.d(TAG,"Updating users: " + userSessions.toString());
-        for (UserSession userSession:userSessions) {
-            String uid = userSession.getUID();
-            // Turn userSession object into a JSON Map
-            Map<String, Object> jsonMap = mapObject(userSession);
-
-            // Overwrite the previous UserType entry assigned to this UID
-            dRef.child(USERS).child(uid).setValue(userSession.getType().toString());
-
-            // Send the JSON data to the corresponding database table
-            if (userSession.getType() == UserInfo.UserType.CARER) {
-                Log.d(TAG, "updateUser: Updating Carer account");
-                dRef.child(CARERS).child(uid).updateChildren(jsonMap);
-            } else {
-                Log.d(TAG, "updateUser: Updated Patient account");
-                dRef.child(PATIENTS).child(uid).updateChildren(jsonMap);
-            }
         }
     }
 
@@ -418,60 +363,6 @@ public class RemoteDB {
         String userSessionString = json.toJson(object, object.getClass());
         return json.fromJson(userSessionString,
                 new TypeToken<HashMap<String, Object>>() {}.getType());
-    }
-
-
-    /**
-     *  Retrieves data at requested node reference
-     *
-     * @param ref DatabaseReference object
-     * @return
-     */
-    private String getNode(DatabaseReference ref){
-        String result = "";
-
-        try {
-            Task<DataSnapshot> task = ref.get();
-            Tasks.await(task);
-
-            if (task.isSuccessful()) {
-                Log.d(TAG, "getNode Success: "+ref.toString());
-
-                if(task.getResult() != null){
-                    result = String.valueOf(task.getResult().getValue());
-                    Log.d(TAG, "getNode: Result is "+result);
-                }else{
-                    Log.w(TAG, "getNode: Result is null");
-                }
-            }
-            else {
-                Log.e("firebase", "Error getting data", task.getException());
-            }
-        } catch (ExecutionException e) {
-            Log.w(TAG, "getNode: Failure", e);
-        } catch (InterruptedException e) {
-            Log.w(TAG, "getNode: Failure", e);
-        }
-
-        return result;
-    }
-
-
-
-    //-------------------|
-    // Custom Exceptions |
-    //-------------------|
-
-    public static class UserNotFoundException extends Exception{
-        public UserNotFoundException(String msg){
-            super(msg);
-        }
-    }
-
-    public static class WrongUserTypeException extends Exception {
-        public WrongUserTypeException(String msg) {
-            super(msg);
-        }
     }
 
 }

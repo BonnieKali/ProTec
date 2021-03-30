@@ -92,7 +92,7 @@ public class RecyclerHelperView {
 //        Toast.makeText(getContext(),"Patient Removed",Toast.LENGTH_SHORT).show();
         mAdapter.notifyItemChanged(position);   // this calls PatientAdapter.onBindViewHolder
         session.saveState();    // saves carers sate
-        session.savePatientState(patientSession); // saves patientState
+//        session.savePatientState(patientSession); // saves patientState
     }
 
     /**
@@ -118,7 +118,7 @@ public class RecyclerHelperView {
 //        Toast.makeText(getContext(), "Patient Added", Toast.LENGTH_SHORT).show();
         mAdapter.notifyItemChanged(position); // this calls PatientAdapter.onBindViewHolder
         session.saveState();
-        session.savePatientState(patientSession);
+//        session.savePatientState(patientSession);
     }
 
     /**
