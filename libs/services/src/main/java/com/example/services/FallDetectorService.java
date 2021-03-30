@@ -414,7 +414,7 @@ public class FallDetectorService implements SensorEventListener {
                 // Notify that fall took palce
 //                Toast.makeText(context, "Sensed Danger! Sending SMS", Toast.LENGTH_SHORT).show();
                 Log.i(TAG_FALL_DETECTOR,"PERSON FELL");
-                Session.getInstance().generateLiveEvent(EventType.FELL);
+//                Session.getInstance().generateLiveEvent(EventType.FELL);
             } else {
                 // No fall took place
 //                Toast.makeText(context, "Sudden Movement! But looks safe", Toast.LENGTH_SHORT).show();
