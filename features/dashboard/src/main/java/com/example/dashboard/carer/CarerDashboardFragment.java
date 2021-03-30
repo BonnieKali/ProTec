@@ -1,6 +1,7 @@
 package com.example.dashboard.carer;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -47,6 +48,7 @@ public class CarerDashboardFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_carer_dashboard, container, false);
+        Context context = getContext();
 
         session = Session.getInstance();
         user = (CarerSession) session.getUser();
@@ -77,7 +79,6 @@ public class CarerDashboardFragment extends Fragment {
         session.updateLocalDataFromRemote(callback);
     }
 
-    // -- Button Listeners -- //
     /**
      * custom on click listener
      * @param view view of the inflated view (all elements on screen)
@@ -101,8 +102,6 @@ public class CarerDashboardFragment extends Fragment {
             }
         });
     }
-    // -- -------------- -- //
-
 
     /**
      * Starts the notification service in the background
