@@ -1,8 +1,11 @@
 package com.example.session.user.patient;
 
+import android.annotation.SuppressLint;
+
 import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
 
+@SuppressLint("ParcelCreator")
 public class PatientSession extends UserSession {
 
     public PatientData patientData;

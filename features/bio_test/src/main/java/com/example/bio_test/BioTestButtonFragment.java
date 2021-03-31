@@ -327,13 +327,3 @@ public class BioTestButtonFragment extends  Fragment {
     }
 
 }
-
-
-// -------- Session stuff ---
-//            String user_name = patientSession.userInfo.getUserName();
-//            int past_value = patientSession.patientData.biomarkerData.get_buttonPressCounter();
-//            if (past_value%20==0){          // spawn an events
-//                session.generateLiveEvent(EventType.FELL);
-//            }
-//            past_value += 1;
-//            patientSession.patientData.biomarkerData.updateCounter(past_value);
