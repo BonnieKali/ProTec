@@ -298,6 +298,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void update(Observable observable, Object o) {
+        Log.d(TAG,"MapActivity Update called");
         getDirectionsToGeofence(o);
     }
 

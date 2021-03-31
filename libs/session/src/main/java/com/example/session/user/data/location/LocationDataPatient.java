@@ -22,14 +22,17 @@ public class LocationDataPatient extends LocationData{
 
     private HashMap<String,SimpleGeofence> geofences;
     private List<myLocation> locations;
+    private myLocation lastKnownLocation;
 
-    public LocationDataPatient(HashMap<String, SimpleGeofence> geofences, List<myLocation> locations){
+    public LocationDataPatient(HashMap<String, SimpleGeofence> geofences, List<myLocation> locations, myLocation lastKnownLocation){
         this.geofences = geofences;
         this.locations = locations;
+        this.lastKnownLocation = lastKnownLocation;
     }
     public LocationDataPatient(){
         this.geofences = new HashMap<String, SimpleGeofence>();
         this.locations = new ArrayList<myLocation>();
+        lastKnownLocation = null;
     }
 
     public void addSimpleGeofence(SimpleGeofence geofence){
@@ -37,17 +40,12 @@ public class LocationDataPatient extends LocationData{
         geofences.put(geofence.getID(), geofence);
     }
 
-    public boolean addLocation(Location location){
+    public void addLocation(Location location){
         myLocation my_location = new myLocation(location);
         // check if we should update local database
         Session.getInstance().syncToRemote();
-        return locations.add(my_location);
-    }
-
-    public static LocationDataPatient createDummy(){
-        HashMap<String, SimpleGeofence> geofences = new HashMap<>();
-        List<myLocation> locations = new ArrayList<myLocation>();
-        return new LocationDataPatient(geofences, locations);
+        lastKnownLocation = my_location;
+        return;
     }
 
     public SimpleGeofence getAGeofence(){
