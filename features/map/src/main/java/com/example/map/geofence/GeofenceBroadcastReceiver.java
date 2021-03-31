@@ -7,6 +7,7 @@ import android.location.Location;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.map.ObservableObject;
 import com.example.map.R;
 import com.example.session.Session;
 import com.example.session.event.EventType;
@@ -58,11 +59,14 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         Log.d(TAG, "Location: " + location);
         Log.d(TAG, "Transition Type: " + transitionType);
 
+        ObservableObject.getInstance().updateValue(transitionType);
+
         switch (transitionType) {
             case Geofence.GEOFENCE_TRANSITION_ENTER:
                 Log.d(TAG, "GEOFENCE_TRANSITION_ENTER" + transitionType);
                 Toast.makeText(context, "GEOFENCE_TRANSITION_ENTER toast", Toast.LENGTH_SHORT).show();
                 Session.getInstance().generateLiveEvent(EventType.ENTER_HOUSE);
+
 //                notificationHelper.sendHighPriorityNotification("GEOFENCE_TRANSITION_ENTER", "", MapsActivity.class);
                 break;
 //            case Geofence.GEOFENCE_TRANSITION_DWELL:
@@ -78,4 +82,5 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
                 break;
         }
     }
+
 }

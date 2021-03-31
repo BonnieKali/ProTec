@@ -31,8 +31,6 @@ public class LocationDataPatient extends LocationData{
         this.locations = new ArrayList<myLocation>();
     }
 
-
-
     public void addSimpleGeofence(SimpleGeofence geofence){
         Log.d(TAG,"Adding simple geofence: " + geofence);
         geofences.put(geofence.getID(), geofence);
@@ -47,6 +45,10 @@ public class LocationDataPatient extends LocationData{
         HashMap<String, SimpleGeofence> geofences = new HashMap<>();
         List<myLocation> locations = new ArrayList<myLocation>();
         return new LocationDataPatient(geofences, locations);
+    }
+
+    public SimpleGeofence getAGeofence(){
+        return (SimpleGeofence) geofences.values().toArray()[0];
     }
 
     // -- Getters -- //

@@ -34,6 +34,11 @@ public class DirectionHelper {
         return url;
     }
 
+    /**
+     * Get the googleMaps request Intent
+     * @param destination
+     * @return
+     */
     public static Intent getGoogleMapsRequestIntent(LatLng destination){
         String dest = String.format("%f,%f",destination.latitude, destination.longitude);
         String mode = "w";
