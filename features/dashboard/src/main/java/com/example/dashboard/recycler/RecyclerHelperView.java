@@ -80,19 +80,10 @@ public class RecyclerHelperView {
         PatientItem patient =  patientItems.get(position);
         PatientSession patientSession = patient.getSession();
 
-        patientSession.patientData.relationship.removeCarer(user.getUID());
         user.carerData.removePatient(patientSession);
 
-        HashSet<PatientSession> patientSessions = session.retrieveAllPatientSessions();
-        Log.d("debug","All patient sessions loaded after removing patient: " + patientSessions);
-
-        Log.d(TAG, "Patient after being removed: " + patientSession.patientData);
-        Log.d(TAG, "carer after removing Patient: " + user.carerData);
-
-//        Toast.makeText(getContext(),"Patient Removed",Toast.LENGTH_SHORT).show();
         mAdapter.notifyItemChanged(position);   // this calls PatientAdapter.onBindViewHolder
         session.saveState();    // saves carers sate
-//        session.savePatientState(patientSession); // saves patientState
     }
 
     /**
@@ -105,20 +96,9 @@ public class RecyclerHelperView {
         PatientItem patient =  patientItems.get(position);
         PatientSession patientSession = patient.getSession();
 
-        // TODO make a session method that updates both of these instead of manually doing it
-        patientSession.patientData.relationship.addCarer(user.getUID());
         user.carerData.addPatient(patientSession);
-
-        HashSet<PatientSession> patientSessions = session.retrieveAllPatientSessions();
-        Log.d("debug","All patient sessions loaded after adding patient: " + patientSessions);
-
-        Log.d(TAG, "Patient after being added: " + patientSession.patientData);
-        Log.d(TAG, "carer after adding Patient: " + user.carerData);
-
-//        Toast.makeText(getContext(), "Patient Added", Toast.LENGTH_SHORT).show();
         mAdapter.notifyItemChanged(position); // this calls PatientAdapter.onBindViewHolder
         session.saveState();
-//        session.savePatientState(patientSession);
     }
 
     /**

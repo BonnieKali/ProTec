@@ -141,20 +141,14 @@ public class GeoFenceHelper extends ContextWrapper {
             showGeofences(patient, mMap);
             // Get the carers geofences which are those of their patients
         }else if (user.getType() == UserInfo.UserType.CARER){
-            String patient_id_of_carer = "NdSBSeOx47TC9cGRKFe35tsXBU83";
-            HashSet<String> patient_ids = ((CarerSession) user).carerData.relationship.getPatientIDs();
-            Log.d(TAG,"Patient Ids assigned to carer: " + patient_ids);
-
             // background process to get patients from carers
             RunnableTask get_patients = () ->
-                    new TaskResult<HashSet>(getPatientsForCarer(user));
+                    new TaskResult<HashSet>(getPatientsForCarer((CarerSession) user));
 
             // method called when get_patients has completeds
             OnTaskCompleteCallback callback = taskResult -> {
                 showGeofences((HashSet<PatientSession>) taskResult.getData(), mMap);
             };
-
-
             // run the task
             BackgroundPool.attachTask(get_patients, callback);
         }
@@ -166,9 +160,9 @@ public class GeoFenceHelper extends ContextWrapper {
      * @param user
      * @return
      */
-    private static HashSet<PatientSession> getPatientsForCarer(UserSession user) {
+    private static HashSet<PatientSession> getPatientsForCarer(CarerSession user) {
         Log.d(TAG,"Getting patients for carer: " + user.userInfo.getUserName());
-        HashSet<PatientSession> patients = Session.getInstance().retrieveCarerPatientSessions();
+        HashSet<PatientSession> patients = user.carerData.getAssignedPatientSessions();
         return patients;
     }
 

@@ -163,32 +163,5 @@ public class LocalDB {
     public HashMap<String, UserInfo.UserType> retrieveUserIdTypeMap(){
         return LocalLiveData.retrieveUserIdMap();
     }
-
-    /**
-     * Adds a patientSession object to the modified hashset to act as a flag when pushing to remote
-     * database
-     *
-     * @param patientSession
-     * @return Boolean operation succeeded
-     */
-    public Boolean addPatientModified(PatientSession patientSession){
-        return LocalLiveData.addModifiedPatient(patientSession);
-    }
-
-    public HashSet<PatientSession> retrieveModifiedPatientSessions(){
-        return LocalLiveData.retrieveModifiedPatients();
-    }
-
-    public HashSet<PatientSession> retrieveCarerPatientSessions(){
-        return LocalLiveData.retrieveCarerPatientSessions();
-    }
-
-    public boolean removePatientFromCarer(PatientSession patientSession) {
-        return LocalLiveData.removePatientFromCarer(patientSession);
-    }
-
-    public boolean addPatientFromCarer(PatientSession patientSession) {
-        return LocalLiveData.addPatientFromCarer(patientSession);
-    }
     // -----------------------
 }

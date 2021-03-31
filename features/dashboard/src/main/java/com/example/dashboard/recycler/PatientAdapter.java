@@ -134,7 +134,7 @@ public class PatientAdapter extends RecyclerView.Adapter<PatientAdapter.PatientV
     private void setUpPatient(PatientItem currentItem, PatientViewHolder holder){
         // set background colour along with removing btns to add and remove
         CarerSession user = (CarerSession) Session.getInstance().getUser(); // we know carer is loading this
-        if (currentItem.isBelongToCarer(user.getUID())){
+        if (currentItem.isBelongToCarer(user)){
             holder.cardBackground.setBackgroundColor(context.getResources().getColor(R.color.light_green));
             holder.mPatientAddImage.setVisibility(View.INVISIBLE);
             holder.mPatientRemoveImage.setVisibility(View.VISIBLE);

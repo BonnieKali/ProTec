@@ -137,10 +137,6 @@ public class Session {
         return sessionHandler.retrieveAllPatientSessions();
     }
 
-    public HashSet<PatientSession> retrieveCarerPatientSessions(){
-        return sessionHandler.retrieveCarerPatientSessions();
-    }
-
     public HashMap<String, UserInfo.UserType> retrieveUserIdTypeMap(){
         return sessionHandler.retrieveUserIdTypeMap();
     }

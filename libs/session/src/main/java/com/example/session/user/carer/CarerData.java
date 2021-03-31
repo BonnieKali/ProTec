@@ -43,8 +43,8 @@ public class CarerData extends UserData {
         return relationship.addPatient(patientSession.getUID());
     }
 
-    public HashSet<PatientSession> getAssignedPatients(){
-        return Session.getInstance().retrieveCarerPatientSessions();
+    public HashSet<String> getAssignedPatients(){
+        return relationship.getPatientIDs();
     }
 
     /**
@@ -54,6 +54,18 @@ public class CarerData extends UserData {
      */
     public boolean isAssignedPatient(String ID){
         return relationship.getPatientIDs().contains(ID);
+    }
+
+    public HashSet<PatientSession> getAssignedPatientSessions(){
+        HashSet<String> patientIDs = getAssignedPatients();
+        HashSet<PatientSession> allPatientSessions = Session.getInstance().retrieveAllPatientSessions();
+        HashSet<PatientSession> patientSessions = new HashSet<>();
+        for (PatientSession patient : allPatientSessions){
+            if (patientIDs.contains(patient.getUID())){
+                patientSessions.add(patient);
+            }
+        }
+        return patientSessions;
     }
 
     @Override

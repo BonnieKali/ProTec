@@ -47,16 +47,11 @@ public class PatientItem {
     }
 
     /**
-     * Checks if a patient belongs to a carer by checking the carerIDs assigned to the patient using
-     * a given carerID
-     * @param ID: carers ID
+     * Checks if a patient belongs to a carer by checking if the patientID is in the carers patients list
      * @return
      */
-    public boolean isBelongToCarer(String ID) {
-        Log.d("debug","Checking patientItem to see if carer ID belongs in it: " + ID);
-        Log.d("debug","patienttems session carer ids: " + session.patientData.relationship);
-        //TODO check the localLiveData for this instead of here
-        return session.patientData.isAssignedCarer(ID);
+    public boolean isBelongToCarer(CarerSession carer) {
+        return carer.carerData.isAssignedPatient(this.ID);
     }
 
     public String getID() {

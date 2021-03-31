@@ -119,10 +119,6 @@ public class SessionHandler {
         return localDB.retrieveAllPatientSessions();
     }
 
-    public HashSet<PatientSession> retrieveCarerPatientSessions(){
-        return localDB.retrieveCarerPatientSessions();
-    }
-
     public HashMap<String, UserInfo.UserType> retrieveUserIdTypeMap(){
         return localDB.retrieveUserIdTypeMap();
     }

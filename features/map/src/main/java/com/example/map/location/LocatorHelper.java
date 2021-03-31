@@ -51,7 +51,7 @@ public class LocatorHelper {
 
             // background process to get patients from carers
             RunnableTask get_patients = () ->
-                    new TaskResult<HashSet>(getPatientsForCarer(user));
+                    new TaskResult<HashSet>(getPatientsForCarer((CarerSession) user));
 
             // method called when get_patients has completeds
             OnTaskCompleteCallback callback = taskResult -> {
@@ -69,9 +69,9 @@ public class LocatorHelper {
      * @param user
      * @return
      */
-    private static HashSet<PatientSession> getPatientsForCarer(UserSession user) {
+    private static HashSet<PatientSession> getPatientsForCarer(CarerSession user) {
         Log.d(TAG,"Getting patients for carer: " + user.userInfo.getUserName());
-        HashSet<PatientSession> patients = Session.getInstance().retrieveCarerPatientSessions();
+        HashSet<PatientSession> patients = user.carerData.getAssignedPatientSessions();
         return patients;
     }
 
