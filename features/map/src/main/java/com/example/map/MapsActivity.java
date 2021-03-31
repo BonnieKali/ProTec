@@ -75,9 +75,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d(TAG, "Inside maps activity");
 
         geofencingClient = LocationServices.getGeofencingClient(this);
-        locator = new Locator(this);
+        locator = Locator.getInstance();
         initialiseUser();
-        ObservableObject.getInstance().addObserver(this);   // this is used so the geofence broadcast reciever can act on this activity
+//        ObservableObject.getInstance().addObserver(this);   // this is used so the geofence broadcast reciever can act on this activity
+
     }
 
     /**
@@ -86,7 +87,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     private void startLocating(){
         if (checkGeofencePermissions()){
-            locator.startLocationUpdates(user);
+            locator.startLocationUpdates(user, this);
         }
     }
 
@@ -265,7 +266,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             startActivity(mapIntent);
             return true;
         }catch(Exception exception){
-            Toast.makeText(getApplicationContext(), "Google Maps is not installed but it is required to get directions. Please install", Toast.LENGTH_LONG).show();
+//            Toast.makeText(getApplicationContext(), "Google Maps is not installed", Toast.LENGTH_LONG).show();
             return false;
         }
     }
@@ -308,12 +309,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         int transitionType = (int) o;
         switch (transitionType) {
             case Geofence.GEOFENCE_TRANSITION_EXIT:
-                Location startingLocation = locator.getLastLocation();
                 LatLng destination = ((PatientSession) user).patientData.locationData.getAGeofence().getPosition();
-                LatLng startingLoc = new LatLng(startingLocation.getLatitude(), startingLocation.getLongitude());
                 boolean googleMapsOpened = openGoogleMaps(destination);
                 if (!googleMapsOpened){
-                    getDirections(startingLoc, destination);
+                    // check if the last known location is available
+                    if (locator.isLastKnownLocationAvailable()){
+                        Location startingLocation = locator.getLastLocation();
+                        LatLng startingLoc = new LatLng(startingLocation.getLatitude(), startingLocation.getLongitude());
+                        getDirections(startingLoc, destination);
+                    }
                 }
                 break;
             case Geofence.GEOFENCE_TRANSITION_ENTER:
@@ -323,5 +327,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 break;
         }
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        ObservableObject.getInstance().deleteObserver(this);
+    }
+
+    /**
+     * registers itself to the orientation listener
+     */
+    @Override
+    protected void onResume(){
+        super.onResume();
+        ObservableObject.getInstance().addObserver(this);
     }
 }

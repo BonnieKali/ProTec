@@ -1,6 +1,8 @@
 package com.example.map.location;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.location.Criteria;
@@ -10,6 +12,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.map.ObservableObject;
 import com.example.map.R;
 import com.example.session.Session;
 import com.example.session.user.UserInfo;
@@ -17,8 +20,10 @@ import com.example.session.user.UserSession;
 import com.example.session.user.data.location.LocationDataPatient;
 import com.example.session.user.patient.PatientSession;
 
-public class Locator extends ContextWrapper {
+public class Locator {
     private static final String TAG = "myLocator";
+    private static final long minTimeBetweenLocationUpdates = 5*(60*1000);  //5 minutes
+    private static final int minDistanceBetweenLocationUpdates = 10;  //10 metres
 
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -26,22 +31,39 @@ public class Locator extends ContextWrapper {
     String bestprovider;
     Criteria criteria;
 
-    public Locator(Context base) {
-        super(base);
+//    public Locator(Context base) {
+//        super(base);
+//    }
+
+    private static Locator instance = new Locator();
+
+    public static Locator getInstance() {
+        return instance;
     }
 
+    private Locator() {
+    }
     /**
      * Starts getting location updates
-     * @param patientData
+     * @param patientData: The patientSession
+     * @param activity: The activity starting the location updates
      */
     @SuppressLint("MissingPermission")
-    public void startLocationUpdates(UserSession patientData){
+    public void startLocationUpdates(UserSession patientData, Activity activity){
         Log.d(TAG, "Starting Location Updates");
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new myLocationListener(patientData);
         bestprovider = locationManager.getBestProvider(getcriteria(), true);
         // need to check permissions
-        locationManager.requestLocationUpdates(bestprovider, 0, 0, locationListener);
+        locationManager.requestLocationUpdates(bestprovider, minTimeBetweenLocationUpdates, minDistanceBetweenLocationUpdates, locationListener);
+    }
+
+    /**
+     * Checks if the last know location is available
+     * @return
+     */
+    public boolean isLastKnownLocationAvailable(){
+        return lastLocation != null;
     }
 
     /**

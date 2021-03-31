@@ -7,6 +7,7 @@ import android.location.Location;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.map.MapsActivity;
 import com.example.map.ObservableObject;
 import com.example.map.R;
 import com.example.session.Session;
@@ -64,23 +65,26 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         switch (transitionType) {
             case Geofence.GEOFENCE_TRANSITION_ENTER:
                 Log.d(TAG, "GEOFENCE_TRANSITION_ENTER" + transitionType);
-                Toast.makeText(context, "GEOFENCE_TRANSITION_ENTER toast", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "Geofence Entered", Toast.LENGTH_SHORT).show();
 //                Session.getInstance().generateLiveEvent(EventType.ENTER_HOUSE);
-
-//                notificationHelper.sendHighPriorityNotification("GEOFENCE_TRANSITION_ENTER", "", MapsActivity.class);
                 break;
-            case Geofence.GEOFENCE_TRANSITION_DWELL:
-                Toast.makeText(context, "GEOFENCE_TRANSITION_DWELL", Toast.LENGTH_SHORT).show();
-//                notificationHelper.sendHighPriorityNotification("GEOFENCE_TRANSITION_DWELL", "", MapsActivity.class);
-                break;
+//            case Geofence.GEOFENCE_TRANSITION_DWELL:
+//                Toast.makeText(context, "GEOFENCE_TRANSITION_DWELL", Toast.LENGTH_SHORT).show();
+//                break;
             case Geofence.GEOFENCE_TRANSITION_EXIT:
                 Log.d(TAG, "GEOFENCE_TRANSITION_EXIT" + transitionType);
-                Toast.makeText(context, "GEOFENCE_TRANSITION_EXIT", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "Geofence Exited", Toast.LENGTH_SHORT).show();
                 // will tell carers that person has left the house
                 Session.getInstance().generateLiveEvent(EventType.LEFT_HOUSE);
-//                notificationHelper.sendHighPriorityNotification("GEOFENCE_TRANSITION_EXIT", "", MapsActivity.class);
+//                openMapActivity(context); BEWARE: Has funky side affects!
                 break;
         }
+    }
+
+    private void openMapActivity(Context context){
+        Intent i = new Intent(context, MapsActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(i);
     }
 
 }

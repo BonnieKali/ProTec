@@ -116,10 +116,10 @@ public class CarerDashboardFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
-        Log.d(TAG,"Resuming Activity...");
+        Log.d(TAG,"Resuming Activity and pulling data from remoteDB");
 //        HashSet<PatientSession> patientSessions = session.retrieveAllPatientSessions();
 //        Log.d("debug","All patient sessions when opening carerDashboard: " + patientSessions);
-//        loadAllPatients(this.getView());
+        loadAllPatients(this.getView());
     }
 
     @Override

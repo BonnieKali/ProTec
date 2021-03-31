@@ -74,7 +74,7 @@ public class GeoFenceHelper extends ContextWrapper {
     public GeofencingRequest createGeofenceRequest(Geofence geofence){
         GeofencingRequest request = new GeofencingRequest.Builder()
                 .addGeofence(geofence)
-                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_EXIT)
                 .build();
 
         return request;
@@ -243,7 +243,6 @@ public class GeoFenceHelper extends ContextWrapper {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "onSuccess: Geofence Added...");
-                        Toast.makeText(getApplicationContext(), "added geofence", Toast.LENGTH_SHORT).show();
                         MapHelper.addMarker(mMap, position, user.userInfo.getUserName());
                         MapHelper.addCircle(mMap, position, 200);
                         if (user.getType() == UserInfo.UserType.PATIENT) {

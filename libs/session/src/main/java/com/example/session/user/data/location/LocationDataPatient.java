@@ -3,6 +3,7 @@ import android.location.Location;
 import android.os.Build;
 import android.util.Log;
 
+import com.example.session.Session;
 import com.google.android.gms.location.Geofence;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +39,8 @@ public class LocationDataPatient extends LocationData{
 
     public boolean addLocation(Location location){
         myLocation my_location = new myLocation(location);
+        // check if we should update local database
+        Session.getInstance().syncToRemote();
         return locations.add(my_location);
     }
 
