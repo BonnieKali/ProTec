@@ -25,10 +25,12 @@ public class LocationDataPatient extends LocationData{
     private myLocation lastKnownLocation;
     private boolean leftGeofence;
 
-    public LocationDataPatient(HashMap<String, SimpleGeofence> geofences, List<myLocation> locations, myLocation lastKnownLocation, boolean leftGeofence){
+    public LocationDataPatient(HashMap<String, SimpleGeofence> geofences, List<myLocation> locations,
+                               myLocation lastKnownLocation, boolean leftGeofence, boolean goingHome){
         this.geofences = geofences;
         this.locations = locations;
         this.lastKnownLocation = lastKnownLocation;
+        Log.d(TAG,"Constructor and left geofence: " + leftGeofence);
         this.leftGeofence = leftGeofence;
     }
     public LocationDataPatient(){
@@ -71,6 +73,7 @@ public class LocationDataPatient extends LocationData{
     public boolean getleftGeofence(){
         return this.leftGeofence;
     }
+
     // ----------------
 
     public void returnedToGeofence(){
@@ -78,6 +81,7 @@ public class LocationDataPatient extends LocationData{
     }
 
     public void LeftGeofence(){
+        Log.d(TAG,"left the geofence");
         this.leftGeofence = true;
     }
 

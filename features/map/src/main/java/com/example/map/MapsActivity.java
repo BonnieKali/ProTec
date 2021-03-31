@@ -77,6 +77,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         geofencingClient = LocationServices.getGeofencingClient(this);
         locator = Locator.getInstance();
         initialiseUser();
+        Log.d(TAG,"User has left geofence: " + ((PatientSession) user).patientData.locationData.getleftGeofence());
 //        ObservableObject.getInstance().addObserver(this);   // this is used so the geofence broadcast reciever can act on this activity
 
     }
@@ -302,6 +303,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (currentPolyline != null)
             currentPolyline.remove();
         currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+
     }
 
     /**
@@ -312,42 +314,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void update(Observable observable, Object o) {
         Log.d(TAG,"MapActivity Update called");
-        getDirectionsToGeofence(o);
+        getDirectionsToGeofence();
     }
 
     /**
      * This deals with getting directions to the patients geofence
-     * @param o
      */
-    private void getDirectionsToGeofence(Object o){
-        int transitionType = (int) o;
-        Log.d(TAG,"Getting directions to Geofence with transition type: " + transitionType);
-        switch (transitionType) {
-            case Geofence.GEOFENCE_TRANSITION_EXIT:
-                LatLng destination = ((PatientSession) user).patientData.locationData.getAGeofence().getPosition();
-                boolean googleMapsOpened = openGoogleMaps(destination);
-                if (!googleMapsOpened){
-                    // check if the last known location is available
-                    if (locator.isLastKnownLocationAvailable()){
-                        Log.d(TAG,"Last location is known thus manually getting directions");
-                        Location startingLocation = locator.getLastLocation();
-                        Log.d(TAG,"Starting location: " + startingLocation);
-                        LatLng startingLoc = new LatLng(startingLocation.getLatitude(), startingLocation.getLongitude());
-                        getDirections(startingLoc, destination);
-
-                    }else{
-                        Log.d(TAG,"Last location is NOT known thus not manually getting directions");
-                        Toast.makeText(this,"Your last known location is not known, please reload.",Toast.LENGTH_LONG).show();
-                    }
+    private void getDirectionsToGeofence(){
+        boolean leftGeofence = ((PatientSession) user).patientData.locationData.getleftGeofence();
+//        boolean goingHome = ((PatientSession) user).patientData.locationData.getGoingHome();
+        Log.d(TAG,"Patient left geofence: " + leftGeofence);
+//        Log.d(TAG,"Patient is already going home: " + goingHome);
+        if (leftGeofence) {
+            Log.d(TAG, "getting directions to Geofence...");
+            LatLng destination = ((PatientSession) user).patientData.locationData.getAGeofence().getPosition();
+            boolean googleMapsOpened = openGoogleMaps(destination);
+            if (!googleMapsOpened) {
+                // check if the last known location is available
+                if (locator.isLastKnownLocationAvailable()) {
+                    Log.d(TAG, "Last location is known thus manually getting directions");
+                    Location startingLocation = locator.getLastLocation();
+                    Log.d(TAG, "Starting location: " + startingLocation);
+                    LatLng startingLoc = new LatLng(startingLocation.getLatitude(), startingLocation.getLongitude());
+                    getDirections(startingLoc, destination);
+//                    ((PatientSession) user).patientData.locationData.setGoingHome();
+                } else {
+                    Log.d(TAG, "Last location is NOT known thus not manually getting directions");
+//                    Toast.makeText(this, "Your last known location is not known, please reload.", Toast.LENGTH_LONG).show();
                 }
-                break;
-            case Geofence.GEOFENCE_TRANSITION_ENTER:
-                // remove the polyline if in the geofence
-                if (currentPolyline != null) {
-                    currentPolyline.remove();
-                }
-                break;
+            }else{
+                Log.d(TAG, "getting directions to Geofence using google maps");
+//                ((PatientSession) user).patientData.locationData.setGoingHome();
+            }
         }
+        else{
+            // remove the polyline if in the geofence
+            if (currentPolyline != null) {
+                currentPolyline.remove();
+            }
+        }
+
     }
 
     @Override

@@ -107,17 +107,17 @@ public class Locator {
             if (location != null){
                 double tlat = location.getLatitude();
                 double tlong = location.getLongitude();
-
+                // we still know the carers location but we do not save it to the database
+                lastLocation = location;
                 // add location if user is a patient
                 UserSession user = Session.getInstance().getUser();
 //                Log.d(TAG,"User is null: " + (user==null));
                 if (user != null && user.getType() == UserInfo.UserType.PATIENT) {
                     PatientSession patientSession  = (PatientSession) user;
                     patientSession.patientData.locationData.addLocation(location);
+                    ObservableObject.getInstance().updateValue(null);
 //                    Log.d(TAG,"User is not null: " + user);
                 }
-                // we still know the carers location but we do not save it to the database
-                lastLocation = location;
             }
         }
 

@@ -61,7 +61,7 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         Log.d(TAG, "Location: " + location);
         Log.d(TAG, "Transition Type: " + transitionType);
 
-        ObservableObject.getInstance().updateValue(transitionType);
+
 
         switch (transitionType) {
             case Geofence.GEOFENCE_TRANSITION_ENTER:
@@ -82,11 +82,13 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
                 if (!left) { // notification has already been sent
                     Log.d(TAG,"Geofence Exit: making notification");
                     Session.getInstance().generateLiveEvent(EventType.LEFT_HOUSE);
-                    ((PatientSession) Session.getInstance().getUser()).patientData.locationData.LeftGeofence();;
+                    ((PatientSession) Session.getInstance().getUser()).patientData.locationData.LeftGeofence();
                 }
                 //openMapActivity(context); //BEWARE: Has funky side affects!
                 break;
         }
+        // ensures patient data is updated correctly about leaving geofence
+        ObservableObject.getInstance().updateValue(transitionType);
     }
 
     private void openMapActivity(Context context){
