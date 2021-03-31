@@ -12,6 +12,7 @@ import com.example.map.ObservableObject;
 import com.example.map.R;
 import com.example.session.Session;
 import com.example.session.event.EventType;
+import com.example.session.user.patient.PatientSession;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
@@ -65,6 +66,8 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         switch (transitionType) {
             case Geofence.GEOFENCE_TRANSITION_ENTER:
                 Log.d(TAG, "GEOFENCE_TRANSITION_ENTER" + transitionType);
+                // user has returned
+                ((PatientSession) Session.getInstance().getUser()).patientData.locationData.returnedToGeofence();
 //                Toast.makeText(context, "Geofence Entered", Toast.LENGTH_SHORT).show();
 //                Session.getInstance().generateLiveEvent(EventType.ENTER_HOUSE);
                 break;
@@ -75,8 +78,13 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
                 Log.d(TAG, "GEOFENCE_TRANSITION_EXIT" + transitionType);
 //                Toast.makeText(context, "Geofence Exited", Toast.LENGTH_SHORT).show();
                 // will tell carers that person has left the house
-                Session.getInstance().generateLiveEvent(EventType.LEFT_HOUSE);
-//                openMapActivity(context); BEWARE: Has funky side affects!
+                boolean left = ((PatientSession) Session.getInstance().getUser()).patientData.locationData.getleftGeofence();
+                if (!left) { // notification has already been sent
+                    Log.d(TAG,"Geofence Exit: making notification");
+                    Session.getInstance().generateLiveEvent(EventType.LEFT_HOUSE);
+                    ((PatientSession) Session.getInstance().getUser()).patientData.locationData.LeftGeofence();;
+                }
+                //openMapActivity(context); //BEWARE: Has funky side affects!
                 break;
         }
     }

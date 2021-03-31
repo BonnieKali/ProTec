@@ -117,15 +117,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setOnMapLongClickListener(this);
-        geofenceHelper = new GeoFenceHelper(this, geofencingClient, mMap);
         startLocating();    // check permissions
+        geofenceHelper = new GeoFenceHelper(this, geofencingClient, mMap);
         MapHelper.initialiseMap(mMap);
-        loadGeofences();
-        LocatorHelper.loadAndDisplayPatients(user, mMap, this);
         // Set a listener for marker click.
         mMap.setOnMarkerClickListener(this);
-        //
-//        openGoogleMaps(new LatLng(55.9533, -3.1883));
+        loadGeofences();
+        LocatorHelper.loadAndDisplayPatients(user, mMap, this);
     }
 
     @Override
@@ -209,7 +207,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return false;
             }
         }
-
         // we will need general location too!
         if (fine_location){
             return true;
@@ -254,11 +251,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // -----------------------------
 
     // -- Geofencing -- //
+
+    /**
+     * Loads the geofences
+      */
     private void loadGeofences(){
         geofenceHelper.loadGeofences(user);
     }
 
     // -- Directions -- //
+
+    /**
+     * Opens google maps and returns true if succeeded else false
+     * @param destination
+     * @return
+     */
     private boolean openGoogleMaps(LatLng destination){
         Intent mapIntent = DirectionHelper.getGoogleMapsRequestIntent(destination);
         Log.d(TAG,"starting google maps with destination: " + destination);
@@ -277,12 +284,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * @param destination
      */
     private void getDirections(LatLng startingPosition, LatLng destination){
+        Log.d(TAG,"Inside getDirections");
         MarkerOptions place1 = new MarkerOptions().position(new LatLng(startingPosition.latitude, startingPosition.longitude)).title("Starting Location");
         MarkerOptions place2 = new MarkerOptions().position(new LatLng(destination.latitude, destination.longitude)).title("Destination");
         String directionMode = "walking";
         new FetchURL(this).execute(DirectionHelper.getUrl(place1.getPosition(), place2.getPosition(), directionMode, getString(R.string.google_maps_direction_key)), directionMode);
     }
 
+    /**
+     * This is called when a task has been completed such as getting the directions
+     * to a destination (Geofence)
+     * @param values
+     */
     @Override
     public void onTaskDone(Object... values) {
         Log.d(TAG,"Finished getting directions");
@@ -308,6 +321,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     private void getDirectionsToGeofence(Object o){
         int transitionType = (int) o;
+        Log.d(TAG,"Getting directions to Geofence with transition type: " + transitionType);
         switch (transitionType) {
             case Geofence.GEOFENCE_TRANSITION_EXIT:
                 LatLng destination = ((PatientSession) user).patientData.locationData.getAGeofence().getPosition();
@@ -315,9 +329,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (!googleMapsOpened){
                     // check if the last known location is available
                     if (locator.isLastKnownLocationAvailable()){
+                        Log.d(TAG,"Last location is known thus manually getting directions");
                         Location startingLocation = locator.getLastLocation();
+                        Log.d(TAG,"Starting location: " + startingLocation);
                         LatLng startingLoc = new LatLng(startingLocation.getLatitude(), startingLocation.getLongitude());
                         getDirections(startingLoc, destination);
+
+                    }else{
+                        Log.d(TAG,"Last location is NOT known thus not manually getting directions");
+                        Toast.makeText(this,"Your last known location is not known, please reload.",Toast.LENGTH_LONG).show();
                     }
                 }
                 break;
@@ -336,9 +356,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ObservableObject.getInstance().deleteObserver(this);
     }
 
-    /**
-     * registers itself to the orientation listener
-     */
     @Override
     protected void onResume(){
         super.onResume();

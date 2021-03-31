@@ -138,6 +138,7 @@ public class Locator {
     }
 
     public Location getLastLocation(){
+        Log.d(TAG,"getLastLocation: last location from locator " + this.lastLocation);
         return this.lastLocation;
     }
 

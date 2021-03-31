@@ -36,6 +36,7 @@ dependencies {
     implementation project(':libs:threads')
     implementation project(':libs:notifications')
     implementation project(':libs:services')
+    implementation project(':features:map')
 
 
     implementation 'androidx.appcompat:appcompat:1.2.0'

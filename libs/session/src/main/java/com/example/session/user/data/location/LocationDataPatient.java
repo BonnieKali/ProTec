@@ -23,16 +23,19 @@ public class LocationDataPatient extends LocationData{
     private HashMap<String,SimpleGeofence> geofences;
     private List<myLocation> locations;
     private myLocation lastKnownLocation;
+    private boolean leftGeofence;
 
-    public LocationDataPatient(HashMap<String, SimpleGeofence> geofences, List<myLocation> locations, myLocation lastKnownLocation){
+    public LocationDataPatient(HashMap<String, SimpleGeofence> geofences, List<myLocation> locations, myLocation lastKnownLocation, boolean leftGeofence){
         this.geofences = geofences;
         this.locations = locations;
         this.lastKnownLocation = lastKnownLocation;
+        this.leftGeofence = leftGeofence;
     }
     public LocationDataPatient(){
         this.geofences = new HashMap<String, SimpleGeofence>();
         this.locations = new ArrayList<myLocation>();
         lastKnownLocation = null;
+        leftGeofence = false;
     }
 
     public void addSimpleGeofence(SimpleGeofence geofence){
@@ -62,9 +65,21 @@ public class LocationDataPatient extends LocationData{
     }
 
     public myLocation getLastKnownLocation(){
-        return this.locations.get(this.locations.size() - 1);
+        return this.lastKnownLocation;
+    }
+
+    public boolean getleftGeofence(){
+        return this.leftGeofence;
     }
     // ----------------
+
+    public void returnedToGeofence(){
+        this.leftGeofence = false;
+    }
+
+    public void LeftGeofence(){
+        this.leftGeofence = true;
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
