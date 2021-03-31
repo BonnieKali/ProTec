@@ -215,12 +215,14 @@ public class GeoFenceHelper extends ContextWrapper {
      */
     @SuppressLint("MissingPermission")
     public void addNewGeofence(String id, LatLng position, float radius, int transitionTypes, int loiteringDelay, long expirationDuration){
+        Log.d(TAG,"Adding new Geofences");
         Geofence geofence = createGeofence(id, position, radius, transitionTypes, loiteringDelay, expirationDuration);
         SimpleGeofence simpleGeofence = new SimpleGeofence(id, position, radius, transitionTypes, loiteringDelay, expirationDuration);
         createLiveGeofence(geofence, simpleGeofence);
     }
 
     public void addExisitingGeofence(SimpleGeofence simpleGeofence){
+        Log.d(TAG,"Adding existing Geofences");
         Geofence geofence = simpleGeofence.toGeofence();
         createLiveGeofence(geofence, simpleGeofence);
     }
@@ -247,7 +249,6 @@ public class GeoFenceHelper extends ContextWrapper {
                         if (user.getType() == UserInfo.UserType.PATIENT) {
                             PatientSession patientSession = (PatientSession) user;
                             patientSession.patientData.locationData.addSimpleGeofence(simpleGeofence);
-                            Log.d(TAG, "Success on adding simplegeofence? + ");
                             Session.getInstance().saveState();  // save state with new geofence
                         }
                     }
