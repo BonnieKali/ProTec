@@ -18,12 +18,10 @@ public class MapHelper {
 
     /**
      * Makes the map look nice and starting location is edinburgh
+     * @param: The google map
      */
     public static void initialiseMap(GoogleMap mMap) {
         Log.d(TAG, "Initialising Map");
-        LatLng edinbuirgh = new LatLng(55.953251, -3.188267);
-        mMap.addMarker(new MarkerOptions().position(edinbuirgh).title("Marker in Edinburgh"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(edinbuirgh));
         mMap.getUiSettings().setCompassEnabled(true);
         mMap.getUiSettings().setRotateGesturesEnabled(true);
         mMap.getUiSettings().setScrollGesturesEnabled(true);
@@ -34,7 +32,9 @@ public class MapHelper {
     // -- Extra Functionality -- //
     /**
      * Adds a marker to the map
-     * @param latLng
+     * @param: mMap: The google map
+     * @param latLng: The markers position
+     * @param: The title of the marker
      */
     public static Marker addMarker(GoogleMap mMap, LatLng latLng, String title) {
         Log.d(TAG,"Adding marker for " + latLng.toString());
@@ -44,8 +44,8 @@ public class MapHelper {
 
     /**
      * Adds a circle to the map
-     * @param latLng
-     * @param r
+     * @param latLng: The center of the circle
+     * @param r: The circle
      */
     public static Circle addCircle(GoogleMap mMap, LatLng latLng, float r) {
         Log.d(TAG,"Adding Circle for " + latLng.toString());
