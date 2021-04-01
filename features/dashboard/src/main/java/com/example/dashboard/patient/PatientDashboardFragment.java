@@ -105,7 +105,6 @@ public class PatientDashboardFragment extends Fragment {
         }
     }
 
-
     @Override
     public void onStop() {
         super.onStop();
@@ -119,4 +118,5 @@ public class PatientDashboardFragment extends Fragment {
         Log.d(TAG, "onResume");
         deadReckoning.resume();
     }
+
 }
