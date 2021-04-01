@@ -10,44 +10,61 @@
 
     <TextView
         android:id="@+id/tv_email"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text="Email"
         android:textColor="@android:color/black"
         android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/tv_fallen_state"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.05"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tv_fallen_state"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.062" />
+        app:layout_constraintVertical_bias="0.0" />
 
 
     <TextView
         android:id="@+id/tv_email_value"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="patient@email.com"
+        android:textColor="@android:color/black"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_email"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.05"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tv_static_tests"
+        app:layout_constraintTop_toTopOf="@+id/tv_email"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/btn_last_known_location"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="patient@email.com"
-        android:textColor="@android:color/black"
+        android:layout_marginBottom="8dp"
+        android:text="Show Last Known Location"
+        android:textColor="@android:color/white"
         android:textSize="25sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btn_stationary_test"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.05"
+        app:layout_constraintHeight_percent="0.2"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_email"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_email_value"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/btn_stationary_test"
@@ -61,12 +78,14 @@
         android:text="Ask to Perform Stationary Test"
         android:textColor="@android:color/white"
         android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.3"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHeight_percent="0.2"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_email_value" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_email_value"
+        app:layout_constraintVertical_bias="0.525" />
 
     <Button
         android:id="@+id/btn_dynamic_test"
@@ -83,9 +102,90 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.3"
+        app:layout_constraintHeight_percent="0.2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_stationary_test" />
+
+    <TextView
+        android:id="@+id/tv_fallen_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="Fallen"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_static_tests"
+        app:layout_constraintEnd_toStartOf="@+id/tv_static_tests"
+        app:layout_constraintHorizontal_bias="0.25"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_static_tests"
+        app:layout_constraintVertical_bias="0.089" />
+
+    <TextView
+        android:id="@+id/tv_fallen_state_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="- - -"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_stationary_test"
+        app:layout_constraintEnd_toEndOf="@+id/tv_fallen_state"
+        app:layout_constraintStart_toStartOf="@+id/tv_fallen_state"
+        app:layout_constraintTop_toBottomOf="@+id/tv_fallen_state"
+        app:layout_constraintVertical_bias="0.121" />
+
+    <TextView
+        android:id="@+id/tv_static_tests"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Static"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_email"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/tv_dynamic_tests"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dynamic"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_static_tests"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.75"
+        app:layout_constraintStart_toEndOf="@+id/tv_static_tests"
+        app:layout_constraintTop_toTopOf="@+id/tv_static_tests" />
+
+    <TextView
+        android:id="@+id/tv_static_tests_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="XXX"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_stationary_test"
+        app:layout_constraintEnd_toEndOf="@+id/tv_static_tests"
+        app:layout_constraintStart_toStartOf="@+id/tv_static_tests"
+        app:layout_constraintTop_toBottomOf="@+id/tv_static_tests"
+        app:layout_constraintVertical_bias="0.121" />
+
+    <TextView
+        android:id="@+id/tv_dynamic_tests_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="XXX"
+        android:textColor="@color/black"
+        android:textSize="25sp"        app:layout_constraintBottom_toTopOf="@+id/btn_stationary_test"
+        app:layout_constraintEnd_toEndOf="@+id/tv_dynamic_tests"
+        app:layout_constraintStart_toStartOf="@+id/tv_dynamic_tests"
+        app:layout_constraintTop_toBottomOf="@+id/tv_dynamic_tests"
+        app:layout_constraintVertical_bias="0.121" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

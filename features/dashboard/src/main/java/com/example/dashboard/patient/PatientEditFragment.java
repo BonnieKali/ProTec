@@ -42,7 +42,7 @@ public class PatientEditFragment extends Fragment {
     // Settings that can be edited
     double acc_threshold, q1_threshold, q2_threshold;
     // Enums
-    private enum SETTINGS_KEY {
+    protected enum SETTINGS_KEY {
         ACC("ACC"), Q1("Q1"), Q2("Q2"), FALLEN("Fallen");
         private final String key;
         /**
@@ -124,7 +124,7 @@ public class PatientEditFragment extends Fragment {
             acc_threshold = Double.valueOf(settings.get(SETTINGS_KEY.ACC.getKey()).toString());
             q1_threshold = Double.valueOf(settings.get(SETTINGS_KEY.Q1.getKey()).toString());
             q2_threshold = Double.valueOf(settings.get(SETTINGS_KEY.Q2.getKey()).toString());
-            cb_fallen_state_value = Boolean.parseBoolean(settings.get(SETTINGS_KEY.Q2.getKey()).toString());
+            cb_fallen_state_value = Boolean.parseBoolean(settings.get(SETTINGS_KEY.FALLEN.getKey()).toString());
             Log.d(TAG_LOG,"VALUES WERE SET: "+acc_threshold+"; "+"q1_threshold="+q1_threshold+"; "+"q2_threshold="+q2_threshold);
         } else {                                                                                    // set them in database
             Log.d(TAG_LOG,"SETTINGS DON'T EXIST");
