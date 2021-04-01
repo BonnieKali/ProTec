@@ -1,7 +1,6 @@
 package com.example.dashboard.carer;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -22,14 +21,8 @@ import com.example.session.Session;
 import com.example.session.user.carer.CarerSession;
 import com.example.session.user.patient.PatientSession;
 import com.example.threads.OnTaskCompleteCallback;
-import com.example.threads.TaskResult;
-import com.example.ui.ProTecAlerts;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,8 +51,8 @@ public class CarerDashboardFragment extends Fragment {
         carerTextView = view.findViewById(R.id.carer_textView);
         carerTextView.setText("Hello "+session.getUser().userInfo.email);
 
-        // Start service for notifications
-        startBackgroundService();
+        // Start service for events
+        startCarerService();
 
         // Set Listeners for clickable items
         setOnClickListeners(view);
@@ -110,13 +103,13 @@ public class CarerDashboardFragment extends Fragment {
     /**
      * Starts the notification service in the background
      */
-    private void startBackgroundService() {
+    private void startCarerService() {
         Activity act = getActivity();
         if (act != null){
-            Log.d(TAG, "Activity was not null!. Starting BackgroundService");
-            act.startService(Actions.geBackgroundServiceIntent(act));
+            Log.d(TAG, "Activity was not null!. Starting CarerService");
+            act.startService(Actions.getCarerServiceIntent(act));
         }else{
-            Log.w(TAG, "Activity was null!. Cannot start BackgroundService!");
+            Log.w(TAG, "Activity was null!. Cannot start CarerService!");
         }
     }
 
@@ -128,9 +121,9 @@ public class CarerDashboardFragment extends Fragment {
 
     @Override
     public void onPause(){
-        // synch to remote
+        // sync to remote
         if (session.getUser().isInitialised()) {
-            Session.getInstance().syncToRemote();   //
+            Session.getInstance().syncToRemote();
         }
         super.onPause();
     }
