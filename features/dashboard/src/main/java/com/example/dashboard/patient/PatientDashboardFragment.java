@@ -97,6 +97,4 @@ public class PatientDashboardFragment extends Fragment {
             Log.w(TAG, "Activity was null!. Cannot start PatientService!");
         }
     }
-
-
 }

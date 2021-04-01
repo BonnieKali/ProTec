@@ -68,6 +68,7 @@ public class PatientInfoFragment extends Fragment {
 
     private void setButtonContactListener(Button button) {
         button.setOnClickListener(v -> {
+//            Session.getInstance().generateLivePatientNotification(patientSession.getUID(),"TITLE","MESSAGE");
             PatientContactFragment patientContactFragment = new PatientContactFragment();
             switchToFragment(patientContactFragment);
         });
