@@ -32,7 +32,6 @@ public class PatientItem {
     }
 
 
-
     // -- Getters -- //
     public int getmImageResource() {
         return mImageResource;

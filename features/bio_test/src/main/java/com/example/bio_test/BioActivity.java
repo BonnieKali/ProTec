@@ -13,8 +13,8 @@ public class BioActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bio);                  // content view
-//        showFragment(new BiomarkerTests());                     // show fragment
-        showFragment(new FallDetectorFragment());
+        showFragment(new BiomarkerTests());                     // show fragment
+//        showFragment(new FallDetectorFragment());
     }
 
 

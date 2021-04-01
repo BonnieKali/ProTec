@@ -1,9 +1,13 @@
 package com.example.services;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.KeyguardManager;
 import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -11,7 +15,10 @@ import android.hardware.SensorManager;
 import android.icu.number.Precision;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,12 +28,15 @@ import androidx.annotation.Nullable;
 import com.example.session.Session;
 import com.example.session.event.Event;
 import com.example.session.event.EventType;
+import com.example.threads.OnTaskCompleteCallback;
+import com.example.threads.TaskResult;
 import com.google.android.material.slider.Slider;
 
 import org.w3c.dom.Text;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -38,7 +48,6 @@ public class FallDetectorService implements SensorEventListener {
     private static final String TAG_FALL_DETECTOR = "TAG_FALL_DETECTOR";
     // Class vars
     Context context;
-//    View view;
     // Sensors
     private SensorManager sensorManager;
     private Sensor sensor_acc, sensor_gyr, sensor_mag;
@@ -64,10 +73,6 @@ public class FallDetectorService implements SensorEventListener {
     // States
     private enum STATE{INITIAL, ONGOING};
     private STATE STATE_CURRENT = STATE.INITIAL;
-    // UI vars
-//    TextView tv_smv, tv_degreeFloat, tv_degreeFloat2, tv_smv_max_old, tv_smv_max_new, tv_nr_falls,
-//            tv_smv_fall,  tv_slider_thresh_smv, tv_slider_thresh_degree1, tv_slider_thresh_degree2;
-//    Slider slider_thresh_smv, slider_thresh_degree1, slider_thresh_degree2;
     // Testing Vars
     private int count_falls_detected = 0;
     private double SMV_max_new = 0;
@@ -76,6 +81,20 @@ public class FallDetectorService implements SensorEventListener {
     private double THRESHOLD_SMV = 10;
     private double THRESHOLD_degreeFloat = 30;
     private double THRESHOLD_degreeFloat2 = 30;
+    // Enums
+    private enum SETTINGS_KEY {
+        ACC("ACC"), Q1("Q1"), Q2("Q2");
+        private final String key;
+        /**
+         * @param key
+         */
+        private SETTINGS_KEY(final String key) {
+            this.key = key;
+        }
+        public String getKey() {
+            return key;
+        }
+    }
 
 
     /***
@@ -85,35 +104,9 @@ public class FallDetectorService implements SensorEventListener {
      */
     public FallDetectorService(Context context){
         this.context = context;
-//        this.view = view;
-//        initializeUI();
-//        initializeSliderListeners();
         initializeSensors();
         initializeSensorListeners();
     }
-
-
-    /***
-     * Initializes all UI element on screen
-     */
-//    private void initializeUI(){
-//        // Usual TextView updates
-//        tv_smv = view.findViewById(R.id.tv_smv_value);
-//        tv_degreeFloat = view.findViewById(R.id.tv_deg_float_1_value);
-//        tv_degreeFloat2 = view.findViewById(R.id.tv_deg_float_2_value);
-//        tv_smv_max_new = view.findViewById(R.id.tv_smv_max_new_value);
-//        tv_smv_max_old = view.findViewById(R.id.tv_smv_max_old__value);
-//        tv_smv_fall = view.findViewById(R.id.tv_nr_falls_detected_smv_value);
-//        tv_nr_falls = view.findViewById(R.id.tv_nr_falls_detected_value);
-//        // Sliders
-//        slider_thresh_smv = view.findViewById(R.id.slider_thresh_smv);
-//        slider_thresh_degree1 = view.findViewById(R.id.slider_thresh_degree1);
-//        slider_thresh_degree2 = view.findViewById(R.id.slider_thresh_degree2);
-//        // TextView related to sliders
-//        tv_slider_thresh_smv = view.findViewById(R.id.tv_slider_thresh_smv_value);
-//        tv_slider_thresh_degree1 = view.findViewById(R.id.tv_slider_thresh_degree1_value);
-//        tv_slider_thresh_degree2 = view.findViewById(R.id.tv_slider_thresh_degree2_value);
-//    }
 
 
     /***
@@ -137,36 +130,11 @@ public class FallDetectorService implements SensorEventListener {
     }
 
 
-    /***
-     * Register Listeners for the sliders
-     */
-//    private void initializeSliderListeners(){
-//        slider_thresh_smv.addOnChangeListener(new Slider.OnChangeListener() {
-//            @Override
-//            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-//                tv_slider_thresh_smv.setText(""+value);
-//                THRESHOLD_SMV = value;
-//            }
-//        });
-//        slider_thresh_degree1.addOnChangeListener(new Slider.OnChangeListener() {
-//            @Override
-//            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-//                tv_slider_thresh_degree1.setText(""+value);
-//                THRESHOLD_degreeFloat = value;
-//            }
-//        });
-//        slider_thresh_degree2.addOnChangeListener(new Slider.OnChangeListener() {
-//            @Override
-//            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-//                tv_slider_thresh_degree2.setText(""+value);
-//                THRESHOLD_degreeFloat2 = value;
-//            }
-//        });
-//    }
-
-
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
+        // check threshold values
+        checkThresholdValues();
+        // check sensors change
         switch (sensorEvent.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
                 System.arraycopy(sensorEvent.values, 0, vector_acc, 0, 3);
@@ -179,8 +147,58 @@ public class FallDetectorService implements SensorEventListener {
                 System.arraycopy(sensorEvent.values, 0, vector_mag, 0, 3);
                 break;
         }
+        // check if fallen
         calculateFusedOrientationTask();
     }
+
+
+    /***
+     * Checks the threshold values in the firebase
+     */
+    private void checkThresholdValues() {
+        Session.getInstance().getPatientSettings(Session.getInstance().getUser().userInfo.id,
+                new OnTaskCompleteCallback() {
+            @Override
+            public void onComplete(TaskResult<?> taskResult) {
+                Map<String, Object> settings = (Map<String, Object>) taskResult.getData();
+                Log.d(TAG_FALL_DETECTOR,"LOADING PATIENT SETTINGS"+settings.toString());
+                loadPatientSettings(settings);                                                      // extract settings from database
+            }
+        });
+    }
+
+    /***
+     * Load values from firebase to current variables
+     * @param settings
+     */
+    private void loadPatientSettings(Map<String, Object> settings) {
+        // check if settings exists
+        if (isValidSettings(settings)) {                                                            // all thresholds already defined in database
+            THRESHOLD_SMV = Double.valueOf(settings.get(SETTINGS_KEY.ACC.getKey()).toString());
+            THRESHOLD_degreeFloat = Double.valueOf(settings.get(SETTINGS_KEY.Q1.getKey()).toString());
+            THRESHOLD_degreeFloat2 = Double.valueOf(settings.get(SETTINGS_KEY.Q2.getKey()).toString());
+            Log.d(TAG_FALL_DETECTOR,"VALUES WERE SET: "+THRESHOLD_SMV+"; "+"q1_threshold="+THRESHOLD_degreeFloat+"; "+"q2_threshold="+THRESHOLD_degreeFloat2);
+        } else {                                                                                    // set them in database
+            // Don't Change settings
+            Log.d(TAG_FALL_DETECTOR,"SETTINGS DON'T EXIST");
+        }
+    }
+
+
+    /***
+     * Function checks if the keys are present in the database
+     * @param settings
+     * @return
+     */
+    private boolean isValidSettings(Map<String, Object> settings) {
+        for (SETTINGS_KEY settings_key : SETTINGS_KEY.values()) {
+            if (!settings.containsKey(settings_key.getKey())){
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
@@ -378,8 +396,6 @@ public class FallDetectorService implements SensorEventListener {
      * Function detects of a fall took place
      */
     public void calculateFusedOrientationTask () {
-//        Log.i(TAG_FALL_DETECTOR,"CHECK FOR FALL");
-//        Session.getInstance().generateLiveEvent(EventType.FELL);
         float oneMinusCoeff = 1.0f - LPF_COF;
         // Calculate orientation
         angles_orientation[0] = LPF_COF * angles_gyro[0] + oneMinusCoeff * angles_acc_mag[0];
@@ -387,20 +403,9 @@ public class FallDetectorService implements SensorEventListener {
         angles_orientation[2] = LPF_COF * angles_gyro[2] + oneMinusCoeff * angles_acc_mag[2];
         // Calculate acceleration magnitude
         double SMV = Math.sqrt(vector_acc[0] * vector_acc[0] + vector_acc[1] * vector_acc[1] + vector_acc[2] * vector_acc[2]);
-        // Update UI
-//        tv_smv.setText("" + rounder(SMV, 2));
-        if (SMV > SMV_max_new) {
-            SMV_max_old = SMV_max_new;
-            SMV_max_new = SMV;
-//            tv_smv_max_new.setText("" + rounder(SMV_max_new, 2));
-//            tv_smv_max_old.setText("" + rounder(SMV_max_old, 2));
-        }
         if (SMV > THRESHOLD_SMV) {                                                  // Check passed threshold
             Q1 = (float) (angles_orientation[1] * 180 / Math.PI);                   // Calculate first angle
             Q2 = (float) (angles_orientation[2] * 180 / Math.PI);                   // Calculate second angle
-            // Update UI
-//            tv_degreeFloat.setText(("" + rounder(Q1, 2)));
-//            tv_degreeFloat2.setText(("" + rounder(Q2, 2)));
             // Check angles if actually went over threshold
             if (Q1 < 0)                                                             // Flip to positive
                 Q1 = Q1 * -1;
@@ -409,21 +414,56 @@ public class FallDetectorService implements SensorEventListener {
             if (Q1 > THRESHOLD_degreeFloat || Q2 > THRESHOLD_degreeFloat2) {        // Check for threshold
                 // Update UI
                 count_falls_detected += 1;
-//                tv_nr_falls.setText("" + count_falls_detected);
-//                tv_smv_fall.setText("" + rounder(SMV, 2) + " " + "" + rounder(Q1, 2) + " " + "" + rounder(Q2, 2));
-                // Notify that fall took palce
-//                Toast.makeText(context, "Sensed Danger! Sending SMS", Toast.LENGTH_SHORT).show();
+                // Notify that fall took place
                 Log.i(TAG_FALL_DETECTOR,"PERSON FELL");
-//                Session.getInstance().generateLiveEvent(EventType.FELL);
+                notifyPatientFallen();                                              // user has fallen procedure
             } else {
                 // No fall took place
-//                Toast.makeText(context, "Sudden Movement! But looks safe", Toast.LENGTH_SHORT).show();
-                Log.i(TAG_FALL_DETECTOR,"PERSON STANDING");
-//                Session.getInstance().generateLiveEvent(EventType.FELL);
+                Log.i(TAG_FALL_DETECTOR,"DANGER BUT STANDING");
             }
         }
         // Update gyro matrix
         matrix_gyro = getMatrixGyro(angles_orientation);
         System.arraycopy(angles_orientation, 0, angles_gyro, 0, 3);
+    }
+
+
+    /***
+     * Procedure followed when patient falls
+     * Sets live event in the firebase
+     * Sets the User Settings Fallen to True
+     */
+    private void notifyPatientFallen() {
+        Log.d(TAG_FALL_DETECTOR,"SETTING NOTIFICATION");
+        Session.getInstance().generateLivePatientNotification(Session.getInstance().getUser().getUID(),"FALLEN","MESSAGE");
+        // set live event
+        Session.getInstance().generateLiveEvent(EventType.FELL);
+        // change user settings
+        Session.getInstance().setPatientSetting(Session.getInstance().getUser().userInfo.id,"Fallen",true);
+        // Create alert dialogue
+//        createAlertDialogue();
+    }
+
+
+    private void createAlertDialogue() {
+        AlertDialog alertDialog = new AlertDialog.Builder(context.getApplicationContext())
+                .setIcon(android.R.drawable.ic_dialog_alert)                                        //set icon
+                .setTitle("FALL DETECTOR MESSAGE")                                                   //set title
+                .setMessage("HAVE YOU FALLEN")                                    //set message
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {              //set positive button
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //set what would happen when positive button is clicked
+                        Log.d(TAG_FALL_DETECTOR, "DIALOG BUTTON YES");
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {               //set negative button
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //set what should happen when negative button is clicked
+                        Log.d(TAG_FALL_DETECTOR, "DIALOG BUTTON NO");
+                    }
+                })
+                .show();
     }
 }
