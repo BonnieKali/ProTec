@@ -70,7 +70,7 @@ public class RecyclerHelperView{
             @Override
             public void onItemClick(int position) {
                 Log.d(TAG,"item click");
-                changeItem(position, context, view);
+                changeItem(position, context);
             }
 
             @Override
@@ -125,22 +125,9 @@ public class RecyclerHelperView{
      * the recycler viewer displaying it
      * @param position
      */
-    private void changeItem(int position, Context context, View v) {
+    private void changeItem(int position, Context context) {
         // this seems to induce a wierd bug where the
         PatientItem patient = patientItems.get(position);
-
-        // --------- Patient Session Example --------- //
-        PatientSession patientSession= patient.getSession();
-        Log.d(TAG,"changeItem" + "\n" + "userInfo: "+ patientSession.userInfo);
-        session.getPatientSettings(patientSession.userInfo.id, new OnTaskCompleteCallback() {
-            @Override
-            public void onComplete(TaskResult<?> taskResult) {
-                Map<String, Object> settings = (Map<String, Object>) taskResult.getData();
-                Log.d(TAG,settings.toString());
-            }
-        });
-        session.setPatientSetting(patientSession.userInfo.id,"James",true);
-        // --------------------------- //
         switchPatientInfoFragment(patient,context);
     }
 
