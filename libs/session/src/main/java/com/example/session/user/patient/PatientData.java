@@ -3,6 +3,8 @@ package com.example.session.user.patient;
 import android.util.Log;
 
 import com.example.session.user.data.biomarker.BiomarkerData;
+import com.example.session.user.data.deadreckoning.DRData;
+import com.example.session.user.data.deadreckoning.DRDataBuilder;
 import com.example.session.user.data.location.LocationData;
 import com.example.session.user.UserData;
 import com.example.session.user.data.location.LocationDataPatient;
@@ -18,6 +20,7 @@ public class PatientData extends UserData {
     public LocationDataPatient locationData;
     public BiomarkerData biomarkerData;
     public RelationshipPatient relationship;
+    public List<DRData> drData;
     /*
         PLACE MORE OBJECTS HERE
      */
@@ -31,6 +34,7 @@ public class PatientData extends UserData {
         locationData = new LocationDataPatient();
         biomarkerData = initializeBiomarkerData();
         relationship = new RelationshipPatient();
+        drData = new ArrayList<>();
 
         /*
             PLACE MORE OBJECTS HERE
@@ -44,11 +48,15 @@ public class PatientData extends UserData {
      * @param locationData LocationData object
      * @param biomarkerData BiomarkerData object
      */
-    public PatientData(LocationData locationData, BiomarkerData biomarkerData, Relationship relationship){
+    public PatientData(LocationData locationData,
+                       BiomarkerData biomarkerData,
+                       Relationship relationship,
+                       List<DRData> drData){
         super();
         this.locationData = (LocationDataPatient) locationData;
         this.biomarkerData = biomarkerData;
         this.relationship = (RelationshipPatient) relationship;
+        this.drData = drData;
 
         /*
             PLACE MORE OBJECTS HERE
