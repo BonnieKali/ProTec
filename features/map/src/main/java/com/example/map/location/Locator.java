@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.example.map.ObservableObject;
 import com.example.map.R;
+import com.example.map.direction.DirectionHelper;
 import com.example.session.Session;
 import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
@@ -106,6 +107,7 @@ public class Locator {
             // stop getting location update if user is signed out.
             if (!Session.getInstance().isUserSignedIn()){
                 Log.d(TAG,"User is not signed in: " + user);
+                DirectionHelper.googleMapsOpen = false; // reset this to be false when user signs out
                 stopLocationUpdates();
                 return;
             }
