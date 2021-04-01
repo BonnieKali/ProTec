@@ -23,10 +23,10 @@ public class BioActivity extends AppCompatActivity {
 
     }
 
-    private void showFragmentFallDetector(){
-        FallDetectorFragment fragment = new FallDetectorFragment();
-        Bundle bundle = new Bundle();
-        fragment.setArguments(bundle);
-    }
+//    private void showFragmentFallDetector(){
+//        FallDetectorFragment fragment = new FallDetectorFragment();
+//        Bundle bundle = new Bundle();
+//        fragment.setArguments(bundle);
+//    }
 
 }

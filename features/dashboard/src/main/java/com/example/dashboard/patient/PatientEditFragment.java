@@ -1,4 +1,4 @@
-package com.example.dashboard.recycler;
+package com.example.dashboard.patient;
 
 import android.os.Bundle;
 
@@ -161,16 +161,19 @@ public class PatientEditFragment extends Fragment {
         setUiListeners();
     }
 
+
     private void setUiListeners() {
         setSliderListeners();
         setButtonListeners();
     }
+
 
     private void setButtonListeners() {
         btn_update_settings.setOnClickListener(v -> {
             updateSettingsDatabase();
         });
     }
+
 
     /***
      * Implements the Listeners for the Sliders
@@ -226,14 +229,4 @@ public class PatientEditFragment extends Fragment {
         slider_q2 = view.findViewById(R.id.slider_thresh_q2);
         btn_update_settings = view.findViewById(R.id.btn_update_settings);
     }
-
-
-//session.getPatientSettings(patientSession.userInfo.id, new OnTaskCompleteCallback() {
-//@Override
-//public void onComplete(TaskResult<?> taskResult) {
-//    Map<String, Object> settings = (Map<String, Object>) taskResult.getData();
-//    Log.d(TAG,settings.toString());
-//}
-//});
-//session.setPatientSetting(patientSession.userInfo.id,"James",true);
 }

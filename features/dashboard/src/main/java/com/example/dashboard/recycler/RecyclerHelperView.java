@@ -1,26 +1,21 @@
 package com.example.dashboard.recycler;
 
-import android.app.Activity;
 //import android.app.FragmentManager;
 //import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
-import com.example.dashboard.R;
+        import com.example.dashboard.R;
+import com.example.dashboard.patient.PatientInfoFragment;
 import com.example.session.Session;
 import com.example.session.user.carer.CarerSession;
 import com.example.session.user.patient.PatientSession;
-import com.example.threads.OnTaskCompleteCallback;
-import com.example.threads.TaskResult;
 
-import java.util.ArrayList;
+        import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
 
-import androidx.fragment.app.Fragment;
 //import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;

@@ -1,4 +1,4 @@
-package com.example.dashboard.recycler;
+package com.example.dashboard.patient;
 
 import android.os.Bundle;
 
