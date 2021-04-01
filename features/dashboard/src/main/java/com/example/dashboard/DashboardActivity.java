@@ -64,4 +64,14 @@ public class DashboardActivity extends AppCompatActivity {
             startActivity(Actions.openLoginIntent(this));
         });
     }
+
+    @Override
+    public void onBackPressed() {
+        if(getFragmentManager().getBackStackEntryCount() == 0) {
+            super.onBackPressed();
+        }
+        else {
+            getFragmentManager().popBackStack();
+        }
+    }
 }

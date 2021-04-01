@@ -1,7 +1,12 @@
 package com.example.session.user;
 
 
-public class UserSession {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
+public class UserSession implements Parcelable {
 
     // Specifies whether the UserSession is initialized (if user is logged out, this is
     // not initialized)
@@ -60,11 +65,22 @@ public class UserSession {
         }
     }
 
+
     @Override
     public String toString() {
         return "UserSession{" +
                 "initialized=" + initialized +
                 ", userInfo=" + userInfo +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }
