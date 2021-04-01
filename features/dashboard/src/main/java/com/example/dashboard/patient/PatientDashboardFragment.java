@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.actions.Actions;
 import com.example.dashboard.R;
+import com.example.deadreckoning.DeadReckoning;
 import com.example.session.Session;
 
 /**
@@ -26,6 +27,8 @@ public class PatientDashboardFragment extends Fragment {
     TextView patientTextView;
 
     private Session session;
+
+    private DeadReckoning deadReckoning;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,6 +47,10 @@ public class PatientDashboardFragment extends Fragment {
 
         // Set Listeners for clickable items
         setOnClickListeners(view);
+
+        // Start dead reckoning
+        Log.d(TAG, "Starting dead reckoning");
+        deadReckoning = new DeadReckoning(getActivity());
 
         return view;
     }
@@ -99,4 +106,17 @@ public class PatientDashboardFragment extends Fragment {
     }
 
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop");
+        deadReckoning.stop();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+        deadReckoning.resume();
+    }
 }
