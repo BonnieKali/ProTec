@@ -25,7 +25,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.Navigation;
+//import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -70,7 +70,7 @@ public class RecyclerHelperView{
             @Override
             public void onItemClick(int position) {
                 Log.d(TAG,"item click");
-                changeItem(position, context, view);
+                changeItem(position, context);
             }
 
             @Override
@@ -97,19 +97,10 @@ public class RecyclerHelperView{
         PatientItem patient =  patientItems.get(position);
         PatientSession patientSession = patient.getSession();
 
-        patientSession.patientData.relationship.removeCarer(user.getUID());
         user.carerData.removePatient(patientSession);
 
-        HashSet<PatientSession> patientSessions = session.retrieveAllPatientSessions();
-        Log.d("debug","All patient sessions loaded after removing patient: " + patientSessions);
-
-        Log.d(TAG, "Patient after being removed: " + patientSession.patientData);
-        Log.d(TAG, "carer after removing Patient: " + user.carerData);
-
-//        Toast.makeText(getContext(),"Patient Removed",Toast.LENGTH_SHORT).show();
         mAdapter.notifyItemChanged(position);   // this calls PatientAdapter.onBindViewHolder
         session.saveState();    // saves carers sate
-//        session.savePatientState(patientSession); // saves patientState
     }
 
     /**
@@ -122,15 +113,7 @@ public class RecyclerHelperView{
         PatientItem patient =  patientItems.get(position);
         PatientSession patientSession = patient.getSession();
 
-        // TODO make a session method that updates both of these instead of manually doing it
-        patientSession.patientData.relationship.addCarer(user.getUID());
         user.carerData.addPatient(patientSession);
-
-        HashSet<PatientSession> patientSessions = session.retrieveAllPatientSessions();
-        Log.d("debug","All patient sessions loaded after adding patient: " + patientSessions);
-
-        Log.d(TAG, "Patient after being added: " + patientSession.patientData);
-        Log.d(TAG, "carer after adding Patient: " + user.carerData);
 
         mAdapter.notifyItemChanged(position); // this calls PatientAdapter.onBindViewHolder
         session.saveState();
@@ -142,22 +125,9 @@ public class RecyclerHelperView{
      * the recycler viewer displaying it
      * @param position
      */
-    private void changeItem(int position, Context context, View v) {
+    private void changeItem(int position, Context context) {
         // this seems to induce a wierd bug where the
         PatientItem patient = patientItems.get(position);
-
-        // --------- Patient Session Example --------- //
-        PatientSession patientSession= patient.getSession();
-        Log.d(TAG,"changeItem" + "\n" + "userInfo: "+ patientSession.userInfo);
-        session.getPatientSettings(patientSession.userInfo.id, new OnTaskCompleteCallback() {
-            @Override
-            public void onComplete(TaskResult<?> taskResult) {
-                Map<String, Object> settings = (Map<String, Object>) taskResult.getData();
-                Log.d(TAG,settings.toString());
-            }
-        });
-        session.setPatientSetting(patientSession.userInfo.id,"James",true);
-        // --------------------------- //
         switchPatientInfoFragment(patient,context);
     }
 

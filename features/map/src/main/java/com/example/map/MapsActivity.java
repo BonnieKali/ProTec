@@ -7,12 +7,9 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,50 +22,31 @@ import com.example.map.geofence.GeoFenceHelper;
 import com.example.map.location.LocatorHelper;
 import com.example.map.map.MapHelper;
 import com.example.session.Session;
-import com.example.session.remote.RemoteDB;
 import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
-import com.example.session.user.UserSessionBuilder;
 import com.example.session.user.carer.CarerSession;
-import com.example.session.user.data.location.LocationDataCarer;
-import com.example.session.user.data.location.SimpleGeofence;
 import com.example.map.location.Locator;
-import com.example.session.user.data.location.LocationDataPatient;
-import com.example.session.user.patient.PatientData;
 import com.example.session.user.patient.PatientSession;
-import com.example.threads.BackgroundPool;
-import com.example.threads.OnTaskCompleteCallback;
-import com.example.threads.RunnableTask;
-import com.example.threads.TaskResult;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
-import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-
-import static com.example.map.map.MapHelper.initialiseMap;
+import java.util.Observable;
+import java.util.Observer;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleMap.OnMapLongClickListener,
         GoogleMap.OnMarkerClickListener,
-        TaskLoadedCallback {
+        TaskLoadedCallback,
+        Observer {
 
     private static final int FINE_LOCATION_ACCESS_REQUEST_CODE = 1029;
     private static final int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 1039;
@@ -97,8 +75,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d(TAG, "Inside maps activity");
 
         geofencingClient = LocationServices.getGeofencingClient(this);
-        geofenceHelper = new GeoFenceHelper(this);
-        locator = new Locator(this);
+        locator = Locator.getInstance();
         initialiseUser();
     }
 
@@ -108,7 +85,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     private void startLocating(){
         if (checkGeofencePermissions()){
-            locator.startLocationUpdates(user);
+            locator.startLocationUpdates(user, this);
         }
     }
 
@@ -139,13 +116,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.setOnMapLongClickListener(this);
         startLocating();    // check permissions
+        geofenceHelper = new GeoFenceHelper(this, geofencingClient, mMap);
         MapHelper.initialiseMap(mMap);
-        GeoFenceHelper.loadGeofences(user, mMap);
-        LocatorHelper.loadAndDisplayPatients(user, mMap, this);
         // Set a listener for marker click.
         mMap.setOnMarkerClickListener(this);
-        //
-//        openGoogleMaps(new LatLng(55.9533, -3.1883));
+        loadGeofences();
+        LocatorHelper.loadAndDisplayPatients(user, mMap);
     }
 
     @Override
@@ -157,12 +133,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     // -- Actions -- //
+
+    /**
+     * If user is a patient then we add a new geofence
+     * @param latLng
+     */
     @Override
     public void onMapLongClick(LatLng latLng) {
         Log.d(TAG, "Long click for " + latLng.toString());
         if (user.getType() == UserInfo.UserType.PATIENT) {
             mMap.clear();
-            addGeofence(latLng, 200);
+            // set up basic geofence
+            String ID = user.getUID();
+            if(checkGeofencePermissions()) {
+                geofenceHelper.addNewGeofence(ID, latLng, GeoFenceHelper.radius, GeoFenceHelper.transitionType, GeoFenceHelper.loiteringDelay, GeoFenceHelper.expirationDuration);
+            }
         }else{
             Toast.makeText(getApplicationContext(), "Only patients may make Geofences",Toast.LENGTH_LONG).show();
         }
@@ -172,7 +157,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // -- Permission Checking -- //
     /**
      * Checks if the user has granted the location service needed for them to see themselves on the map
-     * @return
+     * @return: true if the neccessary foreground permissions have been accepted
      */
     private boolean checkForegroundPermissions(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -192,7 +177,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     /**
      * Checks if the user has granted the location service needed for geofences to work in the background
-     * @return
+     * @return: true if the neccessary background permissions have been accepted
      */
     private boolean checkBackgroundPermissions(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -213,7 +198,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      * Checks if all the permissions are needed by individually checking the permissions and asking for them
      * if they are not permitted.
-     * @return
+     * @return: true if the neccessary permissions to create geofences have been accepted
      */
     private boolean checkGeofencePermissions(){
         boolean fine_location = checkForegroundPermissions();
@@ -225,7 +210,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return false;
             }
         }
-
         // we will need general location too!
         if (fine_location){
             return true;
@@ -270,79 +254,127 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // -----------------------------
 
     // -- Geofencing -- //
+
     /**
-     * Adds a geofence to the map by creating a geofence, request and then pending intent
-     * @param latLng
-     * @param radius
-     */
-    @SuppressLint("MissingPermission")
-    private void addGeofence(LatLng latLng, float radius) {
-        Log.d(TAG, "Adding geofence for " + latLng.toString());
-        String id = user.userInfo.id;
-
-        com.google.android.gms.location.Geofence geofence = geofenceHelper.createGeofence(id, latLng, radius, com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_DWELL | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_EXIT);
-        SimpleGeofence simpleGeofence = new SimpleGeofence(id, latLng, radius, com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_DWELL | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_EXIT, 5000, Geofence.NEVER_EXPIRE);
-        GeofencingRequest geofencingRequest = geofenceHelper.createGeofenceRequest(geofence);
-        PendingIntent pendingIntent = geofenceHelper.createPendingIntent();
-
-        // check permissions and then add geofence
-        if (checkGeofencePermissions()) {
-            geofencingClient.addGeofences(geofencingRequest, pendingIntent)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d(TAG, "onSuccess: Geofence Added...");
-                            Toast.makeText(getApplicationContext(), "added geofence", Toast.LENGTH_SHORT).show();
-                            MapHelper.addMarker(mMap, latLng, user.userInfo.getUserName());
-                            MapHelper.addCircle(mMap, latLng, 200);
-                            if (user.getType() == UserInfo.UserType.PATIENT) {
-                                PatientSession patientSession = (PatientSession) user;
-                                patientSession.patientData.locationData.addSimpleGeofence(simpleGeofence);
-//                                Log.d(TAG, "Success on adding simplegeofence? + ");
-                                Session.getInstance().saveState();  // save state with new geofence
-                            }
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            String errorMessage = geofenceHelper.getErrorString(e);
-                            String msg = "Please turn on location and make sure it is high accuracy";
-                            Log.e(TAG, msg);
-                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
+     * Loads the geofences
+      */
+    private void loadGeofences(){
+        geofenceHelper.loadGeofences(user);
     }
 
     // -- Directions -- //
-    private void openGoogleMaps(LatLng destination){
+
+    /**
+     * Opens google maps and returns true if succeeded else false
+     * @param destination
+     * @return: true if google maps opened successfully
+     */
+    private boolean openGoogleMaps(LatLng destination){
         Intent mapIntent = DirectionHelper.getGoogleMapsRequestIntent(destination);
         Log.d(TAG,"starting google maps with destination: " + destination);
-//        try {
-//            startActivity(mapIntent);
-//        }catch(Exception exception){
-//            Toast.makeText(getApplicationContext(), "Google Maps is not installed but it is required to get directions. Please install", Toast.LENGTH_LONG).show();
-            // manually display directions
-            Location lastKnownUserLocation = locator.getLastLocation();
-            LatLng test = new LatLng(55.9379, -3.1882);
-            LatLng startingPosition = new LatLng(test.latitude, test.longitude);
-            getDirections(startingPosition, destination);
-//        }
+        try {
+            startActivity(mapIntent);
+            return true;
+        }catch(Exception exception){
+//            Toast.makeText(getApplicationContext(), "Google Maps is not installed", Toast.LENGTH_LONG).show();
+            return false;
+        }
     }
 
+    /**
+     * Asks the GoogleMaps Directions API for directions to the destination from the startingPosition
+     * @param startingPosition
+     * @param destination
+     */
     private void getDirections(LatLng startingPosition, LatLng destination){
+        Log.d(TAG,"Inside getDirections");
         MarkerOptions place1 = new MarkerOptions().position(new LatLng(startingPosition.latitude, startingPosition.longitude)).title("Starting Location");
         MarkerOptions place2 = new MarkerOptions().position(new LatLng(destination.latitude, destination.longitude)).title("Destination");
         String directionMode = "walking";
         new FetchURL(this).execute(DirectionHelper.getUrl(place1.getPosition(), place2.getPosition(), directionMode, getString(R.string.google_maps_direction_key)), directionMode);
     }
 
+    /**
+     * This is called when a task has been completed such as getting the directions
+     * to a destination (Geofence)
+     * @param values: The value from the direction API which is the polylineOption
+     */
     @Override
     public void onTaskDone(Object... values) {
         Log.d(TAG,"Finished getting directions");
         if (currentPolyline != null)
             currentPolyline.remove();
         currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+
+    }
+
+    /**
+     * This gets called when a geofence event has happened
+     * @param observable: The observer object
+     * @param o: The object data
+     */
+    @Override
+    public void update(Observable observable, Object o) {
+        Log.d(TAG,"MapActivity Update called");
+        getDirectionsToGeofence();
+    }
+
+    /**
+     * This deals with getting directions to the patients geofence
+     */
+    private void getDirectionsToGeofence(){
+        boolean leftGeofence = ((PatientSession) user).patientData.locationData.getleftGeofence();
+        boolean googleMapsOpen = DirectionHelper.googleMapsOpen;
+        Log.d(TAG,"Patient left geofence: " + leftGeofence);
+        Log.d(TAG,"googleMapsOpen: " + googleMapsOpen);
+        if (leftGeofence) {
+            Log.d(TAG, "getting directions to Geofence...");
+            LatLng destination = ((PatientSession) user).patientData.locationData.getAGeofence().getPosition();
+            if (!googleMapsOpen) {
+                boolean googleMapsOpened = openGoogleMaps(destination);
+                if (!googleMapsOpened) {
+                    // check if the last known location is available
+                    if (locator.isLastKnownLocationAvailable()) {
+                        Log.d(TAG, "Last location is known thus manually getting directions");
+                        Location startingLocation = locator.getLastLocation();
+                        Log.d(TAG, "Starting location: " + startingLocation);
+                        LatLng startingLoc = new LatLng(startingLocation.getLatitude(), startingLocation.getLongitude());
+                        getDirections(startingLoc, destination);
+                    } else {
+                        Log.d(TAG, "Last location is NOT known thus not manually getting directions");
+                    }
+                } else {
+                    DirectionHelper.googleMapsOpen = true;
+                    Log.d(TAG, "getting directions to Geofence using google maps");
+                }
+            }
+        }
+        else{
+            // remove the polyline if in the geofence
+            if (currentPolyline != null) {
+                currentPolyline.remove();
+            }
+            Log.d(TAG,"Setting google maps false");
+            DirectionHelper.googleMapsOpen = false;
+        }
+
+    }
+
+    /**
+     * Remove this activity as a listener for geofence and location updates
+     */
+    @Override
+    protected void onPause(){
+        super.onPause();
+        ObservableObject.getInstance().deleteObserver(this);
+    }
+
+    /**
+     * Add this activity as a listener for geofence and location updates
+     */
+    @Override
+    protected void onResume(){
+        super.onResume();
+        ObservableObject.getInstance().addObserver(this);
     }
 }

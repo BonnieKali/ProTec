@@ -7,8 +7,13 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
+/**
+ * James Hanratty
+ * This class contains methods to help with getting the directions
+ */
 public class DirectionHelper {
     private static final String TAG = "DirectionHelper";
+    public static boolean googleMapsOpen = false;
 
     /**
      * Creates the url string used to ask the directions API for directions
@@ -16,24 +21,31 @@ public class DirectionHelper {
      * @param dest
      * @param directionMode
      * @param api_key
-     * @return
+     * @return: The url used to send to the directions API
      */
     public static String getUrl(LatLng origin, LatLng dest, String directionMode, String api_key) {
         // Origin of route
-        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+        String str_origin = String.format("origin=%f,%f",origin.latitude, origin.longitude);
         // Destination of route
-        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+        String str_dest = String.format("destination=%f,%f",dest.latitude, dest.longitude);
         // Mode
-        String mode = "mode=" + directionMode;
+        String mode = String.format("mode=%s",directionMode);
         // Building the parameters to the web service
-        String parameters = str_origin + "&" + str_dest + "&" + mode;
+        String parameters = String.format("%s&%s&%s",str_origin, str_dest, mode);
         // Output format
         String output = "json";
+        // directions web domain
+        String domain = String.format("https://maps.googleapis.com/maps/api/directions/");
         // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + api_key;
+        String url = String.format("%s%s?%s&key=%s",domain,output,parameters,api_key);
         return url;
     }
 
+    /**
+     * Get the googleMaps request Intent
+     * @param destination
+     * @return: The intent used to open google maps
+     */
     public static Intent getGoogleMapsRequestIntent(LatLng destination){
         String dest = String.format("%f,%f",destination.latitude, destination.longitude);
         String mode = "w";

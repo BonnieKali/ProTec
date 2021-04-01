@@ -1,7 +1,9 @@
 package com.example.map.direction;
 
 /**
- * Created by Vishal on 10/20/2018.
+ * James Hanratty
+ * Defines the interface that other classes should use
+ * so they can get directions
  */
 
 public interface TaskLoadedCallback {

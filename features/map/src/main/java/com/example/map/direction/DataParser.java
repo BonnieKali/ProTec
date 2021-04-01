@@ -11,10 +11,16 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by Vishal on 10/20/2018.
+ * James Hanratty credit with Vishal.
+ * This class deals with parsing the response from the directions API
  */
 
 public class DataParser {
+    /**
+     * Parses the actual JSON object returned from the directions API
+     * @param jObject
+     * @return
+     */
     public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
 
         List<List<HashMap<String, String>>> routes = new ArrayList<>();

@@ -12,7 +12,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by Vishal on 10/20/2018.
+ * James Hanratty with credit to Vishal.
+ * This file contains class that queryies the Google Directions API
+ * which must be done in an AsyncTask
  */
 
 public class FetchURL extends AsyncTask<String, Void, String> {
@@ -25,6 +27,11 @@ public class FetchURL extends AsyncTask<String, Void, String> {
         this.mContext = mContext;
     }
 
+    /**
+     * Stores the data from repsonse of executing url (Directions API)
+     * @param strings: The URLs to execute
+     * @return: The data from the url
+     */
     @Override
     protected String doInBackground(String... strings) {
         // For storing data from web service
@@ -40,6 +47,10 @@ public class FetchURL extends AsyncTask<String, Void, String> {
         return data;
     }
 
+    /**
+     * Parse the points received from the response of the directions API
+     * @param s: The directions api result from asking for directions
+     */
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
@@ -48,6 +59,12 @@ public class FetchURL extends AsyncTask<String, Void, String> {
         parserTask.execute(s);
     }
 
+    /**
+     * Actually makes the
+     * @param strUrl: The url to execute
+     * @return: The data from the response of executing the URL
+     * @throws IOException: The url request threw an error
+     */
     private String downloadUrl(String strUrl) throws IOException {
         String data = "";
         InputStream iStream = null;

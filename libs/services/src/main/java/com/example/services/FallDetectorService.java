@@ -132,6 +132,10 @@ public class FallDetectorService implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
+        if (!Session.getInstance().isUserSignedIn()){
+            sensorManager.unregisterListener(this);
+            return;
+        }
         // check threshold values
         checkThresholdValues();
         // check sensors change

@@ -17,15 +17,10 @@ public class LocalLiveData {
     private static boolean initialised = false;
     private static HashMap<String, UserInfo.UserType> userIdMap;
     private static HashSet<PatientSession> allPatients;
-    private static HashSet<PatientSession> modifiedPatients;
-    private static HashSet<PatientSession> carerPatientSessions;
-//    private UserSession userSession;
 
     private static void initialiseLocalLiveData(HashMap<String, UserInfo.UserType> idMap, HashSet<PatientSession> allPatients){
         setUserIdMap(idMap);
         setAllPatients(allPatients);
-        setModifiedPatients(new HashSet<PatientSession>());
-        setCarerPatientSessions(allPatients);
         initialised = true;
     }
 
@@ -40,7 +35,6 @@ public class LocalLiveData {
         // TODO Merge the remoteDB and localDB data instead of just overwritting the localDB data
         setUserIdMap(idMap);
         setAllPatients(allPatients);
-        setCarerPatientSessions(allPatients);
     }
 
     // -- Interface Methods -- //
@@ -64,10 +58,8 @@ public class LocalLiveData {
      * Resets the localLiveData such as when somoeone logs out
      */
     public static void resetLocalLiveData(){
-        setModifiedPatients(null);
         setAllPatients(null);
         setUserIdMap(null);
-        setCarerPatientSessions(null);
         initialised = false;
     }
 
@@ -86,24 +78,6 @@ public class LocalLiveData {
         return allPatients;
     }
 
-    public static HashSet<PatientSession> retrieveModifiedPatients(){
-        if (modifiedPatients == null){
-            modifiedPatients = new HashSet<>();
-        }
-        return modifiedPatients;
-    }
-
-    public static HashSet<PatientSession> retrieveCarerPatientSessions(){
-        if (carerPatientSessions == null){
-            return new HashSet<PatientSession>();
-        }
-        return carerPatientSessions;
-    }
-
-    public static Boolean addModifiedPatient(PatientSession patientSession){
-        return retrieveModifiedPatients().add(patientSession);
-    }
-
     // -- Setters -- //
     public static void setUserIdMap(HashMap<String, UserInfo.UserType> userIdMaps) {
         userIdMap = userIdMaps;
@@ -113,52 +87,4 @@ public class LocalLiveData {
         allPatients = allPatient;
     }
 
-    public static void setModifiedPatients(HashSet<PatientSession> modifiedPatient) {
-        modifiedPatients = modifiedPatient;
-    }
-
-    /**
-     * Adds the patients to a list of patients belonging to the carer
-     * @param allPatientSessions
-     */
-    private static void setCarerPatientSessions(HashSet<PatientSession> allPatientSessions){
-        Log.d(TAG,"Setting Patients that belong to carer");
-        String ID = Session.getInstance().getUser().getUID();
-        carerPatientSessions = new HashSet<>();
-        if (allPatientSessions == null){
-            Log.d(TAG,"allPatientSessions == null");
-            return;
-        }else {
-            for (PatientSession patient : allPatientSessions) {
-                boolean isCarer = isBelongToCarer(patient);
-                if (isCarer) {
-                    carerPatientSessions.add(patient);
-                }
-            }
-        }
-        Log.d(TAG,"All patients belonging to carer: " + carerPatientSessions);
-    }
-
-    /**
-     * Checks if the patient belongs to the carer
-     * @param patient
-     * @return
-     */
-    private static boolean isBelongToCarer(PatientSession patient) {
-        String id = Session.getInstance().getUser().getUID();
-        for (String carerID : patient.patientData.relationship.getCarerIDs()) {
-            if (id.equals(carerID)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean removePatientFromCarer(PatientSession patientSession) {
-        return carerPatientSessions.remove(patientSession);
-    }
-
-    public static boolean addPatientFromCarer(PatientSession patientSession) {
-        return carerPatientSessions.add(patientSession);
-    }
 }
