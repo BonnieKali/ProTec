@@ -43,6 +43,7 @@ dependencies {
     implementation project(':libs:threads')
     implementation project(':libs:notifications')
     implementation project(':libs:services')
+    implementation project(':libs:deadreckoning')
 
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
