@@ -77,9 +77,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         geofencingClient = LocationServices.getGeofencingClient(this);
         locator = Locator.getInstance();
         initialiseUser();
-        Log.d(TAG,"User has left geofence: " + ((PatientSession) user).patientData.locationData.getleftGeofence());
-//        ObservableObject.getInstance().addObserver(this);   // this is used so the geofence broadcast reciever can act on this activity
-
     }
 
     /**
@@ -124,7 +121,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Set a listener for marker click.
         mMap.setOnMarkerClickListener(this);
         loadGeofences();
-        LocatorHelper.loadAndDisplayPatients(user, mMap, this);
+        LocatorHelper.loadAndDisplayPatients(user, mMap);
     }
 
     @Override
@@ -136,6 +133,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     // -- Actions -- //
+
+    /**
+     * If user is a patient then we add a new geofence
+     * @param latLng
+     */
     @Override
     public void onMapLongClick(LatLng latLng) {
         Log.d(TAG, "Long click for " + latLng.toString());
@@ -155,7 +157,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // -- Permission Checking -- //
     /**
      * Checks if the user has granted the location service needed for them to see themselves on the map
-     * @return
+     * @return: true if the neccessary foreground permissions have been accepted
      */
     private boolean checkForegroundPermissions(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -175,7 +177,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     /**
      * Checks if the user has granted the location service needed for geofences to work in the background
-     * @return
+     * @return: true if the neccessary background permissions have been accepted
      */
     private boolean checkBackgroundPermissions(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -196,7 +198,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      * Checks if all the permissions are needed by individually checking the permissions and asking for them
      * if they are not permitted.
-     * @return
+     * @return: true if the neccessary permissions to create geofences have been accepted
      */
     private boolean checkGeofencePermissions(){
         boolean fine_location = checkForegroundPermissions();
@@ -265,7 +267,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      * Opens google maps and returns true if succeeded else false
      * @param destination
-     * @return
+     * @return: true if google maps opened successfully
      */
     private boolean openGoogleMaps(LatLng destination){
         Intent mapIntent = DirectionHelper.getGoogleMapsRequestIntent(destination);
@@ -295,7 +297,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      * This is called when a task has been completed such as getting the directions
      * to a destination (Geofence)
-     * @param values
+     * @param values: The value from the direction API which is the polylineOption
      */
     @Override
     public void onTaskDone(Object... values) {
@@ -308,8 +310,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     /**
      * This gets called when a geofence event has happened
-     * @param observable
-     * @param o
+     * @param observable: The observer object
+     * @param o: The object data
      */
     @Override
     public void update(Observable observable, Object o) {
@@ -322,29 +324,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     private void getDirectionsToGeofence(){
         boolean leftGeofence = ((PatientSession) user).patientData.locationData.getleftGeofence();
-//        boolean goingHome = ((PatientSession) user).patientData.locationData.getGoingHome();
+        boolean googleMapsOpen = DirectionHelper.googleMapsOpen;
         Log.d(TAG,"Patient left geofence: " + leftGeofence);
-//        Log.d(TAG,"Patient is already going home: " + goingHome);
+        Log.d(TAG,"googleMapsOpen: " + googleMapsOpen);
         if (leftGeofence) {
             Log.d(TAG, "getting directions to Geofence...");
             LatLng destination = ((PatientSession) user).patientData.locationData.getAGeofence().getPosition();
-            boolean googleMapsOpened = openGoogleMaps(destination);
-            if (!googleMapsOpened) {
-                // check if the last known location is available
-                if (locator.isLastKnownLocationAvailable()) {
-                    Log.d(TAG, "Last location is known thus manually getting directions");
-                    Location startingLocation = locator.getLastLocation();
-                    Log.d(TAG, "Starting location: " + startingLocation);
-                    LatLng startingLoc = new LatLng(startingLocation.getLatitude(), startingLocation.getLongitude());
-                    getDirections(startingLoc, destination);
-//                    ((PatientSession) user).patientData.locationData.setGoingHome();
+            if (!googleMapsOpen) {
+                boolean googleMapsOpened = openGoogleMaps(destination);
+                if (!googleMapsOpened) {
+                    // check if the last known location is available
+                    if (locator.isLastKnownLocationAvailable()) {
+                        Log.d(TAG, "Last location is known thus manually getting directions");
+                        Location startingLocation = locator.getLastLocation();
+                        Log.d(TAG, "Starting location: " + startingLocation);
+                        LatLng startingLoc = new LatLng(startingLocation.getLatitude(), startingLocation.getLongitude());
+                        getDirections(startingLoc, destination);
+                    } else {
+                        Log.d(TAG, "Last location is NOT known thus not manually getting directions");
+                    }
                 } else {
-                    Log.d(TAG, "Last location is NOT known thus not manually getting directions");
-//                    Toast.makeText(this, "Your last known location is not known, please reload.", Toast.LENGTH_LONG).show();
+                    DirectionHelper.googleMapsOpen = true;
+                    Log.d(TAG, "getting directions to Geofence using google maps");
                 }
-            }else{
-                Log.d(TAG, "getting directions to Geofence using google maps");
-//                ((PatientSession) user).patientData.locationData.setGoingHome();
             }
         }
         else{
@@ -352,16 +354,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (currentPolyline != null) {
                 currentPolyline.remove();
             }
+            Log.d(TAG,"Setting google maps false");
+            DirectionHelper.googleMapsOpen = false;
         }
 
     }
 
+    /**
+     * Remove this activity as a listener for geofence and location updates
+     */
     @Override
     protected void onPause(){
         super.onPause();
         ObservableObject.getInstance().deleteObserver(this);
     }
 
+    /**
+     * Add this activity as a listener for geofence and location updates
+     */
     @Override
     protected void onResume(){
         super.onResume();

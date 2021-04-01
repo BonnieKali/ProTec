@@ -20,6 +20,10 @@ import com.example.session.user.UserSession;
 import com.example.session.user.data.location.LocationDataPatient;
 import com.example.session.user.patient.PatientSession;
 
+/**
+ * James Hanratty
+ * This class is a singleton class that deals with locating the user.
+ */
 public class Locator {
     private static final String TAG = "myLocator";
     private static final long minTimeBetweenLocationUpdates = 10000;//5*(60*1000);  //5 minutes
@@ -31,10 +35,6 @@ public class Locator {
     String bestprovider;
     Criteria criteria;
 
-//    public Locator(Context base) {
-//        super(base);
-//    }
-
     private static Locator instance = new Locator();
 
     public static Locator getInstance() {
@@ -45,14 +45,14 @@ public class Locator {
     }
     /**
      * Starts getting location updates
-     * @param patientData: The patientSession
+     * @param userSession: The users session, can be carer or patient
      * @param activity: The activity starting the location updates
      */
     @SuppressLint("MissingPermission")
-    public void startLocationUpdates(UserSession patientData, Activity activity){
+    public void startLocationUpdates(UserSession userSession, Activity activity){
         Log.d(TAG, "Starting Location Updates");
         locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new myLocationListener(patientData);
+        locationListener = new myLocationListener(userSession);
         bestprovider = locationManager.getBestProvider(getcriteria(), true);
         // need to check permissions
         locationManager.requestLocationUpdates(bestprovider, minTimeBetweenLocationUpdates, minDistanceBetweenLocationUpdates, locationListener);
@@ -95,6 +95,12 @@ public class Locator {
             this.user = user;
         }
 
+        /**
+         * This is called when the location has changed.
+         * It checks if the user is signed if, if not then cancle locations
+         * It also checks if user is patient becasue if not then we dont care about storing location data
+         * @param location: The location the user is currently at
+         */
         @Override
         public void onLocationChanged(Location location) {
             // stop getting location update if user is signed out.
@@ -105,18 +111,14 @@ public class Locator {
             }
             Log.d("locations","new location: "+location.toString());
             if (location != null){
-                double tlat = location.getLatitude();
-                double tlong = location.getLongitude();
                 // we still know the carers location but we do not save it to the database
                 lastLocation = location;
                 // add location if user is a patient
                 UserSession user = Session.getInstance().getUser();
-//                Log.d(TAG,"User is null: " + (user==null));
                 if (user != null && user.getType() == UserInfo.UserType.PATIENT) {
                     PatientSession patientSession  = (PatientSession) user;
                     patientSession.patientData.locationData.addLocation(location);
                     ObservableObject.getInstance().updateValue(null);
-//                    Log.d(TAG,"User is not null: " + user);
                 }
             }
         }
@@ -137,6 +139,10 @@ public class Locator {
         }
     }
 
+    /**
+     * Gets the last known location for this user
+     * @return: The last known location which can be null so check first
+     */
     public Location getLastLocation(){
         Log.d(TAG,"getLastLocation: last location from locator " + this.lastLocation);
         return this.lastLocation;

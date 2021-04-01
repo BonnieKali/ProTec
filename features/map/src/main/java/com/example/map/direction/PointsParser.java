@@ -15,7 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by Vishal on 10/20/2018.
+ * James Hanratty with credit to Vishal
+ * This file containts methods to help with parising the points recieved
+ * by Google Maps API for getting directions to a place
  */
 
 public class PointsParser extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {

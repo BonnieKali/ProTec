@@ -80,5 +80,8 @@ public class PatientService extends Service {
         // Initialize fall detector
         Log.i(TAG, "GETTING FALL DETECTOR SERVICE IN BACKGROUND");
         fallDetectorService = new FallDetectorService(context);       // getting the sensor
+
+        // initialise geofence detection
+
     }
 }

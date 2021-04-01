@@ -5,12 +5,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+/**
+ * James Hanratty
+ * This detetmines if the data has been cleared that is required for the maps package to work
+ * such as geofences being cleared.
+ */
 public class DataClearedReceiver extends BroadcastReceiver {
 
     private static final String TAG = "myDataClearedReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        // check if intent is for data cleared
         if (Intent.ACTION_PACKAGE_DATA_CLEARED.equals(intent.getAction()) && intent.getData() != null) {
             if (intent.getData().getSchemeSpecificPart() == "com.google.android.gms") {
                 // perform action

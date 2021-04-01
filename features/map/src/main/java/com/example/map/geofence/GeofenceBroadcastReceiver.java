@@ -18,9 +18,13 @@ import com.google.android.gms.location.GeofencingEvent;
 
 import java.util.List;
 
+/**
+ * James Hanratty
+ * Class that is called whenever a gefoence transition event happens
+ */
 public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
-    private static final String TAG = "myMap";;
+    private static final String TAG = "GeofenceBroadcastRec";;
 
     /**
      * This method is called when a user interacts with 1 or more geofences
@@ -68,15 +72,12 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
                 Log.d(TAG, "GEOFENCE_TRANSITION_ENTER" + transitionType);
                 // user has returned
                 ((PatientSession) Session.getInstance().getUser()).patientData.locationData.returnedToGeofence();
-//                Toast.makeText(context, "Geofence Entered", Toast.LENGTH_SHORT).show();
-//                Session.getInstance().generateLiveEvent(EventType.ENTER_HOUSE);
                 break;
 //            case Geofence.GEOFENCE_TRANSITION_DWELL:
 //                Toast.makeText(context, "GEOFENCE_TRANSITION_DWELL", Toast.LENGTH_SHORT).show();
 //                break;
             case Geofence.GEOFENCE_TRANSITION_EXIT:
                 Log.d(TAG, "GEOFENCE_TRANSITION_EXIT" + transitionType);
-//                Toast.makeText(context, "Geofence Exited", Toast.LENGTH_SHORT).show();
                 // will tell carers that person has left the house
                 boolean left = ((PatientSession) Session.getInstance().getUser()).patientData.locationData.getleftGeofence();
                 if (!left) { // notification has already been sent
@@ -91,6 +92,10 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         ObservableObject.getInstance().updateValue(transitionType);
     }
 
+    /**
+     * Opens the MapActivity screen
+     * @param context
+     */
     private void openMapActivity(Context context){
         Intent i = new Intent(context, MapsActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

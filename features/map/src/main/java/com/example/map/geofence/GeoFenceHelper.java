@@ -58,7 +58,7 @@ public class GeoFenceHelper extends ContextWrapper {
     private GeofencingClient geofencingClient;
     private GoogleMap mMap;
 
-    public GeoFenceHelper(Context base,GeofencingClient geofencingClient, GoogleMap mMap) {
+    public GeoFenceHelper(Context base, GeofencingClient geofencingClient, GoogleMap mMap) {
         super(base);
         this.geofencingClient = geofencingClient;
         this.mMap = mMap;
@@ -101,7 +101,7 @@ public class GeoFenceHelper extends ContextWrapper {
 
     /**
      * Creates or returns a pending intent for the geofence
-     * @return
+     * @return: A pending intent for the geofence Reciever
      */
     public PendingIntent createPendingIntent() {
         // this suggests there is only one pending intent for all geofences? remove this and create
@@ -117,8 +117,8 @@ public class GeoFenceHelper extends ContextWrapper {
 
     /**
      * Get the error string for the geofence error
-     * @param e
-     * @return
+     * @param e: The exception when trying to create a geofence
+     * @return: A string detailing the error
      */
     public String getErrorString(Exception e) {
         if (e instanceof ApiException) {
@@ -143,6 +143,7 @@ public class GeoFenceHelper extends ContextWrapper {
     /**
      * Shows the geofences but does not create them since they already exist?
      * Well need to actually check they exist
+     * @param: user: The current user session
      */
     public void loadGeofences(UserSession user){
         Log.d(TAG,"Loading Geofences");
@@ -168,10 +169,10 @@ public class GeoFenceHelper extends ContextWrapper {
     }
 
     /**
-     * This is the method the background task runs which retrieves the
-     * patients of the carer
-     * @param user
-     * @return
+     * This is the method that gets the patients for the current carer session. This should be run in the
+     * background
+     * @param user: The user session
+     * @return: All the patient sessions belonging to the carer
      */
     private static HashSet<PatientSession> getPatientsForCarer(CarerSession user) {
         Log.d(TAG,"Getting patients for carer: " + user.userInfo.getUserName());
@@ -180,8 +181,9 @@ public class GeoFenceHelper extends ContextWrapper {
     }
 
     /**
-     * Is the callback fro showing the Geofences of patients
-     * @param patients
+     * Shows the patients geofences on the google map
+     * @param patients: The patients for which geofences we want to show
+     * @param mMap: The google map
      */
     private static void showGeofences(HashSet<PatientSession> patients, GoogleMap mMap){
         for (PatientSession patient : patients) {
@@ -195,7 +197,9 @@ public class GeoFenceHelper extends ContextWrapper {
 
     /**
      * Shows a single geofence
-     * @param geofence
+     * @param geofence: The geofence to show as a marker
+     * @param title: The title of the marker
+     * @param mMap: The google map
      */
     private static void showGeofence(SimpleGeofence geofence, String title, GoogleMap mMap){
         LatLng position = geofence.getPosition();
@@ -206,12 +210,12 @@ public class GeoFenceHelper extends ContextWrapper {
 
     /**
      * Adds a new geofence by passing all the needed attributes to create it
-     * @param id
-     * @param position
-     * @param radius
-     * @param transitionTypes
-     * @param loiteringDelay
-     * @param expirationDuration
+     * @param id: The unique String id of the geofence
+     * @param position: The centre position of the geofence
+     * @param radius: The radius of the geofence
+     * @param transitionTypes: When does this geofence trigger the boradcast reciever
+     * @param loiteringDelay: How long does a person need to be in the geofence before the DWELL action is triggered
+     * @param expirationDuration: The time when the geofence will expire
      */
     @SuppressLint("MissingPermission")
     public void addNewGeofence(String id, LatLng position, float radius, int transitionTypes, int loiteringDelay, long expirationDuration){
@@ -221,6 +225,10 @@ public class GeoFenceHelper extends ContextWrapper {
         createLiveGeofence(geofence, simpleGeofence);
     }
 
+    /**
+     * Adds already exisitng geofences and can easily be created using the simple geofence
+     * @param simpleGeofence: The simple geofence to add
+     */
     public void addExisitingGeofence(SimpleGeofence simpleGeofence){
         Log.d(TAG,"Adding existing Geofences");
         Geofence geofence = simpleGeofence.toGeofence();
@@ -229,8 +237,8 @@ public class GeoFenceHelper extends ContextWrapper {
 
     /**
      * Creates the actual live geofence that is stored inside the android system
-     * @param geofence
-     * @param simpleGeofence
+     * @param geofence: The geofence to add
+     * @param simpleGeofence: The simple geofence version of the geofence
      */
     @SuppressLint("MissingPermission")
     private void createLiveGeofence(Geofence geofence, SimpleGeofence simpleGeofence){
