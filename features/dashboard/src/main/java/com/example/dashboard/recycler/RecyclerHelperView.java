@@ -25,7 +25,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.Navigation;
+//import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -114,16 +114,7 @@ public class RecyclerHelperView{
         PatientSession patientSession = patient.getSession();
 
         user.carerData.addPatient(patientSession);
-<<<<<<< HEAD
-=======
 
-        HashSet<PatientSession> patientSessions = session.retrieveAllPatientSessions();
-        Log.d("debug","All patient sessions loaded after adding patient: " + patientSessions);
-
-        Log.d(TAG, "Patient after being added: " + patientSession.patientData);
-        Log.d(TAG, "carer after adding Patient: " + user.carerData);
-
->>>>>>> dev
         mAdapter.notifyItemChanged(position); // this calls PatientAdapter.onBindViewHolder
         session.saveState();
     }
