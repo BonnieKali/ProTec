@@ -65,6 +65,7 @@ public class RecyclerHelperView{
             @Override
             public void onItemClick(int position) {
                 Log.d(TAG,"item click");
+                addPatient(position, view);
                 changeItem(position, context);
             }
 
@@ -77,7 +78,7 @@ public class RecyclerHelperView{
 
             @Override
             public void onPatientRemoveClick(int position, View v) {
-                Log.d(TAG,"Remive click");
+                Log.d(TAG,"Remive click");                          // james ... you dyslexic  XD
                 removePatient(position, v);
             }
         });
@@ -149,7 +150,6 @@ public class RecyclerHelperView{
         transaction.addToBackStack(null);
         // Commit the transaction
         transaction.commit();
-
     }
 
 }
