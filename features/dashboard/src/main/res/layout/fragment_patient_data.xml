@@ -6,7 +6,7 @@
     android:weightSum="100" >
 
     <RelativeLayout
-        android:id="@+id/button1"
+        android:id="@+id/layout_relative_1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="50" >
@@ -14,10 +14,25 @@
         <!-- Your RelativeLayout Items -->
 
         <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/lineChart"
+            android:id="@+id/lineChart_speed"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            ></com.github.mikephil.charting.charts.LineChart>
 
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_relative_2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="50" >
+
+        <!-- Your RelativeLayout Items -->
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/lineChart_accuracy"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             ></com.github.mikephil.charting.charts.LineChart>
 
     </RelativeLayout>

@@ -181,10 +181,10 @@ public class FallDetectorService implements SensorEventListener {
             THRESHOLD_SMV = Double.valueOf(settings.get(SETTINGS_KEY.ACC.getKey()).toString());
             THRESHOLD_degreeFloat = Double.valueOf(settings.get(SETTINGS_KEY.Q1.getKey()).toString());
             THRESHOLD_degreeFloat2 = Double.valueOf(settings.get(SETTINGS_KEY.Q2.getKey()).toString());
-            Log.d(TAG_FALL_DETECTOR,"VALUES WERE SET: "+THRESHOLD_SMV+"; "+"q1_threshold="+THRESHOLD_degreeFloat+"; "+"q2_threshold="+THRESHOLD_degreeFloat2);
+//            Log.d(TAG_FALL_DETECTOR,"VALUES WERE SET: "+THRESHOLD_SMV+"; "+"q1_threshold="+THRESHOLD_degreeFloat+"; "+"q2_threshold="+THRESHOLD_degreeFloat2);
         } else {                                                                                    // set them in database
             // Don't Change settings
-            Log.d(TAG_FALL_DETECTOR,"SETTINGS DON'T EXIST");
+//            Log.d(TAG_FALL_DETECTOR,"SETTINGS DON'T EXIST");
         }
     }
 

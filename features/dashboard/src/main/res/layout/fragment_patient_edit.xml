@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".recycler.PatientEditFragment"
+    tools:context=".patient.PatientEditFragment"
     android:id="@+id/fragment_layout_patient_edit">
 
 
@@ -129,18 +129,67 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/tv_Q1_threshold"
-        app:layout_constraintHorizontal_bias="0.082"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/tv_Q1_threshold"
         app:layout_constraintTop_toBottomOf="@+id/slider_thresh_q1"
-        app:layout_constraintVertical_bias="0.193" />
+        app:layout_constraintVertical_bias="0.121" />
 
     <Button
         android:id="@+id/btn_update_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Update Fall Detection Settings"
+        android:text="Custom Settings"
+        android:textSize="20sp"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_sensitive_default_settings" />
+
+    <Button
+        android:id="@+id/btn_sensitive_default_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Default"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/slider_thresh_q2"
+        app:layout_constraintVertical_bias="0.459" />
+
+    <Button
+        android:id="@+id/btn_sensitive_low_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Low"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_sensitive_default_settings"
+        app:layout_constraintEnd_toStartOf="@+id/btn_sensitive_default_settings"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_sensitive_default_settings" />
+
+    <Button
+        android:id="@+id/btn_sensitive_high_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="High"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_sensitive_default_settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_sensitive_default_settings"
+        app:layout_constraintTop_toTopOf="@+id/btn_sensitive_default_settings" />
+
+    <CheckBox
+        android:id="@+id/checkBox_fall_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CheckBox"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_sensitive_default_settings"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/slider_thresh_q2" />

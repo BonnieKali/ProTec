@@ -1,26 +1,21 @@
 package com.example.dashboard.recycler;
 
-import android.app.Activity;
 //import android.app.FragmentManager;
 //import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
-import com.example.dashboard.R;
+        import com.example.dashboard.R;
+import com.example.dashboard.patient.PatientInfoFragment;
 import com.example.session.Session;
 import com.example.session.user.carer.CarerSession;
 import com.example.session.user.patient.PatientSession;
-import com.example.threads.OnTaskCompleteCallback;
-import com.example.threads.TaskResult;
 
-import java.util.ArrayList;
+        import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
 
-import androidx.fragment.app.Fragment;
 //import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -70,6 +65,7 @@ public class RecyclerHelperView{
             @Override
             public void onItemClick(int position) {
                 Log.d(TAG,"item click");
+                addPatient(position, view);
                 changeItem(position, context);
             }
 
@@ -82,7 +78,7 @@ public class RecyclerHelperView{
 
             @Override
             public void onPatientRemoveClick(int position, View v) {
-                Log.d(TAG,"Remive click");
+                Log.d(TAG,"Remive click");                          // james ... you dyslexic  XD
                 removePatient(position, v);
             }
         });
@@ -154,7 +150,6 @@ public class RecyclerHelperView{
         transaction.addToBackStack(null);
         // Commit the transaction
         transaction.commit();
-
     }
 
 }

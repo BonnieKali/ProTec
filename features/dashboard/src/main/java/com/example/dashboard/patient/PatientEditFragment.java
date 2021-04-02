@@ -1,4 +1,4 @@
-package com.example.dashboard.recycler;
+package com.example.dashboard.patient;
 
 import android.os.Bundle;
 
@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.example.dashboard.R;
@@ -36,12 +37,13 @@ public class PatientEditFragment extends Fragment {
     // Ui
     TextView tv_acc, tv_q1, tv_q2;
     Slider slider_acc, slider_q1, slider_q2;
-    Button btn_update_settings;
+    Button btn_update_settings, btn_set_default, btn_set_low, btn_set_high;
+    CheckBox cb_fallen_state;
     // Settings that can be edited
     double acc_threshold, q1_threshold, q2_threshold;
-    // Constants
-    private enum SETTINGS_KEY {
-        ACC("ACC"), Q1("Q1"), Q2("Q2");
+    // Enums
+    protected enum SETTINGS_KEY {
+        ACC("ACC"), Q1("Q1"), Q2("Q2"), FALLEN("Fallen");
         private final String key;
         /**
          * @param key
@@ -53,20 +55,37 @@ public class PatientEditFragment extends Fragment {
             return key;
         }
     }
-
-    private enum SETTINGS_DEFAULT {
-        ACC(30.), Q1(40.), Q2(40.);
+    private enum STATE_FALLEN {
+        TRUE(true), FALSE(false);
+        private final boolean key;
+        /**
+         * @param key
+         */
+        private STATE_FALLEN(final boolean key) {
+            this.key = key;
+        }
+        public boolean getKey() {
+            return key;
+        }
+    }
+    private enum SETTINGS_VALUES_TYPES{DEFAULT,HIGH,LOW};
+    private enum SETTINGS_VALUES {
+        ACC_DEFAULT(30.), Q1_DEFAULT(40.), Q2_DEFAULT(40.),
+        ACC_HIGH(60.), Q1_HIGH(70.), Q2_HIGH(70.),
+        ACC_LOW(10.), Q1_LOW(30.), Q2_LOW(30.);
         private final double key;
         /**
          * @param key
          */
-        private SETTINGS_DEFAULT(final double key) {
+        private SETTINGS_VALUES(final double key) {
             this.key = key;
         }
         public double getKey() {
             return key;
         }
     }
+    // Constants
+    boolean cb_fallen_state_value;
 
 
     @Override
@@ -76,8 +95,6 @@ public class PatientEditFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_patient_edit, container, false);
         // Initialize Patient session
         initializePatient();
-        // Initialize UI
-//        initializeUi();
         return view;
     }
 
@@ -107,10 +124,11 @@ public class PatientEditFragment extends Fragment {
             acc_threshold = Double.valueOf(settings.get(SETTINGS_KEY.ACC.getKey()).toString());
             q1_threshold = Double.valueOf(settings.get(SETTINGS_KEY.Q1.getKey()).toString());
             q2_threshold = Double.valueOf(settings.get(SETTINGS_KEY.Q2.getKey()).toString());
+            cb_fallen_state_value = Boolean.parseBoolean(settings.get(SETTINGS_KEY.FALLEN.getKey()).toString());
             Log.d(TAG_LOG,"VALUES WERE SET: "+acc_threshold+"; "+"q1_threshold="+q1_threshold+"; "+"q2_threshold="+q2_threshold);
         } else {                                                                                    // set them in database
             Log.d(TAG_LOG,"SETTINGS DON'T EXIST");
-            loadDefaultValues();
+            loadValues(SETTINGS_VALUES_TYPES.DEFAULT);
         }
 
     }
@@ -119,10 +137,20 @@ public class PatientEditFragment extends Fragment {
     /***
      * Loads default values in class and updates the database
      */
-    private void loadDefaultValues() {
-        acc_threshold = SETTINGS_DEFAULT.ACC.getKey();
-        q1_threshold = SETTINGS_DEFAULT.Q1.getKey();
-        q2_threshold = SETTINGS_DEFAULT.Q2.getKey();
+    private void loadValues(SETTINGS_VALUES_TYPES type) {
+        if(type == SETTINGS_VALUES_TYPES.DEFAULT) {
+            acc_threshold = SETTINGS_VALUES.ACC_DEFAULT.getKey();
+            q1_threshold = SETTINGS_VALUES.Q1_DEFAULT.getKey();
+            q2_threshold = SETTINGS_VALUES.Q2_DEFAULT.getKey();
+        } else if (type == SETTINGS_VALUES_TYPES.HIGH){
+            acc_threshold = SETTINGS_VALUES.ACC_HIGH.getKey();
+            q1_threshold = SETTINGS_VALUES.Q1_HIGH.getKey();
+            q2_threshold = SETTINGS_VALUES.Q2_HIGH.getKey();
+        } else if (type == SETTINGS_VALUES_TYPES.LOW){
+            acc_threshold = SETTINGS_VALUES.ACC_LOW.getKey();
+            q1_threshold = SETTINGS_VALUES.Q1_LOW.getKey();
+            q2_threshold = SETTINGS_VALUES.Q2_LOW.getKey();
+        }
         updateSettingsDatabase();
     }
 
@@ -161,16 +189,48 @@ public class PatientEditFragment extends Fragment {
         setUiListeners();
     }
 
+
     private void setUiListeners() {
         setSliderListeners();
         setButtonListeners();
+        setCheckBoxListeners();
     }
+
+
+    private void setCheckBoxListeners() {
+        cb_fallen_state.setOnClickListener(v -> {
+            cb_fallen_state_value = !(cb_fallen_state_value);
+            updateFallenSetting();
+        });
+    }
+
+
+    /***
+     * Updates the value of the fallen state in the database
+     */
+    private void updateFallenSetting() {
+        session.setPatientSetting(patientSession.userInfo.id,SETTINGS_KEY.FALLEN.getKey(),cb_fallen_state_value);
+    }
+
 
     private void setButtonListeners() {
         btn_update_settings.setOnClickListener(v -> {
             updateSettingsDatabase();
         });
+        btn_set_default.setOnClickListener(v -> {
+            loadValues(SETTINGS_VALUES_TYPES.DEFAULT);
+            setUiElements();
+        });
+        btn_set_high.setOnClickListener(v -> {
+            loadValues(SETTINGS_VALUES_TYPES.HIGH);
+            setUiElements();
+        });
+        btn_set_low.setOnClickListener(v -> {
+            loadValues(SETTINGS_VALUES_TYPES.LOW);
+            setUiElements();
+        });
     }
+
 
     /***
      * Implements the Listeners for the Sliders
@@ -211,6 +271,7 @@ public class PatientEditFragment extends Fragment {
         tv_acc.setText(("")+(int)acc_threshold);
         tv_q1.setText(("")+(int)q1_threshold);
         tv_q2.setText(("")+(int)q2_threshold);
+        cb_fallen_state.setChecked(cb_fallen_state_value);
     }
 
 
@@ -225,15 +286,9 @@ public class PatientEditFragment extends Fragment {
         slider_q1 = view.findViewById(R.id.slider_thresh_q1);
         slider_q2 = view.findViewById(R.id.slider_thresh_q2);
         btn_update_settings = view.findViewById(R.id.btn_update_settings);
+        btn_set_default = view.findViewById((R.id.btn_sensitive_default_settings));
+        btn_set_low = view.findViewById(R.id.btn_sensitive_low_settings);
+        btn_set_high = view.findViewById(R.id.btn_sensitive_high_settings);
+        cb_fallen_state = view.findViewById(R.id.checkBox_fall_status);
     }
-
-
-//session.getPatientSettings(patientSession.userInfo.id, new OnTaskCompleteCallback() {
-//@Override
-//public void onComplete(TaskResult<?> taskResult) {
-//    Map<String, Object> settings = (Map<String, Object>) taskResult.getData();
-//    Log.d(TAG,settings.toString());
-//}
-//});
-//session.setPatientSetting(patientSession.userInfo.id,"James",true);
 }

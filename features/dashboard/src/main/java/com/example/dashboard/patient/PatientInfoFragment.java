@@ -1,6 +1,5 @@
-package com.example.dashboard.recycler;
+package com.example.dashboard.patient;
 
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,16 +7,12 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.transition.Explode;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 
 import com.example.dashboard.R;
-import com.example.session.Session;
 import com.example.session.user.patient.PatientSession;
 
 /**
