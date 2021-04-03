@@ -123,6 +123,11 @@ public class SessionHandler {
         return localDB.retrieveUserIdTypeMap();
     }
 
+
+    //------------------|
+    // Patient Settings |
+    //------------------|
+
     /**
      * Retrieves all patient settings for a given patient and calls ui Callback with TaskResult
      * (HashMap(setting_id -> setting_object))
@@ -138,7 +143,16 @@ public class SessionHandler {
         BackgroundPool.attachTask(task, uiCallback);
     }
 
-    // ------------
+    /**
+     * Sets a listener to the firebase database for the given patients settings. The given callback
+     * is called when there is any change to the settings of the patient.
+     *
+     * @param uid patient id
+     * @param callback callback to be called with the value as input
+     */
+    public void setPatientSettingsListener(String uid, OnTaskCompleteCallback callback){
+        remoteDB.setPatientSettingsListener(uid, callback);
+    }
 
 
 

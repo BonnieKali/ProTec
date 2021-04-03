@@ -1,5 +1,6 @@
 package com.example.session.remote;
 
+import android.renderscript.Sampler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -363,6 +364,26 @@ public class RemoteDB {
         Log.d(TAG, "SetPatientSetting is called with: " + uid + " " + settingKey + " " +
                 settingValue.toString());
         dRef.child(PATIENT_SETTINGS).child(uid).child(settingKey).setValue(settingValue);
+    }
+
+    /**
+     * Sets a listener to the firebase database for the given patients settings. The given callback
+     * is called when there is any change to the settings of the patient.
+     *
+     * @param uid patient id
+     * @param callback callback to be called with the value as input
+     */
+    public void setPatientSettingsListener(String uid, OnTaskCompleteCallback callback){
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                callback.onComplete(new TaskResult<>(snapshot.getValue()));
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        };
+
+        dRef.child(PATIENT_SETTINGS).child(uid).addValueEventListener(valueEventListener);
     }
 
 

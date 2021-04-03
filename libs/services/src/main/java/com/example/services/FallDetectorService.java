@@ -104,8 +104,20 @@ public class FallDetectorService implements SensorEventListener {
      */
     public FallDetectorService(Context context){
         this.context = context;
+
+        // Retrieve patient settings from DB
+        checkThresholdValues();
+
+        // Set recurring listener in case any changes occur
+        // This will be called every time there is a change in the database
+        Session session = Session.getInstance();
+        String patientUid = session.getUser().getUID();
+        session.setPatientSettingsListener(patientUid, taskResult -> checkThresholdValues());
+
+        // Initialize sensors
         initializeSensors();
         initializeSensorListeners();
+
     }
 
 
@@ -137,7 +149,9 @@ public class FallDetectorService implements SensorEventListener {
             return;
         }
         // check threshold values
-        checkThresholdValues();
+
+        // TODO: Add a listener for onDataChanged for firebase
+
         // check sensors change
         switch (sensorEvent.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
