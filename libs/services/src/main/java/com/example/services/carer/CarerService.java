@@ -58,11 +58,13 @@ public class CarerService extends Service {
 
         session.setLiveEventListener(taskResult -> {
             Event event = (Event) taskResult.getData();
+            session.disableLiveEvent(event);
 
             if (event == null){
                 Log.w(TAG, "New event was received but is is null");
                 return;
             }
+            session.disableLiveEvent(event);
 
             String title = "Patient has ";
             String msg = event.patientUid;
@@ -77,6 +79,7 @@ public class CarerService extends Service {
 
             proTecNotificationsManager.showSmallNotification(title, msg,
                     Actions.openDashboardIntent(context));
+
         });
     }
 }
