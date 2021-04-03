@@ -109,6 +109,11 @@ public class PatientService extends Service {
             }
         }
 
+        else if(pn.title.equals("LEFT")){
+            pn.title = "Left The House!";
+            pn.message = "Please open maps to get directions back home.";
+        }
+
     }
 
 }

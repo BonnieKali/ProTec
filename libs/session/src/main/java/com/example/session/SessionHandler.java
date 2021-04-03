@@ -401,9 +401,9 @@ public class SessionHandler {
                                                                String title,
                                                                String msg){
         // Check if current user is patient and if so do not generate
-        if(userSession.userInfo.userType == UserInfo.UserType.PATIENT){
-            return null;
-        }
+//        if(userSession.userInfo.userType == UserInfo.UserType.PATIENT){
+//            return null;
+//        }
 
         PatientNotification patientNotification = PatientNotificationBuilder.
                 buildPatientNotification(patientUid, title, msg);

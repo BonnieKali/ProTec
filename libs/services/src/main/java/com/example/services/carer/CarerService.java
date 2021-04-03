@@ -66,14 +66,14 @@ public class CarerService extends Service {
             }
             session.disableLiveEvent(event);
 
-            String title = "Patient has ";
-            String msg = event.patientUid;
+            String title = "Patient has";
+            String msg = event.patientName;
             if (event.eventType == EventType.FELL){
-                title += "fallen!";
+                title += " fallen!";
                 msg += " has fallen!!! Please check up on him.";
             }
             else if (event.eventType == EventType.LEFT_HOUSE){
-                title += " has left their house!";
+                title += " left their house!";
                 msg += " has left the house!!! Please check up on him";
             }
 

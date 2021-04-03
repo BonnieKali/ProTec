@@ -4,6 +4,7 @@ public class Event {
 
     public String timestamp;
     public String patientUid;
+    public String patientName;
     public EventType eventType;
 
 
@@ -13,9 +14,10 @@ public class Event {
      * @param patientUid Unique user identifier (patient)
      * @param eventType EventType
      */
-    protected Event(String timestamp, String patientUid, EventType eventType){
+    protected Event(String timestamp, String patientUid, String patientName, EventType eventType){
         this.timestamp = timestamp;
         this.patientUid = patientUid;
+        this.patientName = patientName;
         this.eventType = eventType;
     }
 
@@ -35,6 +37,7 @@ public class Event {
         return "Event{" +
                 "timestamp='" + timestamp + '\'' +
                 ", patientUid='" + patientUid + '\'' +
+                ", patientName='" + patientName + '\'' +
                 ", eventType=" + eventType +
                 '}';
     }
