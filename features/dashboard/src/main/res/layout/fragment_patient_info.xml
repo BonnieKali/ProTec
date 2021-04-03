@@ -6,75 +6,111 @@
     android:layout_height="match_parent"
     tools:context=".patient.PatientInfoFragment"
     android:id="@+id/fragment_patient_info"
+    android:weightSum="100"
     >
 
-
-    <Button
-        android:id="@+id/btn_contact"
-        android:layout_width="0dp"
+    <!--  HEADER  -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/patient_dashboard_header"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Patient Information"
-        android:textColor="@android:color/white"
-        android:textSize="25sp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_stationary_test"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.3"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
-
-
-    <Button
-        android:id="@+id/btn_data"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Patient Data"
-        android:textColor="@android:color/white"
-        android:textSize="25sp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_stationary_test"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.3"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_contact"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintHeight_percent="0.27"
+        tools:context=".DashboardActivity"
+        tools:layout_editor_absoluteX="0dp">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/neon_dark_blue"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="0.4"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <ImageView
+            android:id="@+id/user_avatar_picture"
+            android:layout_width="200dp"
+            android:layout_height="180dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/blue_avatar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/patient_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="HELLO"
+            android:textColor="@color/neon_dark_blue"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/user_avatar_picture"
+            app:layout_constraintStart_toStartOf="@+id/user_avatar_picture"
+            app:layout_constraintBottom_toBottomOf="@id/user_avatar_picture" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    <Button
-        android:id="@+id/btn_edit"
-        android:layout_width="0dp"
+    <!--  BODY  -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Patient Parameters"
-        android:textColor="@android:color/white"
-        android:textSize="25sp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_stationary_test"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.3"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_data"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/patient_dashboard_header"
+        app:layout_constraintVertical_bias="100"
+        tools:context=".DashboardActivity"
+        android:id="@+id/layout_body_patient_info">
+
+        <Button
+            android:id="@+id/btn_contact"
+            style="@style/AppTheme.FilledButton"
+            android:layout_width="300dp"
+            android:layout_height="80dp"
+            android:text="Patient Information"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.505"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.34" />
+
+
+        <Button
+            android:id="@+id/btn_data"
+            style="@style/AppTheme.FilledButton"
+            android:layout_width="300dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="20dp"
+            android:scaleType="fitCenter"
+            android:text="Patient Data"
+            android:textSize="25sp"
+            app:layout_constraintEnd_toEndOf="@+id/btn_contact"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/btn_contact"
+            app:layout_constraintTop_toBottomOf="@+id/btn_contact" />
+
+        <Button
+            android:id="@+id/btn_edit"
+            style="@style/AppTheme.FilledButton"
+            android:layout_width="300dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="20dp"
+            android:scaleType="fitCenter"
+            android:text="Edit Patient"
+            android:textSize="25sp"
+            app:layout_constraintEnd_toEndOf="@+id/btn_data"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/btn_data"
+            app:layout_constraintTop_toBottomOf="@+id/btn_data" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
