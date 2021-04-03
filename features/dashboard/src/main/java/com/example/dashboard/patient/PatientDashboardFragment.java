@@ -1,9 +1,11 @@
 package com.example.dashboard.patient;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.example.actions.Actions;
 import com.example.dashboard.R;
@@ -36,11 +39,24 @@ public class PatientDashboardFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_patient_dashboard, container, false);
 
+        // Hide top bar
+        Activity act = getActivity();
+        if (act != null){
+            androidx.appcompat.app.ActionBar actionBar = ((AppCompatActivity) act).getSupportActionBar();
+            if (actionBar != null){
+                actionBar.hide();
+            }else{
+                Log.w(TAG, "onCreateView: Actionbar is null");
+            }
+        }else{
+            Log.w(TAG, "onCreateView: or act is null");
+        }
+
         session = Session.getInstance();
 
         // Sey hello to user (for testing)
         patientTextView = view.findViewById(R.id.patient_textView);
-        patientTextView.setText("Hello "+session.getUser().userInfo.email);
+        patientTextView.setText(session.getUser().userInfo.getUserName());
 
         // Start service for patient notifications
         startPatientService();

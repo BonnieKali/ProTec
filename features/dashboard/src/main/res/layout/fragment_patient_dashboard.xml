@@ -5,146 +5,99 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DashboardActivity">
+    android:weightSum="100">
 
-    <TextView
-        android:id="@+id/patient_textView"
+
+    <!--  HEADER  -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/patient_dashboard_header"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:background="@drawable/box2"
-        android:gravity="center"
-        android:text="HELLO PATIENT"
-        android:textColor="@color/white"
-        android:textSize="25sp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.25"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.050000012" />
-
-    <Button
-        android:id="@+id/dashboard_to_BioTest"
-        style="@style/AppTheme.FilledButton"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="Perform Biometric Test"
-        android:textColor="@android:color/white"
-        android:textSize="25sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.25"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/patient_textView"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintHeight_percent="0.27"
+        tools:context=".DashboardActivity"
+        tools:layout_editor_absoluteX="0dp">
 
-    <Button
-        android:id="@+id/open_map_btn"
-        style="@style/AppTheme.FilledButton"
-        android:layout_width="0dp"
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/neon_dark_blue"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="0.4"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <ImageView
+            android:id="@+id/user_avatar_picture"
+            android:layout_width="200dp"
+            android:layout_height="180dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/blue_avatar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/patient_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="HELLO"
+            android:textColor="@color/neon_dark_blue"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/user_avatar_picture"
+            app:layout_constraintStart_toStartOf="@+id/user_avatar_picture"
+            app:layout_constraintBottom_toBottomOf="@id/user_avatar_picture" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!--  BODY  -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="Take Me Home"
-        android:textColor="@android:color/white"
-        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.25"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dashboard_to_BioTest"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@id/patient_dashboard_header"
+        app:layout_constraintVertical_bias="100"
 
-    <!--    <ImageView-->
-<!--        android:id="@+id/imageView_social_twitter"-->
-<!--        android:layout_width="32dp"-->
-<!--        android:layout_height="32dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/button_social_facebook"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/imageView_social_email"-->
-<!--        app:layout_constraintTop_toTopOf="@+id/button_social_facebook"-->
-<!--        android:src="@drawable/twitter"-->
-<!--        app:tint="#38A1F3" />-->
+        tools:context=".DashboardActivity">
 
-<!--    <Button-->
-<!--        android:id="@+id/button_social_twitter"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="32dp"-->
-<!--        android:drawableStart="@drawable/envelope"-->
-<!--        android:drawableLeft="@drawable/envelope"-->
-<!--        android:drawableTint="#f00"-->
-<!--        android:text="Share on twitter"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/button_social_email"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/button_social_email" />-->
+        <Button
+            android:id="@+id/dashboard_to_BioTest"
+            style="@style/AppTheme.FilledButton"
+            android:layout_width="300dp"
+            android:layout_height="80dp"
+            android:text="Biomarker Test"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.505"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.34" />
 
-
-<!--    <ImageView-->
-<!--        android:id="@+id/imageView_social_email"-->
-<!--        android:layout_width="32dp"-->
-<!--        android:layout_height="32dp"-->
-<!--        android:layout_marginEnd="16dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/button_social_email"-->
-<!--        app:layout_constraintEnd_toStartOf="@+id/button_social_email"-->
-<!--        app:layout_constraintTop_toTopOf="@+id/button_social_email"-->
-<!--        android:src="@drawable/envelope"-->
-<!--        android:layout_marginRight="16dp"-->
-<!--        app:tint="#D44638" />-->
-
-<!--    <Button-->
-<!--        android:id="@+id/button_social_email"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:layout_marginLeft="16dp"-->
-<!--        android:drawableStart="@drawable/envelope"-->
-<!--        android:drawableLeft="@drawable/envelope"-->
-<!--        android:drawableTint="#f00"-->
-<!--        android:text="Share via email"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.5"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/imageView_social_email"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    <ImageView-->
-<!--        android:id="@+id/imageView_social_facebook"-->
-<!--        android:layout_width="32dp"-->
-<!--        android:layout_height="32dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/button_social_twitter"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/imageView_social_email"-->
-<!--        app:layout_constraintTop_toTopOf="@+id/button_social_twitter"-->
-<!--        android:src="@drawable/facebook"-->
-<!--        app:tint="#4267b2" />-->
+        <Button
+            android:id="@+id/open_map_btn"
+            style="@style/AppTheme.FilledButton"
+            android:layout_width="300dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="20dp"
+            android:scaleType="fitCenter"
+            android:text="MAP"
+            android:textSize="25sp"
+            app:layout_constraintEnd_toEndOf="@+id/dashboard_to_BioTest"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/dashboard_to_BioTest"
+            app:layout_constraintTop_toBottomOf="@+id/dashboard_to_BioTest" />
 
 
-<!--    <Button-->
-<!--        android:id="@+id/button_social_facebook"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginBottom="32dp"-->
-<!--        android:drawableStart="@drawable/envelope"-->
-<!--        android:drawableLeft="@drawable/envelope"-->
-<!--        android:drawableTint="#f00"-->
-<!--        android:text="Share on facebook"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/button_social_email"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/button_social_email" />-->
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
