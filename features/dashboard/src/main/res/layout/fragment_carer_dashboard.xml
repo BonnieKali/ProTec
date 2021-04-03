@@ -24,10 +24,10 @@
     <Button
         android:id="@+id/open_map_btn"
         style="@style/AppTheme.FilledButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="Open Map"
+        android:layout_marginBottom="25sp"
+        android:text="Show Patietns on Map"
         app:layout_constraintBottom_toTopOf="@+id/carer_textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
