@@ -62,6 +62,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         session.logOutUser(taskResult -> {
             startActivity(Actions.openLoginIntent(this));
+            finish();
         });
     }
 
