@@ -52,7 +52,7 @@ public class GeoFenceHelper extends ContextWrapper {
     public static final int transitionType = com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_DWELL | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_EXIT;
     public static final int loiteringDelay = 4000;
     public static final long expirationDuration = Geofence.NEVER_EXPIRE;
-    public static final float radius = 200; // a large radius because location data can be inaccurate
+    public static final float radius = 150; // a large radius because location data can be inaccurate, recommended by android
 
     private PendingIntent geoPendingIntent;
     private GeofencingClient geofencingClient;
