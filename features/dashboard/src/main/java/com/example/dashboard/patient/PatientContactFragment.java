@@ -111,6 +111,7 @@ public class PatientContactFragment extends Fragment {
      */
     public void setPatientInfo(){
         patientSession = getArguments().getParcelable("patientSession");
+        ((TextView)view.findViewById(R.id.patient_textView)).setText(patientSession.userInfo.getUserName()); // set user name on ui
         getPatientData();
     }
 

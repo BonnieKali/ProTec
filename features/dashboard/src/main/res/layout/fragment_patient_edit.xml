@@ -8,20 +8,77 @@
     android:id="@+id/fragment_layout_patient_edit">
 
 
-    <!-- Discrete slider -->
-    <com.google.android.material.slider.Slider
-        android:id="@+id/slider_thresh_acc"
+    <!--  HEADER  -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/patient_dashboard_header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:stepSize="1.0"
-        android:valueFrom="0.0"
-        android:valueTo="100.0"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_acc_threshold"
-        app:layout_constraintVertical_bias="0.056" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.27"
+        tools:context=".DashboardActivity"
+        tools:layout_editor_absoluteX="0dp">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/neon_dark_blue"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="0.4"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <ImageView
+            android:id="@+id/user_avatar_picture"
+            android:layout_width="200dp"
+            android:layout_height="180dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/blue_avatar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/patient_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="HELLO"
+            android:textColor="@color/neon_dark_blue"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/user_avatar_picture"
+            app:layout_constraintStart_toStartOf="@+id/user_avatar_picture"
+            app:layout_constraintBottom_toBottomOf="@id/user_avatar_picture" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--  BODY  -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/patient_dashboard_header"
+        app:layout_constraintVertical_bias="100"
+        tools:context=".DashboardActivity"
+        android:id="@+id/layout_body_patient_info">
+    <!-- Discrete slider -->
+        <com.google.android.material.slider.Slider
+            android:id="@+id/slider_thresh_acc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stepSize="1.0"
+            android:valueFrom="0.0"
+            android:valueTo="100.0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_acc_threshold"
+            app:layout_constraintVertical_bias="0.0" />
 
 
     <TextView
@@ -37,19 +94,19 @@
         app:layout_constraintVertical_bias="0.0" />
 
 
-    <com.google.android.material.slider.Slider
-        android:id="@+id/slider_thresh_q1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:stepSize="1.0"
-        android:valueFrom="0.0"
-        android:valueTo="100.0"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_Q1_threshold"
-        app:layout_constraintVertical_bias="0.094" />
+        <com.google.android.material.slider.Slider
+            android:id="@+id/slider_thresh_q1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stepSize="1.0"
+            android:valueFrom="0.0"
+            android:valueTo="100.0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_Q1_threshold"
+            app:layout_constraintVertical_bias="0.0" />
 
 
     <TextView
@@ -65,19 +122,19 @@
         app:layout_constraintVertical_bias="0.0" />
 
 
-    <com.google.android.material.slider.Slider
-        android:id="@+id/slider_thresh_q2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:stepSize="1.0"
-        android:valueFrom="0.0"
-        android:valueTo="100.0"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_Q2_threshold"
-        app:layout_constraintVertical_bias="0.094" />
+        <com.google.android.material.slider.Slider
+            android:id="@+id/slider_thresh_q2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stepSize="1.0"
+            android:valueFrom="0.0"
+            android:valueTo="100.0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_Q2_threshold"
+            app:layout_constraintVertical_bias="0.0" />
 
 
     <TextView
@@ -92,53 +149,103 @@
         app:layout_constraintTop_toTopOf="@+id/tv_Q2_threshold"
         app:layout_constraintVertical_bias="0.0" />
 
+<!--        VIEW-->
+        <View
+            android:id="@+id/view5"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintTop_toBottomOf="@+id/tv_dynamic_tests_value" />
 
-    <TextView
-        android:id="@+id/tv_acc_threshold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Acceleration"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.082"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.091" />
+        <View
+            android:id="@+id/view6"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintTop_toBottomOf="@+id/slider_thresh_acc" />
+
+        <View
+            android:id="@+id/view7"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintTop_toBottomOf="@+id/slider_thresh_q1" />
+
+        <View
+            android:id="@+id/view8"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintTop_toBottomOf="@+id/slider_thresh_q2" />
+
+        <View
+            android:id="@+id/view9"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintBottom_toTopOf="@+id/btn_sensitive_default_settings"
+            app:layout_constraintTop_toBottomOf="@+id/slider_thresh_q2"
+            app:layout_constraintVertical_bias="0.86" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintBottom_toTopOf="@+id/btn_update_settings"
+            app:layout_constraintTop_toBottomOf="@+id/btn_sensitive_default_settings" />
 
 
-    <TextView
-        android:id="@+id/tv_Q1_threshold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Quaternion 1"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/tv_acc_threshold"
-        app:layout_constraintHorizontal_bias="0.082"
-        app:layout_constraintStart_toStartOf="@+id/tv_acc_threshold"
-        app:layout_constraintTop_toBottomOf="@+id/tv_acc_threshold"
-        app:layout_constraintVertical_bias="0.193" />
+        <!--        PARAMETERS-->
+        <TextView
+            android:id="@+id/tv_acc_threshold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Acceleration"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.082"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
 
-    <TextView
-        android:id="@+id/tv_Q2_threshold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Quaternion 2"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/tv_Q1_threshold"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/tv_Q1_threshold"
-        app:layout_constraintTop_toBottomOf="@+id/slider_thresh_q1"
-        app:layout_constraintVertical_bias="0.121" />
+        <TextView
+            android:id="@+id/tv_Q1_threshold"
+            android:layout_width="wrap_content"
+            android:layout_height="27dp"
+            android:layout_marginTop="8dp"
+            android:text="Quaternion 1"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/tv_acc_threshold"
+            app:layout_constraintHorizontal_bias="0.082"
+            app:layout_constraintStart_toStartOf="@+id/tv_acc_threshold"
+            app:layout_constraintTop_toBottomOf="@+id/slider_thresh_acc"
+            app:layout_constraintVertical_bias="0.0" />
+
+
+        <TextView
+            android:id="@+id/tv_Q2_threshold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Quaternion 2"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/tv_Q1_threshold"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/tv_Q1_threshold"
+            app:layout_constraintTop_toBottomOf="@+id/slider_thresh_q1"
+            app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/btn_update_settings"
+        style="@style/AppTheme.FilledButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Custom Settings"
+        android:text="Apply Custom Settings"
         android:textSize="20sp"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -148,6 +255,7 @@
 
     <Button
         android:id="@+id/btn_sensitive_default_settings"
+        style="@style/AppTheme.FilledButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Default"
@@ -161,6 +269,7 @@
 
     <Button
         android:id="@+id/btn_sensitive_low_settings"
+        style="@style/AppTheme.FilledButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Low"
@@ -173,6 +282,7 @@
 
     <Button
         android:id="@+id/btn_sensitive_high_settings"
+        style="@style/AppTheme.FilledButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="High"
@@ -183,16 +293,18 @@
         app:layout_constraintStart_toEndOf="@+id/btn_sensitive_default_settings"
         app:layout_constraintTop_toTopOf="@+id/btn_sensitive_default_settings" />
 
-    <CheckBox
-        android:id="@+id/checkBox_fall_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CheckBox"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_sensitive_default_settings"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/slider_thresh_q2" />
+        <CheckBox
+            android:id="@+id/checkBox_fall_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fallen"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/btn_sensitive_default_settings"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view8"
+            app:layout_constraintVertical_bias="0.39" />
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

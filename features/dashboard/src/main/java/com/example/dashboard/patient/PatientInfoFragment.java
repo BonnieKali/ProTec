@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.dashboard.R;
 import com.example.session.user.patient.PatientSession;
@@ -32,6 +33,7 @@ public class PatientInfoFragment extends Fragment {
                              Bundle savedInstanceState) {
        view = inflater.inflate(R.layout.fragment_patient_info, container, false);      // Inflate the layout for this fragment
        patientSession = getArguments().getParcelable("patientSession");                        // get user id
+       ((TextView)view.findViewById(R.id.patient_textView)).setText(patientSession.userInfo.getUserName()); // set user name on ui
        setOnClickListeners(view);                                                                   // set listeners
        return view;
     }
@@ -79,7 +81,7 @@ public class PatientInfoFragment extends Fragment {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack if needed
-        transaction.replace(R.id.fragment_container, fragment);
+        transaction.replace(R.id.fragment_container, fragment); // layout_body_patient_info, fragment_container
         transaction.addToBackStack(null);
         // Commit the transaction
         transaction.commit();

@@ -22,12 +22,13 @@ public class EventBuilder {
     public static Event buildEvent(PatientSession patientSession, EventType eventType){
         // Get user id
         String uid = patientSession.getUID();
+        String patientName = patientSession.userInfo.getUserName();
 
         // Create a timestamp
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss", Locale.UK);
         String timestamp = dateFormat.format(new Date()); // Find todays date
 
-        return new Event(timestamp, uid, eventType);
+        return new Event(timestamp, uid, patientName, eventType);
 
     }
 

@@ -105,6 +105,7 @@ public class PatientEditFragment extends Fragment {
     private void initializePatient() {
         session = Session.getInstance();
         patientSession = getArguments().getParcelable("patientSession");                       // get user session
+        ((TextView)view.findViewById(R.id.patient_textView)).setText(patientSession.userInfo.getUserName()); // set user name on ui
         session.getPatientSettings(patientSession.userInfo.id, new OnTaskCompleteCallback() {
             @Override
             public void onComplete(TaskResult<?> taskResult) {
