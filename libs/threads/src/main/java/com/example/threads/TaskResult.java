@@ -1,5 +1,14 @@
 package com.example.threads;
 
+
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This class holds a result returned by a RunnableTask. It can accept any type of parameter,
+ * which can be accessed from the OnTaskCompleteCallback.
+ */
+
+
 public class TaskResult<T> {
 
     // Generic-Type data holder

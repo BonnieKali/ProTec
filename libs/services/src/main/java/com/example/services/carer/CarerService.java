@@ -13,6 +13,17 @@ import com.example.session.Session;
 import com.example.session.event.Event;
 import com.example.session.event.EventType;
 
+
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This class subclasses the Android Service class. This functionality will run carer-specific
+ * processes in the background even when the application shuts down.
+ *
+ * This contains the Notification logic and listener for carers
+ */
+
+
 public class CarerService extends Service {
     private static final String TAG = "CarerService";
 
@@ -48,11 +59,12 @@ public class CarerService extends Service {
 
 
     /**
-     * Initializes service functions and listeners.
+     * Initializes service functions and remote database listener for notifications.
      */
     private void initService() {
         Log.d(TAG, "Carer Service is initializing");
-        // Set listener for patient events
+
+        // Set remote listener for patient events
         if (session == null)
             return;
 

@@ -11,6 +11,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+
+/**
+ * Evangelos Dimitriou (s1657192)
+ * James Hanratty (s1645821)
+ *
+ * This class holds all data objects related to carer users.
+ */
+
+
 public class CarerData extends UserData {
 
     // List containing all patient ids assigned to this carer

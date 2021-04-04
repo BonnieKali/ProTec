@@ -1,6 +1,14 @@
 package com.example.session.user;
 
 
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This class holds functionality and information which applies to all types of users, such as
+ * email and unique id
+ */
+
+
 public class UserInfo {
 
     public String id;

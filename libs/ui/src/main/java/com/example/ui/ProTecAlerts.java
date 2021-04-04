@@ -5,8 +5,12 @@ import android.content.Context;
 
 
 /**
- * Static class producing alerts
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This cals is responsible for displaying alert dialogs to the User.
  */
+
+
 public class ProTecAlerts {
 
     /**

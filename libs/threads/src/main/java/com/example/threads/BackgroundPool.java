@@ -13,6 +13,27 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This class is responsible for initializing and communicating to the pool of background threads,
+ * and it provides public calls for attaching processes or tasks to them. The attachTask() call
+ * accepts a RunnableTask, which is executed in the background as soon as a thread becomes available, and
+ * also an OnTaskCompleteCallback, which gets executed on the UI thread when the background task
+ * completes.
+ *
+ * On application startup, it retrieves details about the current device's processor capabilities,
+ * and spawns threads accordingly (more threads for more available cores).
+ *
+ * When a process/task gets attached, it is added to a blocking FIFO queue. When there is an idle
+ * thread, a task/process gets popped from the queue and assigned to the idle thread.
+ *
+ * This decouples all long-blocking tasks from the UI thread, so that the application is always
+ * responsive and smooth.
+ */
+
+
 public class BackgroundPool {
     private static final String TAG = "BackgroundPool";
 

@@ -10,6 +10,12 @@ import com.example.session.user.patient.PatientSession;
 import java.util.HashMap;
 import java.util.HashSet;
 
+
+/**
+ * James Hanratty (s1645821)
+ */
+
+
 public class LocalLiveData {
 
     private static final String TAG = "LocalLiveData";

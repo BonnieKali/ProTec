@@ -4,23 +4,28 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.session.event.Event;
-import com.example.session.event.EventBuilder;
 import com.example.session.event.EventType;
-import com.example.session.local.LocalLiveData;
 import com.example.session.patientNotifications.PatientNotification;
-import com.example.session.patientNotifications.PatientNotificationBuilder;
-import com.example.session.remote.RemoteDB;
 import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
 import com.example.session.user.patient.PatientSession;
-import com.example.threads.BackgroundPool;
 import com.example.threads.OnTaskCompleteCallback;
-import com.example.threads.RunnableTask;
-import com.example.threads.TaskResult;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+
+
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This class acts as an interface between the front-end features and the back-end of the
+ * application. It provides a Singleton object instance, through which thr front-end can perform
+ * actions. For example:
+ *
+ * - Provides calls for user authentication
+ * - Provides calls for communicating with remote and local databases
+ * - Provides calls for setting up listeners for notifications and settings updates
+ */
 
 
 public class Session {

@@ -1,6 +1,5 @@
 package com.example.dashboard.patient;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,16 +13,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.example.actions.Actions;
 import com.example.dashboard.R;
 import com.example.deadreckoning.DeadReckoning;
 import com.example.session.Session;
 
+
 /**
- * A simple {@link Fragment} subclass.
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This Fragment displays the Patient dashboard, and initializes patient-specific application logic.
  */
+
+
 public class PatientDashboardFragment extends Fragment {
     private static final String TAG = "PatientDashboardFrag";
 

@@ -14,7 +14,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.Switch;
 
 import com.example.session.Session;
 import com.example.session.user.UserInfo;
@@ -22,8 +21,14 @@ import com.example.threads.TaskResult;
 import com.example.ui.ProTecAlerts;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This Fragment registers a new account. It provides the user with the choice of registering as a
+ * patient or a carer.
+ *
+ * If there is a problem with the details it displays a message to the user with the explanation.
  */
+
 public class RegisterFragment extends Fragment {
     private static final String TAG = "RegisterFragment";
 

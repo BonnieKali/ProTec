@@ -29,6 +29,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This class contains all the Session class methods logic for decoupling purposes. (It basically
+ * contains all the same methods, such that function names are decoupled between back-end and
+ * front-end.
+ */
+
+
 public class SessionHandler {
     private static final String TAG = "SessionHandler";
 

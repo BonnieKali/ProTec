@@ -1,27 +1,28 @@
 package com.example.services.patient;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.app.KeyguardManager;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.IBinder;
-import android.os.PowerManager;
 import android.util.Log;
-import android.view.WindowManager;
 
 import com.example.actions.Actions;
 import com.example.notifications.ProTecNotificationsManager;
 import com.example.services.FallDetectorService;
-import com.example.services.R;
 import com.example.session.Session;
-import com.example.session.event.Event;
-import com.example.session.event.EventType;
 import com.example.session.patientNotifications.PatientNotification;
-import com.example.threads.OnTaskCompleteCallback;
-import com.example.threads.TaskResult;
+
+
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This class subclasses the Android Service class. This functionality will run patient-specific
+ * processes in the background even when the application shuts down.
+ *
+ * This contains the notification logic and listener for patients, along with the fall detection
+ * logic.
+ */
+
 
 public class PatientService extends Service {
     private static final String TAG = "PatientService";

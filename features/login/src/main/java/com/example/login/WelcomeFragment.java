@@ -5,17 +5,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import com.example.session.Session;
 
 /**
- * A simple {@link Fragment} subclass.
- * create an instance of this fragment.
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This fragment welcomes the user to the ProTec and sends them to the login screen.
  */
+
+
 public class WelcomeFragment extends Fragment {
     private static final String TAG = "WelcomeFragment";
 

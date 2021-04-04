@@ -14,6 +14,23 @@ import com.example.session.user.data.relationship.RelationshipPatient;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This class holds all data objects related to patient users. This is extensible by the addition
+ * of more Data classes to the constructor and the public fields.
+ *
+ * The database serializes this object to JSON string for database storage. As a result any
+ * extensions of this for further Patient data objects is automatically integrated inside the
+ * database without further modification. This made the development of all features very fast
+ * since it abstracted all data-related saving/retrieving.
+ *
+ * To see JSON serialization functionality go to protec.libs.session.remote.RemoteDB. This accepts
+ * PatientData objects, creates a HashMap of all contained data classes and converts it to JSON
+ */
+
+
 public class PatientData extends UserData {
 
     // Patient Specific data
