@@ -82,7 +82,12 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
                 boolean left = ((PatientSession) Session.getInstance().getUser()).patientData.locationData.getleftGeofence();
                 if (!left) { // notification has already been sent
                     Log.d(TAG,"Geofence Exit: making notification");
-                    Session.getInstance().generateLiveEvent(EventType.LEFT_HOUSE);
+                    Session session = Session.getInstance();
+                    session.generateLiveEvent(EventType.LEFT_HOUSE);
+                    session.generateLivePatientNotification(
+                            session.getUser().getUID(),
+                            "LEFT",
+                            "PLEASE_BACK_HOME");
                     ((PatientSession) Session.getInstance().getUser()).patientData.locationData.LeftGeofence();
                 }
                 //openMapActivity(context); //BEWARE: Has funky side affects!

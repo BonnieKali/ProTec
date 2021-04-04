@@ -32,6 +32,10 @@ public class DashboardActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);
         bottomNavigation.setOnNavigationItemSelectedListener(this::navItemSelected);
 
+        // Set support action bar
+        setSupportActionBar(findViewById(R.id.patient_dashboard_toolbar));
+        getSupportActionBar().setTitle("");
+
         // Get session instance
         session = Session.getInstance();
 
@@ -40,7 +44,7 @@ public class DashboardActivity extends AppCompatActivity {
             title.setText("Carer Dashboard");
             showFragment(new CarerDashboardFragment());
         } else {
-            title.setText("Patient Dashboard");
+            title.setText("");
             showFragment(new PatientDashboardFragment());
         }
     }
@@ -62,6 +66,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         session.logOutUser(taskResult -> {
             startActivity(Actions.openLoginIntent(this));
+            finish();
         });
     }
 

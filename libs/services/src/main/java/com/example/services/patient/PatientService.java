@@ -49,7 +49,7 @@ public class PatientService extends Service {
         context = getApplicationContext();
         session = Session.getInstance();
         proTecNotificationsManager = new ProTecNotificationsManager(context);
-//        showAlertDialog();
+
         // Start service if not already started
         if (!isStarted){
             initService();
@@ -77,84 +77,43 @@ public class PatientService extends Service {
 
             // If this notification is meant for the current user_patient then display it
             if (pn.patientUid.equals(session.getUser().userInfo.id)){
+                session.disableLivePatientNotification(pn);
+                dealWithNotification(pn);
                 proTecNotificationsManager.showSmallNotification(
                         pn.title,
                         pn.message,
                         Actions.openDashboardIntent(context));
+
             }
         });
 
-        // Initialize fall detector
-        Log.i(TAG, "GETTING FALL DETECTOR SERVICE IN BACKGROUND");
-        fallDetectorService = new FallDetectorService(context);       // getting the sensor
-
-        // initialise geofence detection
-
+        if (fallDetectorService == null){
+            // Initialize fall detector
+            Log.i(TAG, "GETTING FALL DETECTOR SERVICE IN BACKGROUND");
+            fallDetectorService = new FallDetectorService(context);       // getting the sensor
+        }
     }
 
-    private void showAlertDialog() {
-
-        KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-        KeyguardManager.KeyguardLock kl = km.newKeyguardLock("MyKeyguardLock");
-        kl.disableKeyguard();
-
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        @SuppressLint("InvalidWakeLockTag") PowerManager.WakeLock wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK| PowerManager.ACQUIRE_CAUSES_WAKEUP
-                | PowerManager.ON_AFTER_RELEASE, "MyWakeLock");
-        wakeLock.acquire();
-
-
-        final CharSequence[] items = { "String", "String", "String", "String" };
-        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-        builder.setTitle("Title");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
-                if (items[item].equals("String")) {
-                    dialog.dismiss();
-
-                } else if (items[item].equals("String")) {
-                    dialog.dismiss();
-
-                } else if (items[item].equals("String")) {
-
-                }else if (items[item].equals("String")) {
-                    dialog.dismiss();
-
-
-                }
+    /**
+     * Deals with incoming notification and modifies the contents
+     *
+     * @param pn PatientNotification
+     */
+    private void dealWithNotification(PatientNotification pn) {
+        if (pn.title.equals("REQUEST")){
+            pn.title = "Received Request From Carer! ";
+            if (pn.message.equals("STATIC")){
+                pn.message = "Please perform static biometric test.";
+            }else{
+                pn.message = "Please perform dynamic biometric test.";
             }
-        });
+        }
 
-        AlertDialog alert = builder.create();
-        alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-        alert.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|
-                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
-                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-
-
-        alert.show();
-
-        alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
-
-            @Override
-            public void onDismiss(DialogInterface arg0) {
-
-            }
-        });
-
-
-        alert.setOnCancelListener(new DialogInterface.OnCancelListener() {
-
-            @Override
-            public void onCancel(DialogInterface dialog) {
-
-            }
-        });
-
+        else if(pn.title.equals("LEFT")){
+            pn.title = "Left The House!";
+            pn.message = "Please open maps to get directions back home.";
+        }
 
     }
-
 
 }

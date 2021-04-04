@@ -58,25 +58,28 @@ public class CarerService extends Service {
 
         session.setLiveEventListener(taskResult -> {
             Event event = (Event) taskResult.getData();
+            session.disableLiveEvent(event);
 
             if (event == null){
                 Log.w(TAG, "New event was received but is is null");
                 return;
             }
+            session.disableLiveEvent(event);
 
-            String title = "Patient has ";
-            String msg = event.patientUid;
+            String title = "Patient has";
+            String msg = event.patientName;
             if (event.eventType == EventType.FELL){
-                title += "fallen!";
+                title += " fallen!";
                 msg += " has fallen!!! Please check up on him.";
             }
             else if (event.eventType == EventType.LEFT_HOUSE){
-                title += " has left their house!";
+                title += " left their house!";
                 msg += " has left the house!!! Please check up on him";
             }
 
             proTecNotificationsManager.showSmallNotification(title, msg,
                     Actions.openDashboardIntent(context));
+
         });
     }
 }
