@@ -22,7 +22,7 @@ import com.example.session.user.data.location.LocationDataPatient;
 import com.example.session.user.patient.PatientSession;
 
 /**
- * James Hanratty
+ * James Hanratty (s1645821)
  * This class is a singleton class that deals with locating the user.
  */
 public class Locator {

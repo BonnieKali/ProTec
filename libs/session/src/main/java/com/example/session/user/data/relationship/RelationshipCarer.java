@@ -5,7 +5,7 @@ import android.util.Log;
 import java.util.HashSet;
 
 /**
- * James Hanratty
+ * James Hanratty (s1645821)
  * This class defines the relationships Carers can have such as their
  * patients and maybe even friends if we were to integrate a messaging system
  */

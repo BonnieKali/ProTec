@@ -43,7 +43,7 @@ import androidx.annotation.NonNull;
 import static com.example.map.map.MapHelper.addCircle;
 
 /**
- * James Hanratty
+ * James Hanratty (s1645821)
  * Class that contains methods to help with the GeoFencing
  */
 public class GeoFenceHelper extends ContextWrapper {
@@ -71,7 +71,7 @@ public class GeoFenceHelper extends ContextWrapper {
      * @param geofence: The built Geofence
      * @return: The geofence request
      */
-    public GeofencingRequest createGeofenceRequest(Geofence geofence){
+    private GeofencingRequest createGeofenceRequest(Geofence geofence){
         GeofencingRequest request = new GeofencingRequest.Builder()
                 .addGeofence(geofence)
                 .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_EXIT | GeofencingRequest.INITIAL_TRIGGER_ENTER )
@@ -88,7 +88,7 @@ public class GeoFenceHelper extends ContextWrapper {
      * @param transitionTypes: The allow transisitons for alerts
      * @return: The geofence object
      */
-    public static Geofence createGeofence(String ID, LatLng position, float r, int transitionTypes, int loiteringDelay, long expirationDuration){
+    private static Geofence createGeofence(String ID, LatLng position, float r, int transitionTypes, int loiteringDelay, long expirationDuration){
         Geofence geofence = new Geofence.Builder()
                 .setCircularRegion(position.latitude, position.longitude, r)
                 .setRequestId(ID)
@@ -103,7 +103,7 @@ public class GeoFenceHelper extends ContextWrapper {
      * Creates or returns a pending intent for the geofence
      * @return: A pending intent for the geofence Reciever
      */
-    public PendingIntent createPendingIntent() {
+    private PendingIntent createPendingIntent() {
         // this suggests there is only one pending intent for all geofences? remove this and create
         // a new one for everyone
         if (geoPendingIntent != null) {

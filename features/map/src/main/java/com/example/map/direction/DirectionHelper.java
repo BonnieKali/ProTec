@@ -8,7 +8,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
- * James Hanratty
+ * James Hanratty (s1645821)
  * This class contains methods to help with getting the directions
  */
 public class DirectionHelper {

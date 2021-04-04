@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import androidx.annotation.RequiresApi;
 
 /**
- * James Hanratty
+ * James Hanratty (s1645821)
  * This is the patients data class containing all the location information
  */
 public class LocationDataPatient extends LocationData{

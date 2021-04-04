@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 /**
- * James Hanratty
+ * James Hanratty (s1645821)
  * This detetmines if the data has been cleared that is required for the maps package to work
  * such as geofences being cleared.
  */
