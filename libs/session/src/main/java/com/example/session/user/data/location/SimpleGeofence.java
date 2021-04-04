@@ -2,7 +2,11 @@ package com.example.session.user.data.location;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.maps.model.LatLng;
-
+/**
+ * James Hanratty (s1645821)
+ * This class is a simplified version of the Geofence class that is used to store geoofence data
+ * in the remote database.
+ */
 public class SimpleGeofence {
     private final String ID;
     private final LatLng position;

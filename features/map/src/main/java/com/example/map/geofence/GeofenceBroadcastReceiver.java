@@ -19,7 +19,7 @@ import com.google.android.gms.location.GeofencingEvent;
 import java.util.List;
 
 /**
- * James Hanratty
+ * James Hanratty (s1645821)
  * Class that is called whenever a gefoence transition event happens
  */
 public class GeofenceBroadcastReceiver extends BroadcastReceiver {

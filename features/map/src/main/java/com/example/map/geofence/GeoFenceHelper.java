@@ -43,7 +43,7 @@ import androidx.annotation.NonNull;
 import static com.example.map.map.MapHelper.addCircle;
 
 /**
- * James Hanratty
+ * James Hanratty (s1645821)
  * Class that contains methods to help with the GeoFencing
  */
 public class GeoFenceHelper extends ContextWrapper {
