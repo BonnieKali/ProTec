@@ -6,14 +6,55 @@
     android:layout_height="match_parent"
     tools:context=".patient.PatientTrackingDayFragment">
 
-    <TextView
-        android:id="@+id/tv_day_id"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+
+        android:background="#FFF"
+        android:id="@+id/linearLayoutGraph"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textSize="25sp"
+        android:layout_alignParentBottom="true"
+        android:backgroundTint="#ff0099ff"
+        android:clickable="true"
+        android:tint="@android:color/white"
+        app:borderWidth="0dp"
+        app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:src="@drawable/ic_play_arrow_black_24dp" />
+
+
+
+
+
+
+<!--    <TextView-->
+<!--        android:id="@+id/tv_day_id"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="TextView"-->
+<!--        android:textSize="25sp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+
+
+
+
+
+
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+

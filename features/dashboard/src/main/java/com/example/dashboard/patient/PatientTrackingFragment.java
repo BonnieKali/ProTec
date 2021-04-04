@@ -13,7 +13,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.dashboard.R;
+import com.example.session.user.data.deadreckoning.DRData;
 import com.example.session.user.patient.PatientSession;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * create an instance of this fragment.
@@ -21,6 +25,8 @@ import com.example.session.user.patient.PatientSession;
 public class PatientTrackingFragment extends Fragment {
     View view;
     PatientSession patientSession;
+    //ArrayList<DRData> patientIndoorData;
+    List<DRData> patientIndoorData;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -45,7 +51,7 @@ public class PatientTrackingFragment extends Fragment {
         button.setOnClickListener(v -> {
             // Switch to day 1 fragment
             PatientTrackingDayFragment patientTrackingDayFragment = new PatientTrackingDayFragment();
-            switchToFragment(patientTrackingDayFragment,"DAY 1");
+            switchToFragment(patientTrackingDayFragment,"1");
         });
     }
 
@@ -53,7 +59,7 @@ public class PatientTrackingFragment extends Fragment {
         button.setOnClickListener(v -> {
             // Switch to day 2 fragment
             PatientTrackingDayFragment patientTrackingDayFragment = new PatientTrackingDayFragment();
-            switchToFragment(patientTrackingDayFragment,"DAY 2");
+            switchToFragment(patientTrackingDayFragment,"31");
         });
     }
 
@@ -64,6 +70,9 @@ public class PatientTrackingFragment extends Fragment {
     public void setPatientInfo(){
         patientSession = getArguments().getParcelable("patientSession");
         // get other stuff from patietn session here
+        patientIndoorData = patientSession.patientData.drData;
+
+
 
     }
 
