@@ -15,7 +15,7 @@ import androidx.annotation.RequiresApi;
 
 /**
  * James Hanratty (s1645821)
- * This is the patients data class containing all the location information
+ * This is the patients data class containing all their location information
  */
 public class LocationDataPatient extends LocationData{
     private static final String TAG = "LocationDataPatient";
@@ -33,6 +33,7 @@ public class LocationDataPatient extends LocationData{
         Log.d(TAG,"Constructor and left geofence: " + leftGeofence);
         this.leftGeofence = leftGeofence;
     }
+
     public LocationDataPatient(){
         this.geofences = new HashMap<String, SimpleGeofence>();
         this.locations = new ArrayList<myLocation>();
@@ -40,11 +41,21 @@ public class LocationDataPatient extends LocationData{
         leftGeofence = false;
     }
 
+    /**
+     * Adds a simple geofence to the set of geofences
+     * @param geofence
+     */
     public void addSimpleGeofence(SimpleGeofence geofence){
         Log.d(TAG,"Adding simple geofence: " + geofence);
         geofences.put(geofence.getID(), geofence);
     }
 
+    /**
+     * Adds the location of the patient to the last know location
+     * and also pushes the new location to the remote database as a
+     * myLocation class.
+     * @param location: The location of the patient
+     */
     public void addLocation(Location location){
         myLocation my_location = new myLocation(location);
         // check if we should update local database
@@ -53,6 +64,10 @@ public class LocationDataPatient extends LocationData{
         return;
     }
 
+    /**
+     * Returns a random geofence for this patient
+     * @return
+     */
     public SimpleGeofence getAGeofence(){
         return (SimpleGeofence) geofences.values().toArray()[0];
     }
@@ -76,6 +91,9 @@ public class LocationDataPatient extends LocationData{
 
     // ----------------
 
+    /**
+     * Sets that the patient has not left the geofence
+     */
     public void returnedToGeofence(){
         this.leftGeofence = false;
     }
@@ -85,13 +103,9 @@ public class LocationDataPatient extends LocationData{
         this.leftGeofence = true;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public String toString(){
-        String locations = this.locations.stream().map(Object::toString)
-                .collect(Collectors.joining(", "));
         String geofences = this.geofences.toString();
-
         String str = "Locations: "+ "\n Geofences:" + geofences;
         return str;
     }

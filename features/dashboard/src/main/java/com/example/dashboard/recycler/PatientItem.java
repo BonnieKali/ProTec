@@ -82,7 +82,12 @@ public class PatientItem {
     }
     // ----------------
 
-
+    /**
+     * A static method that helps intialise all the patientItems for every patient
+     * @param view
+     * @param patientSessions: All the patient sessions
+     * @return: A list of patientItems
+     */
     public static ArrayList<PatientItem> initialisePatients(View view, HashSet<PatientSession> patientSessions){
         ArrayList<PatientItem> patientItems = new ArrayList<>();
         Log.d("PatientItem","Patient Sessions: " + patientSessions);

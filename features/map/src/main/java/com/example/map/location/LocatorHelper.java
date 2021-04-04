@@ -34,7 +34,7 @@ import androidx.core.content.ContextCompat;
 
 /**
  * James Hanratty (s1645821)
- * This file contains static methods that help with location related functionality
+ * This file contains static methods that help with displaying patients based on their last location
  */
 public class LocatorHelper {
 

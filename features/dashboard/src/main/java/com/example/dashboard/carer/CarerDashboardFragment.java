@@ -117,8 +117,8 @@ public class CarerDashboardFragment extends Fragment {
     public void onResume(){
         super.onResume();
         Log.d(TAG,"Resuming Activity and pulling data from remoteDB");
-//        HashSet<PatientSession> patientSessions = session.retrieveAllPatientSessions();
-//        Log.d("debug","All patient sessions when opening carerDashboard: " + patientSessions);
+        // reload all the patient sessions from the remoteDB so that they are up to date for
+        // the carer
         loadAllPatients(this.getView());
     }
 

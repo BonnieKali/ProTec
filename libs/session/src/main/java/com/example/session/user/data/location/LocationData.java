@@ -1,9 +1,9 @@
 package com.example.session.user.data.location;
-public class LocationData {
-    /*
-        Customize this class
-     */
 
+/**
+ * An abstract class
+ */
+public class LocationData {
     public String toString(){
         return "empty string";
     }
