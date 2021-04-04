@@ -13,6 +13,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * James Hanratty (s1645821)
+ * This class is an object for the patientItem that the recycleViewer takes
+ */
 public class PatientItem {
 
     private int mImageResource;
