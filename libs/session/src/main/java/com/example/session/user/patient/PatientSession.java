@@ -5,6 +5,14 @@ import android.annotation.SuppressLint;
 import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
 
+
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This class subclasses UserSession and extends it to hold patient-specific logic and data.
+ */
+
+
 @SuppressLint("ParcelCreator")
 public class PatientSession extends UserSession {
 

@@ -7,6 +7,16 @@ import android.os.Bundle;
 import com.example.actions.Actions;
 import com.example.session.Session;
 
+
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This is the first activity spawned by the application. Its task is to check whether the user
+ * is already signed in. If the user is signed in, they go directly to their corresponding
+ * dashboard. Otherwise they go to the login page
+ */
+
+
 public class MainActivity extends AppCompatActivity {
 
     @Override

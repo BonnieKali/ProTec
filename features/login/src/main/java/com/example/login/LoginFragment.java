@@ -15,9 +15,19 @@ import com.example.session.Session;
 import com.example.threads.TaskResult;
 import com.example.ui.ProTecAlerts;
 
+
 /**
- * A simple {@link Fragment} subclass.
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This Fragment displays the login screen to the user. It collects the information passed to the
+ * email and password text boxes and attempts to authenticate them.
+ *
+ * If there is a problem, it displays an alert with the problem description.
+ *
+ * It also offers a link to go to the register fragment.
  */
+
+
 public class LoginFragment extends Fragment {
     private static final String TAG = "LoginFragment";
 

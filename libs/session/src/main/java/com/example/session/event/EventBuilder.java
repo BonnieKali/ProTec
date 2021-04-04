@@ -8,8 +8,12 @@ import java.util.Locale;
 
 
 /**
- * Static class which handles Event instantiation
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This class is responsible for instantiating event objects.
  */
+
+
 public class EventBuilder {
 
     /**

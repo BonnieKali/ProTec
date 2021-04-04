@@ -4,7 +4,14 @@ package com.example.session.user;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
+
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This class acts as a superclass to the PatientSession and CarerSession. It holds common
+ * functionality for both types of users.
+ */
+
 
 public class UserSession implements Parcelable {
 

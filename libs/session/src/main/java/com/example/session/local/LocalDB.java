@@ -14,6 +14,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * Class containing all local database functionality. It uses shared preferences for storage, and
+ * serializes all required data to JSON format for saving.
+ *
+ * It also keeps the user session in storage until they decide to logout.
+ */
+
+
 public class LocalDB {
     private static final String TAG = "LocalDB";
 
@@ -25,9 +35,6 @@ public class LocalDB {
 
     // Reference to SharedPreferences of application
     private final SharedPreferences sharedPreferences;
-
-    // Live data during runtime
-//    private static LocalLiveData localLiveData;
 
 
     /**
@@ -49,7 +56,6 @@ public class LocalDB {
         return sharedPreferences.getBoolean(USER_SESSION_EXISTS_KEY, false);
     }
 
-    // Save to local Disk -- //
     /**
      * Deletes the current user session from db. This should be called when the current user
      * chooses to log out.
@@ -125,9 +131,7 @@ public class LocalDB {
         // Apply changes
         editor.apply();
     }
-    // ------------------------
 
-    // -- Local Live Data -- //
     /**
      * Updates the localDB with remoteDB data, it is possible that the two data conflict because local
      * changes have not been pushed to the remoteDB thus we need to merge changes but

@@ -11,6 +11,15 @@ import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 
+
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This class is responsible for constructing notifications, and handling the creation of the
+ * notification channel (for APIs higher than 26)
+ */
+
+
 public class ProTecNotificationsManager {
 
     public static final int ID_BIG_NOTIFICATION = 234;
@@ -20,7 +29,6 @@ public class ProTecNotificationsManager {
 
     private static final String CHANNEL_ID = "ProTec_ChannelId";
     private Boolean newAPI;
-
 
 
     public ProTecNotificationsManager(Context mCtx) {
@@ -70,6 +78,9 @@ public class ProTecNotificationsManager {
     }
 
 
+    /**
+     * Creates a notification channel if the API is 26+
+     */
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
