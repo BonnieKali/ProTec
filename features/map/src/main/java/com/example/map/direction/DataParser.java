@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * James Hanratty credit with Vishal.
+ * James Hanratty (s1645821) credit with Vishal.
  * This class deals with parsing the response from the directions API
  */
 
