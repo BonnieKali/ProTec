@@ -151,8 +151,17 @@ public class DeadReckoning implements LocationListener, SensorEventListener {
 
         if (currGravity != null && currMag != null){
             // First time the patient is indoors
-            //todo: NEEED TO USE isUserIndoors!
-            if(Session.getInstance().isUserSignedIn()){
+            Session session = Session.getInstance();
+
+            // Make sure the current user is a patient
+            if (session.getUser().userInfo.userType == UserInfo.UserType.CARER){
+                Log.w(TAG, "User is carer, we cannot perform DR on him");
+                return;
+            }
+
+            // Retrieve patientSession object from session
+            PatientSession patient = (PatientSession) session.getUser();
+            if(patient.patientData.locationData.getleftGeofence() == false){
                 if(!isTracking) {
                     Log.d(TAG, "onSensorChanged: User is logged in and Tracking was set to" +
                             " false. We now begin tracking and create a new DRData object");
