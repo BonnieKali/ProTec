@@ -1,5 +1,11 @@
 package com.example.deadreckoning.orientation;
 
+/**
+ * Jose Ignacio (nacho)
+ * s1616915
+ * magnetic orientation calculation
+ */
+
 import android.hardware.SensorManager;
 
 public final class MagneticFieldOrientation {

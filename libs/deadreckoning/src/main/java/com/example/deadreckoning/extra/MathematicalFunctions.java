@@ -1,5 +1,9 @@
 package com.example.deadreckoning.extra;
-
+/**
+ * Jose Ignacio (nacho)
+ * s1616915
+ * Some mathematical functions to help out during Dead Pedestrian Reckoning calculations
+ */
 
 public final class MathematicalFunctions {
 

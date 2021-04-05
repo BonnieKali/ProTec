@@ -1,5 +1,9 @@
 package com.example.deadreckoning.stepcounting;
-
+/**
+ * Jose Ignacio (nacho)
+ * s1616915
+ * Dynamic step counting class. Deals with acceleration data to find peaks and steps
+ */
 public class stepCounter {
 
     private int stepCount;

@@ -1,4 +1,11 @@
 package com.example.dashboard.patient;
+/**
+ * Jose Ignacio (nacho)
+ * s1616915
+ * This deals with fragment of the day picked by the carer
+ * to visualize indoors data
+ */
+
 
 import android.os.Bundle;
 
@@ -18,6 +25,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
+
+
+
 
 /**
  * create an instance of this fragment.
@@ -180,19 +190,24 @@ public class PatientTrackingDayFragment extends Fragment {
 
         //TODO: this gets me the latest data. need to change this to any day, but it depends on the Patient Tracking Fragment which needs a way of creating a list
         day = patientSession.patientData.drData.size()-1;
-        patientDayIndoorData = patientSession.patientData.drData.get(day);
-        xList = patientDayIndoorData.getXList();
-        yList = patientDayIndoorData.getYList();
+        if(day<0){
+            day=0;
+        }
+        if (patientSession.patientData.drData.size()!=0) {
+            patientDayIndoorData = patientSession.patientData.drData.get(day);
+            xList = patientDayIndoorData.getXList();
+            yList = patientDayIndoorData.getYList();
+        }
+        else{
+            xList = new ArrayList<>();
+            yList = new ArrayList<>();
+            xList.add(0.);
+            yList.add(0.);
+
+        }
 
         //tv_day.setText(day_id);
         // extract data after
-    }
-
-    /***
-     * EXAMPLE OF EXTRACITNG DATA
-     */
-    private void extractPatientData() {
-        ArrayList<ArrayList<Double>> patientData_all = patientSession.patientData.biomarkerData.getBiomarkers();
     }
 
 }
