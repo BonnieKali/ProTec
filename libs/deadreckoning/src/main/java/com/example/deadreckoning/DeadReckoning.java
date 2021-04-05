@@ -141,6 +141,10 @@ public class DeadReckoning implements LocationListener, SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        if (!Session.getInstance().isUserSignedIn()){
+            stop();
+            return;
+        }
 
         if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
             currGravity = event.values;
