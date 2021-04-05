@@ -70,9 +70,16 @@ public class PatientService extends Service {
         // Set listener for patient notifications
         session.setLivePatientNotificationListener(taskResult -> {
             PatientNotification pn = (PatientNotification) taskResult.getData();
+            Session session = Session.getInstance();
 
             if (pn == null){
                 Log.w(TAG, "New patient notification was received but is is null");
+                return;
+            }
+
+            if (!session.isUserSignedIn()){
+                Log.w(TAG, "New patient notification was received but current user is" +
+                        " logged out");
                 return;
             }
 
@@ -84,7 +91,6 @@ public class PatientService extends Service {
                         pn.title,
                         pn.message,
                         Actions.openDashboardIntent(context));
-
             }
         });
 

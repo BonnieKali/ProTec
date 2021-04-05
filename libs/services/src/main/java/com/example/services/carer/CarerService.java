@@ -70,12 +70,19 @@ public class CarerService extends Service {
 
         session.setLiveEventListener(taskResult -> {
             Event event = (Event) taskResult.getData();
-            session.disableLiveEvent(event);
+            Session session = Session.getInstance();
 
             if (event == null){
                 Log.w(TAG, "New event was received but is is null");
                 return;
             }
+
+            if (!session.isUserSignedIn()){
+                Log.w(TAG, "New event was received but current carer is logged out");
+                return;
+            }
+
+            // Disable event since we received it correctly
             session.disableLiveEvent(event);
 
             String title = "Patient has";

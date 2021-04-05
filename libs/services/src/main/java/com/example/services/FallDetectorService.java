@@ -98,7 +98,7 @@ public class FallDetectorService implements SensorEventListener {
     }
     // Time variables
     private boolean FLAG_FALLEN_TIME_THRESHOLD = false;
-//    CountDownTimer countDownTimer;
+
     private long last_event_time=-1;
     private static final int TIME_EVENT_THRESHOLD=3;
 
