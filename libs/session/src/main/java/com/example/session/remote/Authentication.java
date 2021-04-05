@@ -14,6 +14,15 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
+
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This class is responsible for performing all user-authentication-specific actions. It uses
+ * FirebaseAuthentication to create, sign in, and logout users.
+ */
+
+
 public class Authentication {
     private static final String TAG = "Authentication";
 

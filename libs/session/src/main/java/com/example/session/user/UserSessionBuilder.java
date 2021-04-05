@@ -11,8 +11,13 @@ import com.example.session.user.patient.PatientSession;
 
 
 /**
- * Static class responsible for building UserSessions
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This class is responsible for instantiating UserSession objects from remote/local database,
+ * and also builds a new UserSession objects upon registration.
  */
+
+
 public class UserSessionBuilder {
     private static final String TAG = "UserSessionBuilder";
 

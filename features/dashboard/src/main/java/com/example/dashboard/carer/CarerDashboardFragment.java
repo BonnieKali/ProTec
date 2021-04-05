@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -24,9 +23,15 @@ import com.example.threads.OnTaskCompleteCallback;
 
 import java.util.HashSet;
 
+
 /**
- * A simple {@link Fragment} subclass.
+ * Evangelos Dimitriou (s1657192)
+ * James Hanratty (s1645821)
+ *
+ * This Fragment displays the carer dashboard, and initializes carer-specific application logic.
  */
+
+
 public class CarerDashboardFragment extends Fragment {
     private static final String TAG = "CarerDashboardFragment";
 

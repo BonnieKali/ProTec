@@ -2,8 +2,12 @@ package com.example.session.event;
 
 
 /**
- * Describes the type an event
+ * Evangelos Dimitriou (s1657192)
+ *
+ * Enum containing all types of events.
  */
+
+
 public enum EventType {
     LEFT_HOUSE,
     FELL,

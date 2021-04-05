@@ -3,6 +3,17 @@ package com.example.actions;
 import android.content.Context;
 import android.content.Intent;
 
+
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This class contains only static methods. It is responsible for returning Intent objects
+ * corresponding to different features for navigation around the application.
+ *
+ * This is how the application switches between different independent features.
+ */
+
+
 public class Actions {
 
     // Custom IntentFilter ids

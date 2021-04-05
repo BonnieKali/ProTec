@@ -5,14 +5,21 @@ import java.util.Date;
 import java.util.Locale;
 
 
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This class is responsible for instantiating patient notification objects
+ */
+
+
 public class PatientNotificationBuilder {
 
     /**
      * Returns an initialized Event
      *
-     * @param patientUid
-     * @param title
-     * @param message
+     * @param patientUid Unique patient id
+     * @param title Title of notification
+     * @param message Message of notification
      * @return PatientNotification object
      */
     public static PatientNotification buildPatientNotification(String patientUid,
