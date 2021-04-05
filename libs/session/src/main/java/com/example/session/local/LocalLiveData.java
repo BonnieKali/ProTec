@@ -10,12 +10,11 @@ import com.example.session.user.patient.PatientSession;
 import java.util.HashMap;
 import java.util.HashSet;
 
-
 /**
- * James Hanratty (s1645821)
+ * James Hanratty (s1645821), Van Dimitriou
+ * This contains local live data such as all the patientSessions that can be easily accessible
+ * to any feature of the App.
  */
-
-
 public class LocalLiveData {
 
     private static final String TAG = "LocalLiveData";

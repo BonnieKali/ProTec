@@ -13,6 +13,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * James Hanratty (s1645821)
+ * This class is an object for the patientItem that the recycleViewer takes
+ */
 public class PatientItem {
 
     private int mImageResource;
@@ -82,7 +86,12 @@ public class PatientItem {
     }
     // ----------------
 
-
+    /**
+     * A static method that helps intialise all the patientItems for every patient
+     * @param view
+     * @param patientSessions: All the patient sessions
+     * @return: A list of patientItems
+     */
     public static ArrayList<PatientItem> initialisePatients(View view, HashSet<PatientSession> patientSessions){
         ArrayList<PatientItem> patientItems = new ArrayList<>();
         Log.d("PatientItem","Patient Sessions: " + patientSessions);

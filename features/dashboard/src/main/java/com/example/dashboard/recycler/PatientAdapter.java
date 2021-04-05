@@ -18,6 +18,10 @@ import java.util.Collections;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * James Hanratty (s1645821)
+ * This class is the adapter for displaying the patients to the RecycleViewer
+ */
 public class PatientAdapter extends RecyclerView.Adapter<PatientAdapter.PatientViewHolder> {
     private ArrayList<PatientItem> patientsList;
     private OnItemClickListener mListener;

@@ -33,8 +33,8 @@ import androidx.annotation.DrawableRes;
 import androidx.core.content.ContextCompat;
 
 /**
- * James Hanratty
- * This file contains static methods that help with location related functionality
+ * James Hanratty (s1645821)
+ * This file contains static methods that help with displaying patients based on their last location
  */
 public class LocatorHelper {
 

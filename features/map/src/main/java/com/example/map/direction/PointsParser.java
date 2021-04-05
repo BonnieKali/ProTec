@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * James Hanratty with credit to Vishal
+ * James Hanratty (s1645821) with credit to Vishal
  * This file containts methods to help with parising the points recieved
  * by Google Maps API for getting directions to a place
  */

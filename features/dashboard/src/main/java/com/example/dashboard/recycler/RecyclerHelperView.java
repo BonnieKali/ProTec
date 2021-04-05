@@ -24,6 +24,11 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * James Hanratty (s1645821)
+ * This class contains the methods to set up the RecycleView which displays the
+ * patients to the carer in a listview
+ */
 public class RecyclerHelperView{
 
     private static final String TAG = "RecyclerHelperView";
@@ -86,7 +91,7 @@ public class RecyclerHelperView{
 
     /**
      * Removes the patient from the carers patients list
-     * @param position
+     * @param position: The position of the patient in the patientItems list
      * @param v
      */
     private void removePatient(int position, View v) {
@@ -101,7 +106,7 @@ public class RecyclerHelperView{
 
     /**
      * Adds the patient to the carers list of patients
-     * @param position
+     * @param position: The position of the patient in the patientItems list
      * @param v
      */
     private void addPatient(int position, View v) {
@@ -119,7 +124,7 @@ public class RecyclerHelperView{
     /**
      * This method deals with changing the patientItem data and updates
      * the recycler viewer displaying it
-     * @param position
+     * @param position: The position of the patient in the patientItems list
      */
     private void changeItem(int position, Context context) {
         // this seems to induce a wierd bug where the
@@ -130,7 +135,7 @@ public class RecyclerHelperView{
 
     /***
      * Function that transitions to Patient Info Fragment
-     * @param patientItem
+     * @param patientItem: The patientItem
      * @param context
      */
     private void switchPatientInfoFragment(PatientItem patientItem, Context context){
