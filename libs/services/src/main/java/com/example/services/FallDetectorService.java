@@ -13,6 +13,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.icu.number.Precision;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
@@ -95,7 +96,11 @@ public class FallDetectorService implements SensorEventListener {
             return key;
         }
     }
-
+    // Time variables
+    private boolean FLAG_FALLEN_TIME_THRESHOLD = false;
+//    CountDownTimer countDownTimer;
+    private long last_event_time=-1;
+    private static final int TIME_EVENT_THRESHOLD=3;
 
     /***
      * Constructor for the FallDetector object
@@ -113,11 +118,11 @@ public class FallDetectorService implements SensorEventListener {
         Session session = Session.getInstance();
         String patientUid = session.getUser().getUID();
         session.setPatientSettingsListener(patientUid, taskResult -> checkThresholdValues());
-
+        // Initialize time variables;
+//        countDownTimer = getCountDownTimer();
         // Initialize sensors
         initializeSensors();
         initializeSensorListeners();
-
     }
 
 
@@ -436,7 +441,13 @@ public class FallDetectorService implements SensorEventListener {
                 count_falls_detected += 1;
                 // Notify that fall took place
                 Log.i(TAG_FALL_DETECTOR,"PERSON FELL");
-                notifyPatientFallen();                                              // user has fallen procedure
+                if ((last_event_time==-1) || (System.currentTimeMillis() - last_event_time > TIME_EVENT_THRESHOLD*1000)) {
+                    Log.i(TAG_FALL_DETECTOR,"STATEMENT TRUE");
+                    last_event_time = System.currentTimeMillis();
+                    notifyPatientFallen();                                              // user has fallen procedure
+                } else {
+                    Log.i(TAG_FALL_DETECTOR,"STATEMENT FALSE");
+                }
             } else {
                 // No fall took place
                 Log.i(TAG_FALL_DETECTOR,"DANGER BUT STANDING");
@@ -460,30 +471,29 @@ public class FallDetectorService implements SensorEventListener {
         Session.getInstance().generateLiveEvent(EventType.FELL);
         // change user settings
         Session.getInstance().setPatientSetting(Session.getInstance().getUser().userInfo.id,"Fallen",true);
-        // Create alert dialogue
-//        createAlertDialogue();
+        // falling time threshold
+        setTimeThreshold();
     }
 
+    private void setTimeThreshold() {
 
-    private void createAlertDialogue() {
-        AlertDialog alertDialog = new AlertDialog.Builder(context.getApplicationContext())
-                .setIcon(android.R.drawable.ic_dialog_alert)                                        //set icon
-                .setTitle("FALL DETECTOR MESSAGE")                                                   //set title
-                .setMessage("HAVE YOU FALLEN")                                    //set message
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {              //set positive button
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        //set what would happen when positive button is clicked
-                        Log.d(TAG_FALL_DETECTOR, "DIALOG BUTTON YES");
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {               //set negative button
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        //set what should happen when negative button is clicked
-                        Log.d(TAG_FALL_DETECTOR, "DIALOG BUTTON NO");
-                    }
-                })
-                .show();
     }
+//
+//    /***
+//     * Creates a custom count down timer object
+//     * @return CountDownTimer object
+//     */
+//    private CountDownTimer getCountDownTimer() {
+//        return new CountDownTimer(3000, 1000) {
+//            @Override
+//            public void onTick(long millisUntilFinished) {
+//                Log.i(TAG_FALL_DETECTOR,);
+//                FLAG_FALLEN_TIME_THRESHOLD = false;
+//            }
+//            @Override
+//            public void onFinish() {
+//                FLAG_FALLEN_TIME_THRESHOLD = true;
+//            }
+//        };
+//    }
 }
