@@ -8,6 +8,11 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * James Hanratty (s1645821)
+ * This class is a simplified version of the location class that is used to store location data
+ * in the remote database.
+ */
 public class myLocation {
 
     private LatLng latLng;

@@ -23,13 +23,6 @@
             android:enabled="true"
             android:exported="true">
         </receiver>
-        <receiver
-            android:name=".geofence.DataClearedReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_DATA_CLEARED" />
-                <data android:scheme="package" />
-            </intent-filter>
-        </receiver>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

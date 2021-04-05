@@ -12,7 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * James Hanratty with credit to Vishal.
+ * James Hanratty (s1645821) with credit to Vishal.
  * This file contains class that queryies the Google Directions API
  * which must be done in an AsyncTask
  */
