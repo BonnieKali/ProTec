@@ -48,7 +48,6 @@ public class PatientService extends Service {
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
-        session = Session.getInstance();
         proTecNotificationsManager = new ProTecNotificationsManager(context);
 
         // Start service if not already started
@@ -63,23 +62,28 @@ public class PatientService extends Service {
      */
     private void initService() {
         Log.d(TAG, "Patient Service is initializing");
-        // Set listener for patient events
-        if (session == null)
+
+        // Validate Session
+        session = Session.getInstance();
+        if (!validateSession(session)){
+            Log.w(TAG, "Session was not valid. Service is not initializing.");
             return;
+        }
 
         // Set listener for patient notifications
         session.setLivePatientNotificationListener(taskResult -> {
-            PatientNotification pn = (PatientNotification) taskResult.getData();
-            Session session = Session.getInstance();
 
-            if (pn == null){
-                Log.w(TAG, "New patient notification was received but is is null");
+            // Validate Session
+            Session session = Session.getInstance();
+            if (!validateSession(session)){
+                Log.w(TAG, "Session was not valid. Received notification is ignored.");
                 return;
             }
 
-            if (!session.isUserSignedIn()){
-                Log.w(TAG, "New patient notification was received but current user is" +
-                        " logged out");
+            // Get notification
+            PatientNotification pn = (PatientNotification) taskResult.getData();
+            if (pn == null){
+                Log.w(TAG, "New patient notification was received but is is null");
                 return;
             }
 
@@ -121,6 +125,45 @@ public class PatientService extends Service {
             pn.message = "Please open maps to get directions back home.";
         }
 
+    }
+
+
+    /**
+     * Validates that all session components exist
+     * @return Boolean validation result
+     */
+    private Boolean validateSession(Session session){
+        if (session == null){
+            Log.w(TAG, "validateSession: session is null");
+            return false;
+        }
+
+        if (!session.isUserSignedIn()){
+            Log.w(TAG, "validateSession: user is signed out");
+            return false;
+        }
+
+        if (session.getUser() == null){
+            Log.w(TAG, "validateSession: userSession is null");
+            return false;
+        }
+
+        if (session.getUser().userInfo == null){
+            Log.w(TAG, "validateSession: userInfo is null");
+            return false;
+        }
+
+        if (session.getUser().userInfo.id == null){
+            Log.w(TAG, "validateSession: userInfo.id is null");
+            return false;
+        }
+
+        if (session.getUser().userInfo.userType == null){
+            Log.w(TAG, "validateSession: userInfo.userType is null");
+            return false;
+        }
+
+        return true;
     }
 
 }
