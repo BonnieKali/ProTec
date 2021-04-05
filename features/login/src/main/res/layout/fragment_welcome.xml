@@ -35,7 +35,7 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ProTech"
+        android:text="@string/app_name"
         android:textStyle="bold"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline2"
         android:textColor="@color/neon_dark_blue"
