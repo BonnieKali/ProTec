@@ -162,7 +162,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean checkForegroundPermissions(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
-            startLocating();
+            locator.startLocationUpdates(user, this);
             return true;
         } else {
             //Ask for permission
@@ -183,7 +183,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean checkBackgroundPermissions(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
-            startLocating();
+            locator.startLocationUpdates(user, this);
             return true;
         } else {
             //Ask for permission
@@ -237,7 +237,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (requestCode == BACKGROUND_LOCATION_ACCESS_REQUEST_CODE){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED ){
                 mMap.setMyLocationEnabled(true);
-                startLocating();;
+                locator.startLocationUpdates(user, this);
                 Toast.makeText(getApplicationContext(), "Geofences enabled!", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(getApplicationContext(), "Allow all the time is needed to use Geofences!", Toast.LENGTH_LONG).show();
@@ -245,6 +245,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }else if (requestCode == FINE_LOCATION_ACCESS_REQUEST_CODE){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED ){
                 mMap.setMyLocationEnabled(true);
+                locator.startLocationUpdates(user, this);
                 startLocating();    // start locating
                 if (!(Build.VERSION.SDK_INT >= 29)) {
                     Toast.makeText(getApplicationContext(), "Geofences enabled!", Toast.LENGTH_SHORT).show();
