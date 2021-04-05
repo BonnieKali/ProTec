@@ -1,6 +1,7 @@
 <resources>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_name">ProTec</string>
 
     <string-array name="account_types">
         <item>Patient</item>
