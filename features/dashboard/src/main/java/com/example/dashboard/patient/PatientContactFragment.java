@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -70,6 +73,19 @@ public class PatientContactFragment extends Fragment {
         setBtnStaticTestListener(view.findViewById(R.id.btn_stationary_test));
         setBtnDynamicTestListener(view.findViewById(R.id.btn_dynamic_test));
         setBtnShowLastLocationListener(view.findViewById(R.id.btn_last_known_location));
+        setBtnTrackingListener(view.findViewById(R.id.btn_tracking));
+    }
+
+
+    /***
+     * NACHO SETS LISTENER FUNCTION
+     * @param button
+     */
+    private void setBtnTrackingListener(Button button) {
+        button.setOnClickListener(v -> {
+            PatientTrackingFragment patientTrackingFragment = new PatientTrackingFragment();
+            switchToFragment(patientTrackingFragment);
+        });
     }
 
 
@@ -133,10 +149,14 @@ public class PatientContactFragment extends Fragment {
             @Override
             public void onComplete(TaskResult<?> taskResult) {
                 Map<String, Object> settings = (Map<String, Object>) taskResult.getData();
-                Log.d(TAG_LOG,"LOADING PATIENT SETTINGS"+settings.toString());
-                if (settings.get(PatientEditFragment.SETTINGS_KEY.FALLEN.getKey())!= null){
-                    fallen_state_value = Boolean.parseBoolean(settings.get(PatientEditFragment.SETTINGS_KEY.FALLEN.getKey()).toString());
-                }else {
+                if (settings!=null) {
+                    Log.d(TAG_LOG, "LOADING PATIENT SETTINGS" + settings.toString());
+                    if (settings.get(PatientEditFragment.SETTINGS_KEY.FALLEN.getKey()) != null) {
+                        fallen_state_value = Boolean.parseBoolean(settings.get(PatientEditFragment.SETTINGS_KEY.FALLEN.getKey()).toString());
+                    } else {
+                        fallen_state_value = false;
+                    }
+                } else {
                     fallen_state_value = false;
                 }
                 setUI();
@@ -181,6 +201,27 @@ public class PatientContactFragment extends Fragment {
         tv_static = view.findViewById(R.id.tv_static_tests_value);
         tv_dynamic = view.findViewById(R.id.tv_dynamic_tests_value);
         tv_fallen_state = view.findViewById(R.id.tv_fallen_state_value);
+    }
+
+
+    /***
+     * Changes between fragments
+     * @param fragment
+     */
+    private void switchToFragment(Fragment fragment) {
+        // Set Args to new fragment
+        Bundle args = new Bundle();
+        args.putParcelable("patientSession", patientSession);
+        fragment.setArguments(args);
+        // Transition to new fragment
+        FragmentManager fragmentManager = ((FragmentActivity)getContext()).getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack if needed
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.addToBackStack(null);
+        // Commit the transaction
+        transaction.commit();
     }
 
 

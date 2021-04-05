@@ -151,6 +151,7 @@ public class DeadReckoning implements LocationListener, SensorEventListener {
 
         if (currGravity != null && currMag != null){
             // First time the patient is indoors
+            //todo: NEEED TO USE isUserIndoors!
             if(Session.getInstance().isUserSignedIn()){
                 if(!isTracking) {
                     Log.d(TAG, "onSensorChanged: User is logged in and Tracking was set to" +

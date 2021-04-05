@@ -251,6 +251,17 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_static_tests"
             app:layout_constraintVertical_bias="0.0" />
 
+    <Button
+        android:id="@+id/btn_tracking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tracking"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/btn_last_known_location"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_static_tests_value" />
+
         <TextView
             android:id="@+id/tv_dynamic_tests_value"
             android:layout_width="wrap_content"

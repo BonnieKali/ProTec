@@ -36,6 +36,13 @@ public class DRData {
         yList.clear();
     }
 
+    public List<Double> getXList(){
+        return xList;
+    }
+    public List<Double> getYList(){
+        return yList;
+    }
+
     @Override
     public String toString() {
         return "DRData{" +
