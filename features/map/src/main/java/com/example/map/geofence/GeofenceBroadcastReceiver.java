@@ -45,6 +45,9 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
      * @param intent
      */
     public void processGeofenceEvent(Context context, Intent intent){
+        if (!Session.getInstance().isUserSignedIn()){
+            return;
+        }
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             Log.e(TAG, "Error receiving geofence event");
@@ -80,6 +83,7 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
                 Log.d(TAG, "GEOFENCE_TRANSITION_EXIT" + transitionType);
                 // will tell carers that person has left the house
                 boolean left = ((PatientSession) Session.getInstance().getUser()).patientData.locationData.getleftGeofence();
+                Log.d(TAG,"Already left: " + left);
                 if (!left) { // notification has already been sent
                     Log.d(TAG,"Geofence Exit: making notification");
                     Session session = Session.getInstance();

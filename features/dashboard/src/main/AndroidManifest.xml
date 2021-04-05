@@ -3,7 +3,11 @@
     package="com.example.dashboard">
 
     <application android:theme="@style/AppTheme">
-        <activity android:name=".DashboardActivity">
+        <activity android:name=".DashboardActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            >
+
             <intent-filter>
                 <action android:name="ProTec.dashboard.open" />
 
