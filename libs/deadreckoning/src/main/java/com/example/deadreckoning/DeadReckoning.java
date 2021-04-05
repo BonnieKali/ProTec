@@ -151,7 +151,6 @@ public class DeadReckoning implements LocationListener, SensorEventListener {
 
         if (currGravity != null && currMag != null){
             // First time the patient is indoors
-            //todo: NEEED TO USE isUserIndoors!
             Session session = Session.getInstance();
 
             // Make sure the current user is a patient

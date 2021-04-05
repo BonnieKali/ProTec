@@ -1,5 +1,13 @@
 package com.example.session.patientNotifications;
 
+
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This class contains all information relevant to a patient notification.
+ */
+
+
 public class PatientNotification {
 
     public String timestamp;

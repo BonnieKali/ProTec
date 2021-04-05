@@ -15,6 +15,16 @@ import com.example.session.Session;
 import com.example.session.user.UserInfo;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+
+/**
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This activity is the most important one in the application. It sets up the Toolbar and the
+ * logout bar. It also holds a fragment container for displaying different types of dashboards.
+ * Both Patient and Carer dashboards are contained in this activity.
+ */
+
+
 public class DashboardActivity extends AppCompatActivity {
     private static final String TAG = "DashboardActivity";
 
@@ -50,11 +60,21 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Displays input fragment inside the activity fragment container.
+     *
+     * @param fragment Fragment to display
+     */
     private void showFragment(Fragment fragment){
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
     }
 
-
+    /**
+     * Logs out the user when the logout button is pressed
+     *
+     * @param menuItem
+     * @return
+     */
     private Boolean navItemSelected(MenuItem menuItem){
         if (menuItem.getItemId() == R.id.action_logout) {
             logout();
@@ -62,6 +82,9 @@ public class DashboardActivity extends AppCompatActivity {
         return false;
     }
 
+    /**
+     * Removes the current logged_in user session from local storage and goes to the login screen.
+     */
     private void logout(){
 
         session.logOutUser(taskResult -> {
@@ -70,6 +93,9 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Corrects fragment-related pop actions
+     */
     @Override
     public void onBackPressed() {
         if(getFragmentManager().getBackStackEntryCount() == 0) {

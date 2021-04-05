@@ -149,10 +149,14 @@ public class PatientContactFragment extends Fragment {
             @Override
             public void onComplete(TaskResult<?> taskResult) {
                 Map<String, Object> settings = (Map<String, Object>) taskResult.getData();
-                Log.d(TAG_LOG,"LOADING PATIENT SETTINGS"+settings.toString());
-                if (settings.get(PatientEditFragment.SETTINGS_KEY.FALLEN.getKey())!= null){
-                    fallen_state_value = Boolean.parseBoolean(settings.get(PatientEditFragment.SETTINGS_KEY.FALLEN.getKey()).toString());
-                }else {
+                if (settings!=null) {
+                    Log.d(TAG_LOG, "LOADING PATIENT SETTINGS" + settings.toString());
+                    if (settings.get(PatientEditFragment.SETTINGS_KEY.FALLEN.getKey()) != null) {
+                        fallen_state_value = Boolean.parseBoolean(settings.get(PatientEditFragment.SETTINGS_KEY.FALLEN.getKey()).toString());
+                    } else {
+                        fallen_state_value = false;
+                    }
+                } else {
                     fallen_state_value = false;
                 }
                 setUI();

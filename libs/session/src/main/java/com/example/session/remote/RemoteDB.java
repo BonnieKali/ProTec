@@ -1,13 +1,10 @@
 package com.example.session.remote;
 
-import android.renderscript.Sampler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.example.session.event.Event;
-import com.example.session.local.LocalDB;
 import com.example.session.patientNotifications.PatientNotification;
 import com.example.session.user.UserInfo;
 import com.example.session.user.UserSession;
@@ -29,10 +26,25 @@ import com.google.gson.stream.JsonReader;
 
 import java.io.StringReader;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
+
+/**
+ * Evangelos Dimitriou (s1657192)
+ * James Hanratty (s1645821)
+ *
+ * This class is responsible for reading and writing to firebase database.
+ *
+ * It uses JSON format to serialise UserData (PatientData and CarerData) objects and save/read them
+ * to their corresponding database nodes. It accepts these objects, creates a HashMap of all
+ * contained data classes and converts them to JSON. This simplifies addition of extra data to
+ * patients and carers, since the database will accommodate them automatically without
+ * additions/modifications
+ *
+ * It also registers listeners for changes in the remote database, and performs the registered
+ * callbacks when changes happen.
+ */
 
 
 public class RemoteDB {

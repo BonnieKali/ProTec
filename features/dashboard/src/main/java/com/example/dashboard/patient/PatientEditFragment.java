@@ -110,8 +110,12 @@ public class PatientEditFragment extends Fragment {
             @Override
             public void onComplete(TaskResult<?> taskResult) {
                 Map<String, Object> settings = (Map<String, Object>) taskResult.getData();
-                Log.d(TAG_LOG,"LOADING PATIENT SETTINGS"+settings.toString());
-                loadPatientSettings(settings);                                                      // extract settings from database
+                if (settings!=null) {
+                    Log.d(TAG_LOG, "LOADING PATIENT SETTINGS" + settings.toString());
+                    loadPatientSettings(settings);                                                      // extract settings from database
+                } else {
+                    loadValues(SETTINGS_VALUES_TYPES.DEFAULT);
+                }
                 initializeUi();
             }
         });

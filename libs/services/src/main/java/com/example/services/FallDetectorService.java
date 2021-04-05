@@ -179,8 +179,10 @@ public class FallDetectorService implements SensorEventListener {
             @Override
             public void onComplete(TaskResult<?> taskResult) {
                 Map<String, Object> settings = (Map<String, Object>) taskResult.getData();
-                Log.d(TAG_FALL_DETECTOR,"LOADING PATIENT SETTINGS"+settings.toString());
-                loadPatientSettings(settings);                                                      // extract settings from database
+                if (settings!=null) {
+                    Log.d(TAG_FALL_DETECTOR, "LOADING PATIENT SETTINGS" + settings.toString());
+                    loadPatientSettings(settings);                                                      // extract settings from database
+                }
             }
         });
     }

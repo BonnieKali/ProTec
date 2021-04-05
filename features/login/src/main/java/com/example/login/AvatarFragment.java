@@ -16,14 +16,18 @@ import androidx.fragment.app.Fragment;
 import com.example.actions.Actions;
 import com.example.session.Session;
 import com.example.threads.BackgroundPool;
-import com.example.threads.OnTaskCompleteCallback;
 import com.example.threads.RunnableTask;
 import com.example.threads.TaskResult;
 
+
 /**
- * A simple {@link Fragment} subclass.
- * create an instance of this fragment.
+ * Evangelos Dimitriou (s1657192)
+ *
+ * This Fragment stays on screen for roughly 4 seconds. It is responsible for checking the type of
+ * user and preparing corresponding dashboard.
  */
+
+
 public class AvatarFragment extends Fragment {
     private static final String TAG = "AvatarFragment";
 
