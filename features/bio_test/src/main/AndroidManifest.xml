@@ -4,7 +4,9 @@
 
     <application android:theme="@style/AppTheme">
 
-        <activity android:name=".BioActivity">
+        <activity android:name=".BioActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="ProTec.bioTest.open" />
 

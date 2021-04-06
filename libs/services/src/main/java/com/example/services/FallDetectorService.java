@@ -79,9 +79,9 @@ public class FallDetectorService implements SensorEventListener {
     private double SMV_max_new = 0;
     private double SMV_max_old = 0;
     // Thresholds
-    private double THRESHOLD_SMV = 10;
-    private double THRESHOLD_degreeFloat = 30;
-    private double THRESHOLD_degreeFloat2 = 30;
+    private double THRESHOLD_SMV = 80;
+    private double THRESHOLD_degreeFloat = 60;
+    private double THRESHOLD_degreeFloat2 = 60;
     // Enums
     private enum SETTINGS_KEY {
         ACC("ACC"), Q1("Q1"), Q2("Q2");

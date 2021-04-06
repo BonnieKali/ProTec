@@ -1,5 +1,13 @@
 package com.example.deadreckoning;
 
+/**
+ * Jose Ignacio (nacho)
+ * s1616915
+ * Main DPR class, deals with sensor changes, calculates headings etc by using the
+ * magnetic, gyrodelta and gyroscope euler orientation
+ */
+
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;

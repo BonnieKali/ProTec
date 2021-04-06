@@ -59,38 +59,38 @@
 
     <!--  BODY  -->
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_body_patient_info"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/patient_dashboard_header"
-        app:layout_constraintVertical_bias="100"
+        app:layout_constraintVertical_bias="1.0"
         tools:context=".DashboardActivity"
-        android:id="@+id/layout_body_patient_info">
+        tools:layout_editor_absoluteX="0dp">
 
         <Button
             android:id="@+id/btn_last_known_location"
             style="@style/AppTheme.FilledButton"
             android:layout_width="300dp"
-            android:layout_height="80dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="16dp"
             android:text="Last Location"
-            android:textSize="25sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.505"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.34" />
+            app:layout_constraintTop_toBottomOf="@+id/view10"
+            app:layout_constraintVertical_bias="0.0" />
 
 
         <Button
             android:id="@+id/btn_stationary_test"
             style="@style/AppTheme.FilledButton"
             android:layout_width="300dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="20dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="16dp"
             android:scaleType="fitCenter"
             android:text="Request Stationary Biomarker Test"
-            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="@+id/btn_last_known_location"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/btn_last_known_location"
@@ -100,17 +100,16 @@
             android:id="@+id/btn_dynamic_test"
             style="@style/AppTheme.FilledButton"
             android:layout_width="300dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="20dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="16dp"
             android:scaleType="fitCenter"
             android:text="Request Dynamic Biomarker Test"
-            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="@+id/btn_stationary_test"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/btn_stationary_test"
             app:layout_constraintTop_toBottomOf="@+id/btn_stationary_test" />
 
-<!--        VIEW -->
+        <!--        VIEW -->
         <View
             android:id="@+id/view"
             android:layout_width="match_parent"
@@ -140,12 +139,13 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_static_tests" />
 
         <View
+            android:id="@+id/view10"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="@android:color/darker_gray"
             app:layout_constraintTop_toBottomOf="@+id/tv_dynamic_tests_value" />
 
-<!--        TEXT -->
+        <!--        TEXT -->
         <TextView
             android:id="@+id/tv_email"
             android:layout_width="wrap_content"
@@ -251,16 +251,19 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_static_tests"
             app:layout_constraintVertical_bias="0.0" />
 
-    <Button
-        android:id="@+id/btn_tracking"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tracking"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/btn_last_known_location"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_static_tests_value" />
+        <Button
+            android:id="@+id/btn_tracking"
+            style="@style/AppTheme.FilledButton"
+            android:layout_width="300dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="20dp"
+            android:text="Tracking"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/btn_dynamic_test"
+            app:layout_constraintStart_toStartOf="@+id/btn_dynamic_test"
+            app:layout_constraintTop_toBottomOf="@+id/btn_dynamic_test"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/tv_dynamic_tests_value"

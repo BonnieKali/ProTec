@@ -86,7 +86,11 @@ public class DashboardActivity extends AppCompatActivity {
      * Removes the current logged_in user session from local storage and goes to the login screen.
      */
     private void logout(){
-
+        if (Session.getInstance().getUser().getType()== UserInfo.UserType.PATIENT) {
+            stopService(Actions.getPatientServiceIntent(this));
+        } else if (Session.getInstance().getUser().getType()== UserInfo.UserType.CARER){
+            stopService(Actions.getCarerServiceIntent(this));
+        }
         session.logOutUser(taskResult -> {
             startActivity(Actions.openLoginIntent(this));
             finish();

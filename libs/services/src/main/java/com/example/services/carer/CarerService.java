@@ -51,7 +51,7 @@ public class CarerService extends Service {
         proTecNotificationsManager = new ProTecNotificationsManager(context);
 
         // Start service if not already started
-        if (!isStarted){
+        if (!isStarted) {
             initService();
             isStarted = true;
         }
@@ -64,21 +64,28 @@ public class CarerService extends Service {
     private void initService() {
         Log.d(TAG, "Carer Service is initializing");
 
-        // Set remote listener for patient events
-        if (session == null)
+        // Validate Session
+        session = Session.getInstance();
+        if (!validateSession(session)){
+            Log.w(TAG, "Session was not valid. Carer Service is not initializing");
             return;
+        }
+
+        // Set remote listener for patient events
 
         session.setLiveEventListener(taskResult -> {
-            Event event = (Event) taskResult.getData();
-            Session session = Session.getInstance();
 
-            if (event == null){
-                Log.w(TAG, "New event was received but is is null");
+            // Validate Session
+            Session session = Session.getInstance();
+            if (!validateSession(session)){
+                Log.w(TAG, "Session was not valid. Received event is ignored.");
                 return;
             }
 
-            if (!session.isUserSignedIn()){
-                Log.w(TAG, "New event was received but current carer is logged out");
+            // Get event and validate
+            Event event = (Event) taskResult.getData();
+            if (event == null) {
+                Log.w(TAG, "New event was received but is is null");
                 return;
             }
 
@@ -87,11 +94,10 @@ public class CarerService extends Service {
 
             String title = "Patient has";
             String msg = event.patientName;
-            if (event.eventType == EventType.FELL){
+            if (event.eventType == EventType.FELL) {
                 title += " fallen!";
                 msg += " has fallen!!! Please check up on him.";
-            }
-            else if (event.eventType == EventType.LEFT_HOUSE){
+            } else if (event.eventType == EventType.LEFT_HOUSE) {
                 title += " left their house!";
                 msg += " has left the house!!! Please check up on him";
             }
@@ -100,5 +106,51 @@ public class CarerService extends Service {
                     Actions.openDashboardIntent(context));
 
         });
+    }
+
+
+    /**
+     * Validates that all session components exist
+     *
+     * @return Boolean validation result
+     */
+    private Boolean validateSession(Session session) {
+        if (session == null) {
+            Log.w(TAG, "validateSession: session is null");
+            return false;
+        }
+
+        if (!session.isUserSignedIn()) {
+            Log.w(TAG, "validateSession: user is signed out");
+            return false;
+        }
+
+        if (session.getUser() == null) {
+            Log.w(TAG, "validateSession: userSession is null");
+            return false;
+        }
+
+        if (session.getUser().userInfo == null) {
+            Log.w(TAG, "validateSession: userInfo is null");
+            return false;
+        }
+
+        if (session.getUser().userInfo.id == null) {
+            Log.w(TAG, "validateSession: userInfo.id is null");
+            return false;
+        }
+
+        if (session.getUser().userInfo.userType == null) {
+            Log.w(TAG, "validateSession: userInfo.userType is null");
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG,"onDestroy()");
     }
 }

@@ -1,5 +1,13 @@
 package com.example.dashboard.patient;
 
+/**
+ * Jose Ignacio (nacho)
+ * s1616915
+ * This deals with plotting the points for indoor tracking
+ */
+
+
+
 import android.content.Context;
 import android.graphics.Color;
 import java.util.ArrayList;

@@ -1,6 +1,13 @@
 
 package com.example.deadreckoning.orientation;
 
+/**
+ * Jose Ignacio (nacho)
+ * s1616915
+ * Calculates gyroscope euler orientation for DPR
+ */
+
+
 import com.example.deadreckoning.extra.MathematicalFunctions;
 
 public class GyroscopeEulerOrientation {
@@ -22,10 +29,6 @@ public class GyroscopeEulerOrientation {
         float wX = gyroValues[0];
         float wY = gyroValues[1];
         float wZ = gyroValues[2];
-
-//        float wX = gyroValues[1];
-//        float wY = gyroValues[0];
-//        float wZ = -gyroValues[2];
 
         float[][] A = calcMatrixA(wX, wY, wZ);
 

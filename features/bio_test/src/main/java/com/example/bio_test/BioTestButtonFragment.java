@@ -177,6 +177,7 @@ public class BioTestButtonFragment extends  Fragment {
             speed_dynamic    = -1.;
         }
         patientSession.patientData.biomarkerData.updateBiomarker(accuracy_static, accuracy_dynamic, speed_static, speed_dynamic);
+        session.syncToRemote();
     }
 
 

@@ -1,5 +1,9 @@
 package com.example.dashboard.patient;
-
+/**
+ * Jose Ignacio (nacho)
+ * s1616915
+ * This deals with the fragment regarding dates available of indoor tracking for a specific user
+ */
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;

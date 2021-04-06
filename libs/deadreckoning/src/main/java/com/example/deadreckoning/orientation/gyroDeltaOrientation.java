@@ -1,5 +1,12 @@
 package com.example.deadreckoning.orientation;
 
+/**
+ * Jose Ignacio (nacho)
+ * s1616915
+ * This deals with gyro delta orientation per time step for DPR
+ */
+
+
 import com.example.deadreckoning.extra.MathematicalFunctions;
 
 public class gyroDeltaOrientation {
