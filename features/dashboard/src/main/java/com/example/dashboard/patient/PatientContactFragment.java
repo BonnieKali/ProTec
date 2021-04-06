@@ -28,16 +28,28 @@ import java.util.ArrayList;
 import java.util.Map;
 
 /**
- * create an instance of this fragment.
+ * Ilie Galit - s1628465
+ * Fragment that shows Patient Information
+ * Gets here only from PatietnInfoFragment
+ * From Here can go to
+ *      MapView (Intent)
+ *      TrackingFragments
+ * Here you can
+ *      See contact details
+ *      See fallen state
+ *      See number of biomarker tests performed
+ *      Shows last known location of patient
+ *      Shows Tracking information
+ *      Can send notifications to patient directly
  */
 public class PatientContactFragment extends Fragment {
     // Log
     private String TAG_LOG = "PatientContactFragment";
-    // Class Vars
+    // Class Variables
     private View view;
-    // UI Vars
+    // UI Variables
     private TextView tv_email, tv_static, tv_dynamic, tv_fallen_state;
-    // Patient Vars
+    // Patient Variables
     private PatientSession patientSession;
     private int counts_static, counts_dynamic;
     private boolean fallen_state_value;
@@ -78,7 +90,7 @@ public class PatientContactFragment extends Fragment {
 
 
     /***
-     * NACHO SETS LISTENER FUNCTION
+     * NACHO SETS LISTENER FUNCTION: Make sure to put your stuff here. ok ?
      * @param button
      */
     private void setBtnTrackingListener(Button button) {
@@ -103,7 +115,11 @@ public class PatientContactFragment extends Fragment {
         });
     }
 
-
+    /***
+     * Listener for the dynamic test request
+     * on press sends notification to patient
+     * @param button
+     */
     private void setBtnDynamicTestListener(Button button) {
         button.setOnClickListener(v -> {
             Log.d(TAG_LOG, "SEND LIVE REQUEST");
@@ -113,6 +129,11 @@ public class PatientContactFragment extends Fragment {
     }
 
 
+    /***
+     * Listener for the static test request
+     * on press sends notification to patient
+     * @param button
+     */
     private void setBtnStaticTestListener(Button button) {
         button.setOnClickListener(v -> {
             Log.d(TAG_LOG, "SEND LIVE REQUEST");
@@ -123,7 +144,7 @@ public class PatientContactFragment extends Fragment {
 
 
     /***
-     * Function Deals setting patient information variables
+     * Function Deals retrieving patient settings information and populating variables
      */
     public void setPatientInfo(){
         patientSession = getArguments().getParcelable("patientSession");
@@ -133,7 +154,7 @@ public class PatientContactFragment extends Fragment {
 
 
     /***
-     * Retrieves the patient data from the database
+     * Getter for the patient biomarker data from the database
      */
     private void getPatientData() {
         setTestCounts();
@@ -142,7 +163,8 @@ public class PatientContactFragment extends Fragment {
 
 
     /***
-     * Gets settings value end displays it
+     * Extracts data from firebase and counts the number of test performed
+     * Once done it updates the UI
      */
     private void setFallenState() {
         Session.getInstance().getPatientSettings(patientSession.userInfo.id, new OnTaskCompleteCallback() {
@@ -205,7 +227,7 @@ public class PatientContactFragment extends Fragment {
 
 
     /***
-     * Changes between fragments
+     * Changes between fragments and passes the patient Session
      * @param fragment
      */
     private void switchToFragment(Fragment fragment) {

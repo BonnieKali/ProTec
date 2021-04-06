@@ -32,7 +32,10 @@ import com.example.threads.TaskResult;
 import java.util.Random;
 
 /**
- * create an instance of this fragment.
+ * Illie Galit - s1628465
+ * Create an instance of this fragment.
+ * Fragment Responsible for Performing the Biometric Test
+ * Whether it's static or dynamic is determined by previous Fragment
  */
 public class BioTestButtonFragment extends  Fragment {
     // Logging
@@ -62,7 +65,6 @@ public class BioTestButtonFragment extends  Fragment {
     private boolean FLAG_TEST_PERFORMED;                // flag: true when test is performed
     private enum PRESS_TYPE{BUTTON, SCREEN}             // type of screen presses/pushes
     private int time_to_count = 5000;                   // time to count in milliseconds
-    private float time_passed;
     private enum TEST_TYPE{STATIC, DYNAMIC, FINISHED}   // types of test that cen be performed
     private TEST_TYPE CURRENT_TEST_TYPE;                // current type of the test performed
     private TEST_TYPE PAST_TEST_TYPE;                   // test that just was performed
@@ -73,18 +75,13 @@ public class BioTestButtonFragment extends  Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_bio_test_button, container, false);
-        // get the session & assign to patient session
-        patientSession = getSession();
-        // Variables
-        countDownTimer = getCountDownTimer();
-        FLAG_TEST_PERFORMED = false;
-        rand = new Random();
-        // UI elements
-        initializeUI(view);
-        // Listeners
-        setOnClickListeners(view);
-        // Arguments
-        CURRENT_TEST_TYPE = getTestType();
+        patientSession = getSession();                 // get the session & assign to patient session
+        countDownTimer = getCountDownTimer();          // set Count Down timer
+        FLAG_TEST_PERFORMED = false;                   // flag used to know if a test is performed
+        rand = new Random();                           // object for generating random values
+        initializeUI(view);                            // setting up UI elements
+        setOnClickListeners(view);                     // setting up Listeners
+        CURRENT_TEST_TYPE = getTestType();             // Args from previous Fragment --> Static/Dynamic
         return view;
     }
 
@@ -107,16 +104,19 @@ public class BioTestButtonFragment extends  Fragment {
      * Initializes all UI elements
      */
     private void initializeUI(View view) {
+        // Text Views
         tv_push_counter = view.findViewById(R.id.textView_button_counter_value);
         tv_screen_counter = view.findViewById(R.id.textView_screen_counter_value);
         tv_accuracy = view.findViewById(R.id.textView_accuracy_value);
         tv_speed = view.findViewById(R.id.textView_speed_value);
         tv_timer = view.findViewById(R.id.textView_timer_value);
         tv_timer.setText(time_to_count/1000+"s");
+        // Full Screen --> Layout
         constraintLayout = view.findViewById(R.id.screen_layout);
+        // Buttons
         btn_press = view.findViewById(R.id.button_bioCounter);
         btn_restart = view.findViewById(R.id.button_bio_restart_test);
-        btn_restart.setVisibility(View.INVISIBLE);                                 // invisible at the start
+        btn_restart.setVisibility(View.INVISIBLE);                      // invisible at the start
     }
 
 
@@ -145,6 +145,13 @@ public class BioTestButtonFragment extends  Fragment {
             public void onTick(long millisUntilFinished) {
                 tv_timer.setText(millisUntilFinished / 1000 + "s");
             }
+
+            /***
+             * Procedure to perform once finished
+             * Calculate accuracy and speed
+             * update database
+             * ask if to restart test
+             */
             @Override
             public void onFinish() {
                 tv_timer.setText("Finished");
@@ -162,22 +169,25 @@ public class BioTestButtonFragment extends  Fragment {
 
     /***
      * Saves the data from the test performed to the session
+     * Update the database with test results
      */
     private void saveUserDataButtonCounter(){
+        // set default values
         double accuracy_static=-1.,accuracy_dynamic=-1.,speed_static=-1.,speed_dynamic=-1.;
-        if(PAST_TEST_TYPE == TEST_TYPE.DYNAMIC){
+        if(PAST_TEST_TYPE == TEST_TYPE.DYNAMIC){                                    // update if dynamic test
             accuracy_static  = -1.;
             accuracy_dynamic = final_accuracy;
             speed_static     = -1.;
             speed_dynamic    = final_speed;
-        } else {
+        } else {                                                                    // update if static test
             accuracy_static  = final_accuracy;
             accuracy_dynamic = -1.;
             speed_static     = final_speed;
             speed_dynamic    = -1.;
         }
-        patientSession.patientData.biomarkerData.updateBiomarker(accuracy_static, accuracy_dynamic, speed_static, speed_dynamic);
-        session.syncToRemote();
+        patientSession.patientData.biomarkerData.updateBiomarker(accuracy_static,
+                accuracy_dynamic, speed_static, speed_dynamic);                     // update session
+        session.syncToRemote();                                                     // update database now
     }
 
 
@@ -259,7 +269,8 @@ public class BioTestButtonFragment extends  Fragment {
 
 
     /***
-     * Timer used for counting down when
+     * Timer used for counting down when test starts
+     * Called at start of test
      */
     private void startCountingDown(){
         FLAG_TEST_PERFORMED = true;
@@ -323,7 +334,7 @@ public class BioTestButtonFragment extends  Fragment {
             layoutParams.bottomMargin = bottom;
             Log.i(TAG_LOG_BIO, "bottom="+bottom);
         }
-
+        // Set new layout configurations to button
         btn_press.setLayoutParams(layoutParams);
     }
 

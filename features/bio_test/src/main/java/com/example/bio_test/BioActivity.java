@@ -5,28 +5,29 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
 
-public class BioActivity extends AppCompatActivity {
 
-    FallDetector fall_detector;
+/***
+ * Galit Ilie - s1628465
+ * This activity is responsible for implementing the Biometric Test Feature
+ * From Here:
+ *      Go to BiomarkerTests (Fragment)
+ */
+public class BioActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bio);                  // content view
-        showFragment(new BiomarkerTests());                     // show fragment
-//        showFragment(new FallDetectorFragment());
+        setContentView(R.layout.activity_bio);                  // Sets the View
+        showFragment(new BiomarkerTests());                     // Switches to the new Fragment with test choices
     }
 
 
+    /***
+     * Function used to switch to a given fragment
+     * @param fragment: Desired fragment to switch to
+     */
     private void showFragment(Fragment fragment){
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container_biomarker, fragment).commit();
-
     }
-
-//    private void showFragmentFallDetector(){
-//        FallDetectorFragment fragment = new FallDetectorFragment();
-//        Bundle bundle = new Bundle();
-//        fragment.setArguments(bundle);
-//    }
 
 }

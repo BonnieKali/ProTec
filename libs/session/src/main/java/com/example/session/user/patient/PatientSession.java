@@ -8,8 +8,9 @@ import com.example.session.user.UserSession;
 
 /**
  * Evangelos Dimitriou (s1657192)
- *
  * This class subclasses UserSession and extends it to hold patient-specific logic and data.
+ * Ilie Galit s1628465
+ * Extended to
  */
 
 

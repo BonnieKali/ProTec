@@ -13,7 +13,13 @@ import android.widget.Button;
 import android.widget.Toast;
 
 /**
+ * Ilie Galit - s1628465
  * Fragment used for choosing tests
+ * Presents the choice between the Static and Dynamic Tets
+ * Responsible to set up correct arguments to pass to the next Fragment
+ * From Here:
+ *      Do Dynamic Test (BioTestButtonFragment)
+ *      Do Static Test  (BioTestButtonFragment)
  */
 public class BiomarkerTests extends Fragment {
 
@@ -21,26 +27,26 @@ public class BiomarkerTests extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_biomarker_tests, container, false);
-        // Listeners
-        setOnClickListeners(view);
+        View view =  inflater.inflate(R.layout.fragment_biomarker_tests,
+                container, false);
+        setOnClickListeners(view);                                                      // Set up Listeners
         return view;
     }
 
 
     /**
-     * custom on click listener
+     * Sets up the Button Listeners
      * @param
      */
     private void setOnClickListeners(View view) {
-        setButtonDynamicTestListener(view.findViewById(R.id.button_dynamic_test));
-        setButtonStaticTestListener(view.findViewById(R.id.button_stationary_test)); // Bio Button
+        setButtonDynamicTestListener(view.findViewById(R.id.button_dynamic_test));      // Dynamic Test button
+        setButtonStaticTestListener(view.findViewById(R.id.button_stationary_test));    // Static Test button
     }
 
 
     /***
      * Listener fot the Dynamic Test Button
-     * Used for determining accuracy
+     * Once clicked will switch to Fragment with Dynamic Parameters in place
      * @param button
      */
     private void setButtonDynamicTestListener(Button button) {
@@ -53,7 +59,7 @@ public class BiomarkerTests extends Fragment {
 
     /***
      * Listener fot the Dynamic Test Button
-     * Used for determining accuracy
+     * Once clicked will switch to Fragment with Static  Parameters in place
      * @param button
      */
     private void setButtonStaticTestListener(Button button) {

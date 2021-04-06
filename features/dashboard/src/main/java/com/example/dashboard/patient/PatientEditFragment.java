@@ -24,7 +24,13 @@ import com.google.android.material.slider.Slider;
 import java.util.Map;
 
 /**
- * create an instance of this fragment.
+ * Ilie Galit s1628465
+ * Gets here only from PatietnInfoFragment
+ * This is present in the carer view
+ * Fragment Responsible for Editing the patient settings and updating the database
+ * Here you can
+ *      Change Fall Detection Thresholds
+ *      Change Fallen State of the patient
  */
 public class PatientEditFragment extends Fragment {
     // Log
@@ -34,7 +40,7 @@ public class PatientEditFragment extends Fragment {
     PatientSession patientSession;
     // Class
     View view;
-    // Ui
+    // UI Elements
     TextView tv_acc, tv_q1, tv_q2;
     Slider slider_acc, slider_q1, slider_q2;
     Button btn_update_settings, btn_set_default, btn_set_low, btn_set_high;
@@ -42,7 +48,7 @@ public class PatientEditFragment extends Fragment {
     // Settings that can be edited
     double acc_threshold, q1_threshold, q2_threshold;
     // Enums
-    protected enum SETTINGS_KEY {
+    protected enum SETTINGS_KEY {                                               // Key Values for database access
         ACC("ACC"), Q1("Q1"), Q2("Q2"), FALLEN("Fallen");
         private final String key;
         /**
@@ -55,21 +61,8 @@ public class PatientEditFragment extends Fragment {
             return key;
         }
     }
-    private enum STATE_FALLEN {
-        TRUE(true), FALSE(false);
-        private final boolean key;
-        /**
-         * @param key
-         */
-        private STATE_FALLEN(final boolean key) {
-            this.key = key;
-        }
-        public boolean getKey() {
-            return key;
-        }
-    }
-    private enum SETTINGS_VALUES_TYPES{DEFAULT,HIGH,LOW};
-    private enum SETTINGS_VALUES {
+    private enum SETTINGS_VALUES_TYPES{DEFAULT,HIGH,LOW};                      // Type of default values
+    private enum SETTINGS_VALUES {                                             // Default Settings values available
         ACC_DEFAULT(30.), Q1_DEFAULT(40.), Q2_DEFAULT(40.),
         ACC_HIGH(60.), Q1_HIGH(70.), Q2_HIGH(70.),
         ACC_LOW(10.), Q1_LOW(30.), Q2_LOW(30.);
@@ -85,7 +78,7 @@ public class PatientEditFragment extends Fragment {
         }
     }
     // Constants
-    boolean cb_fallen_state_value;
+    boolean cb_fallen_state_value;                                      // value taht goes in the checkbox
 
 
     @Override
@@ -93,14 +86,13 @@ public class PatientEditFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_patient_edit, container, false);
-        // Initialize Patient session
-        initializePatient();
+        initializePatient();            // Initialize Patient session and all UI elements
         return view;
     }
 
 
     /***
-     * Function Initializes all patient session requirements
+     * Function Initializes the patient session, extracts data from database and initializes the UI
      */
     private void initializePatient() {
         session = Session.getInstance();
@@ -122,6 +114,11 @@ public class PatientEditFragment extends Fragment {
     }
 
 
+    /***
+     * Loads the Settings of the patient from the database
+     * If no settings are present, then set default ones and update the database
+     * @param settings
+     */
     private void loadPatientSettings(Map<String, Object> settings) {
         // check if settings exists
         if (isValidSettings(settings)) {                                                            // all thresholds already defined in database
@@ -140,7 +137,8 @@ public class PatientEditFragment extends Fragment {
 
 
     /***
-     * Loads default values in class and updates the database
+     * Populates class variables with one of the default types
+     * if type is not one of the defaults, will use the custom varaibles set by user
      */
     private void loadValues(SETTINGS_VALUES_TYPES type) {
         if(type == SETTINGS_VALUES_TYPES.DEFAULT) {
@@ -186,7 +184,7 @@ public class PatientEditFragment extends Fragment {
 
 
     /***
-     * Function Initializes the Ui Elements
+     * Function that Initializes the UI Elements
      */
     private void initializeUi() {
         initializeUiVariables();
@@ -195,6 +193,9 @@ public class PatientEditFragment extends Fragment {
     }
 
 
+    /***
+     * Updates/Sets the new value of the UI elements with values from the database
+     */
     private void setUiListeners() {
         setSliderListeners();
         setButtonListeners();
@@ -202,6 +203,10 @@ public class PatientEditFragment extends Fragment {
     }
 
 
+    /***
+     * Checkbox that updates the Fallen State of the Patient
+     * Trie --> Fallen; Fallen --> All good
+     */
     private void setCheckBoxListeners() {
         cb_fallen_state.setOnClickListener(v -> {
             cb_fallen_state_value = !(cb_fallen_state_value);
@@ -218,6 +223,9 @@ public class PatientEditFragment extends Fragment {
     }
 
 
+    /***
+     * Sts Listeners for the Buttons
+     */
     private void setButtonListeners() {
         btn_update_settings.setOnClickListener(v -> {
             updateSettingsDatabase();
@@ -281,7 +289,7 @@ public class PatientEditFragment extends Fragment {
 
 
     /***
-     * Creates a reference to necessary UI elements
+     * Creates a reference to necessary UI elements that can change
      */
     private void initializeUiVariables() {
         tv_acc = view.findViewById(R.id.tv_slider_thresh_acc_value);

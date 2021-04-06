@@ -4,6 +4,15 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+/***
+ * Ilie Galit s1628465
+ * Object deals with biomarker databse data:
+ *      initializing
+ *      updating
+ *      formatting
+ *      extracting
+ *
+ */
 public class BiomarkerData {
 
     private static final String TAG_BIO_DATA = "TAG_BIO_DATA";
@@ -24,34 +33,17 @@ public class BiomarkerData {
         accuracy_dynamic_list = accuracy_dynamic;
         speed_static_list = speed_static;
         speed_dynamic_list = speed_dynamic;
-        // -- DEBUG --
-        String listString = "";
-        for (double s : accuracy_dynamic_list)
-        {
-            listString += s + "\t";
-        }
-        Log.i(TAG_BIO_DATA, listString + "\n\n\n\n\n" );
-        // -- DEBUG --
     }
 
 
     /***
-     * Updates the values of the biomarkers
+     * Updates the values of the biomarker data on the database
      * @param accuracy_static
      * @param accuracy_dynamic
      * @param speed_static
      * @param speed_dynamic
      */
     public void updateBiomarker(double accuracy_static, double accuracy_dynamic, double speed_static, double speed_dynamic) {
-        // -- DEBUG --
-        Log.i(TAG_BIO_DATA, "accuracy_static="+accuracy_static);
-        String listString = "";
-        for (double s : accuracy_dynamic_list)
-        {
-            listString += s + "\t";
-        }
-        Log.i(TAG_BIO_DATA, listString);
-        // -- DEBUG --
         accuracy_dynamic_list.add(accuracy_dynamic);
         accuracy_static_list.add(accuracy_static);
         speed_static_list.add(speed_static);
@@ -60,7 +52,7 @@ public class BiomarkerData {
 
 
     /***
-     * Returns an array of biomarkers
+     * Returns an array of biomarkers datasets
      * order: accuracy_static, accuracy_dynamic, speed_static, speed_dynamic
      * @return
      */

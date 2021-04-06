@@ -10,6 +10,8 @@ import android.os.Parcelable;
  *
  * This class acts as a superclass to the PatientSession and CarerSession. It holds common
  * functionality for both types of users.
+ *
+ * Ilie Galit s1628465 - extended to parceble to pass between fragments
  */
 
 
