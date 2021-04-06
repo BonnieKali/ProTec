@@ -28,7 +28,7 @@ import com.example.session.user.patient.PatientSession;
 public class Locator {
     private static final String TAG = "myLocator";
     private static final long minTimeBetweenLocationUpdates = 10000;//5*(60*1000);  //5 minutes
-    private static final int minDistanceBetweenLocationUpdates = 0;  //10 metres
+    private static final int minDistanceBetweenLocationUpdates = 10;  //10 metres
 
     private LocationManager locationManager;
     private LocationListener locationListener;
