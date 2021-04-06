@@ -22,7 +22,6 @@ import com.example.session.Session;
 
 /**
  * Evangelos Dimitriou (s1657192)
- *
  * This Fragment displays the Patient dashboard, and initializes patient-specific application logic.
  */
 

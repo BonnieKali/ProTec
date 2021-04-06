@@ -42,7 +42,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /***
- * Class responsible for getting sensor values and checking if a fall occured
+ * Ilie Galit - s1628465
+ * Class implementing the Fall Detection System
+ * Responsible for getting sensor values and checking if a fall occured
+ * Calculates the SMV and the orientation of the device
+ * Notifies Carer in case of fall
+ * Works in the backgroudna s a service
  */
 public class FallDetectorService implements SensorEventListener {
     // Logging
@@ -74,16 +79,12 @@ public class FallDetectorService implements SensorEventListener {
     // States
     private enum STATE{INITIAL, ONGOING};
     private STATE STATE_CURRENT = STATE.INITIAL;
-    // Testing Vars
-    private int count_falls_detected = 0;
-    private double SMV_max_new = 0;
-    private double SMV_max_old = 0;
     // Thresholds
     private double THRESHOLD_SMV = 80;
     private double THRESHOLD_degreeFloat = 60;
     private double THRESHOLD_degreeFloat2 = 60;
     // Enums
-    private enum SETTINGS_KEY {
+    private enum SETTINGS_KEY {                                         // Key elements from the database
         ACC("ACC"), Q1("Q1"), Q2("Q2");
         private final String key;
         /**
@@ -97,10 +98,8 @@ public class FallDetectorService implements SensorEventListener {
         }
     }
     // Time variables
-    private boolean FLAG_FALLEN_TIME_THRESHOLD = false;
-
-    private long last_event_time=-1;
-    private static final int TIME_EVENT_THRESHOLD=3;
+    private long last_event_time=-1;                                    // time when last seen
+    private static final int TIME_EVENT_THRESHOLD=3;                    // Threshold to stay inactive
 
     /***
      * Constructor for the FallDetector object
@@ -109,20 +108,12 @@ public class FallDetectorService implements SensorEventListener {
      */
     public FallDetectorService(Context context){
         this.context = context;
-
-        // Retrieve patient settings from DB
-        checkThresholdValues();
-
-        // Set recurring listener in case any changes occur
-        // This will be called every time there is a change in the database
-        Session session = Session.getInstance();
-        String patientUid = session.getUser().getUID();
+        checkThresholdValues();                                                                     // Retrieve patient settings from DB
+        Session session = Session.getInstance();                                                    // This will be called every time there is a change in the database
+        String patientUid = session.getUser().getUID();                                             // patient id
         session.setPatientSettingsListener(patientUid, taskResult -> checkThresholdValues());
-        // Initialize time variables;
-//        countDownTimer = getCountDownTimer();
-        // Initialize sensors
-        initializeSensors();
-        initializeSensorListeners();
+        initializeSensors();                                                                        // Initialize sensors
+        initializeSensorListeners();                                                                // Listeners
     }
 
 
@@ -147,16 +138,16 @@ public class FallDetectorService implements SensorEventListener {
     }
 
 
+    /***
+     * Populate variables, calculate acceleration and orientation matrices
+     * @param sensorEvent
+     */
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         if (!Session.getInstance().isUserSignedIn()){
             sensorManager.unregisterListener(this);
             return;
         }
-        // check threshold values
-
-        // TODO: Add a listener for onDataChanged for firebase
-
         // check sensors change
         switch (sensorEvent.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
@@ -171,7 +162,7 @@ public class FallDetectorService implements SensorEventListener {
                 break;
         }
         // check if fallen
-        calculateFusedOrientationTask();
+        checkForFall();
     }
 
 
@@ -202,10 +193,6 @@ public class FallDetectorService implements SensorEventListener {
             THRESHOLD_SMV = Double.valueOf(settings.get(SETTINGS_KEY.ACC.getKey()).toString());
             THRESHOLD_degreeFloat = Double.valueOf(settings.get(SETTINGS_KEY.Q1.getKey()).toString());
             THRESHOLD_degreeFloat2 = Double.valueOf(settings.get(SETTINGS_KEY.Q2.getKey()).toString());
-//            Log.d(TAG_FALL_DETECTOR,"VALUES WERE SET: "+THRESHOLD_SMV+"; "+"q1_threshold="+THRESHOLD_degreeFloat+"; "+"q2_threshold="+THRESHOLD_degreeFloat2);
-        } else {                                                                                    // set them in database
-            // Don't Change settings
-//            Log.d(TAG_FALL_DETECTOR,"SETTINGS DON'T EXIST");
         }
     }
 
@@ -227,7 +214,6 @@ public class FallDetectorService implements SensorEventListener {
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
-        // Do Nothing
     }
 
 
@@ -380,6 +366,7 @@ public class FallDetectorService implements SensorEventListener {
 
     /***
      * Function that multiplies two matrices
+     * Help From: https://codereview.stackexchange.com/questions/118416/matrix-multiplication-in-java
      * @param A: First Matrix
      * @param B: Second Matrix
      * @return Multiplication Matrix
@@ -418,44 +405,64 @@ public class FallDetectorService implements SensorEventListener {
 
 
     /***
-     * Function detects of a fall took place
+     * Function detects of a fall took place whenever new data is available
+     *
      */
-    public void calculateFusedOrientationTask () {
-        float oneMinusCoeff = 1.0f - LPF_COF;
-        // Calculate orientation
-        angles_orientation[0] = LPF_COF * angles_gyro[0] + oneMinusCoeff * angles_acc_mag[0];
-        angles_orientation[1] = LPF_COF * angles_gyro[1] + oneMinusCoeff * angles_acc_mag[1];
-        angles_orientation[2] = LPF_COF * angles_gyro[2] + oneMinusCoeff * angles_acc_mag[2];
-        // Calculate acceleration magnitude
-        double SMV = Math.sqrt(vector_acc[0] * vector_acc[0] + vector_acc[1] * vector_acc[1] + vector_acc[2] * vector_acc[2]);
+    public void checkForFall () {
+        getOrientationAngles(1.0f - LPF_COF);                             // Get orientation Angles
+        double SMV = Math.sqrt(vector_acc[0] * vector_acc[0] + vector_acc[1] *      // Calculate acceleration magnitude
+                vector_acc[1] + vector_acc[2] * vector_acc[2]);
         if (SMV > THRESHOLD_SMV) {                                                  // Check passed threshold
-            Q1 = (float) (angles_orientation[1] * 180 / Math.PI);                   // Calculate first angle
-            Q2 = (float) (angles_orientation[2] * 180 / Math.PI);                   // Calculate second angle
-            // Check angles if actually went over threshold
-            if (Q1 < 0)                                                             // Flip to positive
-                Q1 = Q1 * -1;
-            if (Q2 < 0)                                                             // Flip to positive
-                Q2 = Q2 * -1;
+            calculateRotationAngles();                                              // get the value in degrees of the orientation
             if (Q1 > THRESHOLD_degreeFloat || Q2 > THRESHOLD_degreeFloat2) {        // Check for threshold
-                // Update UI
-                count_falls_detected += 1;
-                // Notify that fall took place
                 Log.i(TAG_FALL_DETECTOR,"PERSON FELL");
-                if ((last_event_time==-1) || (System.currentTimeMillis() - last_event_time > TIME_EVENT_THRESHOLD*1000)) {
+                if ((last_event_time==-1) || (System.currentTimeMillis()
+                        - last_event_time > TIME_EVENT_THRESHOLD*1000)) {           // Notify that fall took place
                     Log.i(TAG_FALL_DETECTOR,"STATEMENT TRUE");
-                    last_event_time = System.currentTimeMillis();
-                    notifyPatientFallen();                                              // user has fallen procedure
-                } else {
-                    Log.i(TAG_FALL_DETECTOR,"STATEMENT FALSE");
+                    last_event_time = System.currentTimeMillis();                   // Update time threshold
+                    notifyPatientFallen();                                          // user has fallen procedure
                 }
             } else {
-                // No fall took place
-                Log.i(TAG_FALL_DETECTOR,"DANGER BUT STANDING");
+                Log.i(TAG_FALL_DETECTOR,"DANGER BUT STANDING");               // No fall took place
             }
         }
-        // Update gyro matrix
+        updateVariables();                                                          // Update variables with new values
+    }
+
+
+    /***
+     * Update the Gyro Matrix with new values calculated
+     */
+    private void updateVariables() {
         matrix_gyro = getMatrixGyro(angles_orientation);
         System.arraycopy(angles_orientation, 0, angles_gyro, 0, 3);
+    }
+
+
+    /***
+     * Calculates orientation the angles from radians to degrees
+     * Makes sure the value is positive
+     */
+    private void calculateRotationAngles() {
+        Q1 = (float) (angles_orientation[1] * 180 / Math.PI);                   // Calculate first angle
+        Q2 = (float) (angles_orientation[2] * 180 / Math.PI);                   // Calculate second angle
+        // Check angles if actually went over threshold
+        if (Q1 < 0)                                                             // Flip to positive
+            Q1 = Q1 * -1;
+        if (Q2 < 0)                                                             // Flip to positive
+            Q2 = Q2 * -1;
+    }
+
+
+    /***
+     *  Calculates the angle of the orientation of teh device
+     *  Resulted angles will be in radians
+     */
+    private void getOrientationAngles(float coefficient){
+        // Calculate orientation
+        angles_orientation[0] = LPF_COF * angles_gyro[0] + coefficient * angles_acc_mag[0];
+        angles_orientation[1] = LPF_COF * angles_gyro[1] + coefficient * angles_acc_mag[1];
+        angles_orientation[2] = LPF_COF * angles_gyro[2] + coefficient * angles_acc_mag[2];
     }
 
 
@@ -471,29 +478,5 @@ public class FallDetectorService implements SensorEventListener {
         Session.getInstance().generateLiveEvent(EventType.FELL);
         // change user settings
         Session.getInstance().setPatientSetting(Session.getInstance().getUser().userInfo.id,"Fallen",true);
-        // falling time threshold
-        setTimeThreshold();
     }
-
-    private void setTimeThreshold() {
-
-    }
-//
-//    /***
-//     * Creates a custom count down timer object
-//     * @return CountDownTimer object
-//     */
-//    private CountDownTimer getCountDownTimer() {
-//        return new CountDownTimer(3000, 1000) {
-//            @Override
-//            public void onTick(long millisUntilFinished) {
-//                Log.i(TAG_FALL_DETECTOR,);
-//                FLAG_FALLEN_TIME_THRESHOLD = false;
-//            }
-//            @Override
-//            public void onFinish() {
-//                FLAG_FALLEN_TIME_THRESHOLD = true;
-//            }
-//        };
-//    }
 }

@@ -27,7 +27,12 @@ import java.util.ArrayList;
 import java.util.Map;
 
 /**
- * Fragmetn for the patient Data
+ * Ilie Galit s1628465
+ * Fragment for the patient Biomarker Data Visualization
+ * Gets here only from PatietnInfoFragment
+ * Extracts data from the database and displays it on two graphs
+ * One graph displays speed, the other accuracy
+ * Red - dynamic data; blue - static data
  */
 public class PatientDataFragment extends Fragment {
     // Log
@@ -39,7 +44,7 @@ public class PatientDataFragment extends Fragment {
     //chart
     private LineChart mChart_speed;
     private LineChart mChart_accuracy;
-    // Data Variables
+    // Data Variables that will contain the biomarker data
     private ArrayList<ArrayList<Double>> patientData_all;
     private ArrayList<Double> accuracy_static_list;
     private ArrayList<Double> accuracy_dynamic_list;
@@ -52,21 +57,19 @@ public class PatientDataFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_patient_data, container, false);
-        setPatientInfo();                                                                           // Args
-        // Charts
-        initializeCharts();
-        // plot data
-        plotData();
+        setPatientInfo();               // extract data from the dataset
+        initializeCharts();             // initialize the two charts
+        plotData();                     // plot the data on the charts
         return view;
     }
 
 
     /***
-     * Function Deals with plotting the data  on the charts
+     * Function Deals responsible for plotting the data  on the charts
      */
     private void plotData() {
-        plotAccuracyData();
-        plotSpeedData();
+        plotAccuracyData();                         // plots the accuracy data
+        plotSpeedData();                            // plots the speed data
     }
 
 
@@ -74,8 +77,10 @@ public class PatientDataFragment extends Fragment {
      * Function sets up and plots the accuracy Data
      */
     private void plotAccuracyData() {
+        // Data type for the charts
         ArrayList<Entry> entry_static = new ArrayList<>();
         ArrayList<Entry> entry_dynamic = new ArrayList<>();
+        // populate entries
         for (int i = 0; i < accuracy_static_list.size(); i++){
             entry_static.add(new Entry(i,accuracy_static_list.get(i).floatValue()));
         }
@@ -100,8 +105,10 @@ public class PatientDataFragment extends Fragment {
      * Function sets up and plots the speed Data
      */
     private void plotSpeedData() {
+        // Data type for the charts
         ArrayList<Entry> entry_static = new ArrayList<>();
         ArrayList<Entry> entry_dynamic = new ArrayList<>();
+        // populate entries
         for (int i = 0; i < speed_static_list.size(); i++){
             entry_static.add(new Entry(i,speed_static_list.get(i).floatValue()));
         }
@@ -123,7 +130,7 @@ public class PatientDataFragment extends Fragment {
 
 
     /***
-     * Initializes the Charts
+     * Initializes the Charts to populate later
      */
     private void initializeCharts() {
         mChart_speed = (LineChart) view.findViewById(R.id.lineChart_speed);
@@ -133,7 +140,7 @@ public class PatientDataFragment extends Fragment {
     }
 
     /***
-     * Function Deals setting patient information variables
+     * Function Deals setting/populating patient information variables
      */
     public void setPatientInfo(){
         patientSession = getArguments().getParcelable("patientSession");
